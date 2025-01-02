@@ -2973,19 +2973,18 @@ spawn(function()
             if _G.SST.Auto_Join then
                 local Story = workspace._LOBBIES.Story
                 for i, Boxs in pairs(Story:GetChildren()) do
+					local Room = Boxs
                     local Door = Boxs.Door
-					print(Boxs)
-					bo:Set(Boxs)
                     if Door:FindFirstChild("Surface") and Door.Surface:FindFirstChild("Status") and Door.Surface.Status:FindFirstChild("State") then
                         local StateText = Door.Surface.Status.State.Text
                         if StateText == "Empty" then
                             Tp(Door.CFrame) -- ใช้ฟังก์ชัน TP โดยตรง
                             print("Teleporting to the door...")
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.request_lock_level:InvokeServer(Boxs, _G.SST.Select_Map.."_"..Act_Select,  _G.SST.Select_Friend_Only, _G.SST.Select_Mode)
+                            game:GetService("ReplicatedStorage").endpoints.client_to_server.request_lock_level:InvokeServer(Boxs.Name, _G.SST.Select_Map.."_".._G.Act_Select,  _G.SST.Select_Friend_Only, _G.SST.Select_Mode)
 						else
-                            local PlayersValue = Boxs.Players.Value -- ดึงค่าของ Players.Value
+							print("Room : "..Room)
                             print("Players found in lobby")
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.request_lock_level:InvokeServer(Boxs, _G.SST.Select_Map.."_"..Act_Select,  _G.SST.Select_Friend_Only, _G.SST.Select_Mode)
+                            game:GetService("ReplicatedStorage").endpoints.client_to_server.request_lock_level:InvokeServer(Boxs, _G.SST.Select_Map.."_".._G.Act_Select,  _G.SST.Select_Friend_Only, _G.SST.Select_Mode)
 
 					    end
                     else
@@ -3023,13 +3022,6 @@ _G.SST.Farm_Sukuna = Farm_Sukuna
 SS()
 end)
 
-local spawnPositions = {
-    Vector3.new(316.823, 125.597, -99.345),
-    Vector3.new(319.000, 125.597, -96.916),
-    Vector3.new(320.497, 125.597, -100.160),
-    Vector3.new(319.032, 125.597, -103.319)
-}
-
 local unitId = "{8bf8f990-cb29-4b70-b382-da807acd100d}"
 local replicatedStorage = game:GetService("ReplicatedStorage")
 local spawnUnit = replicatedStorage.endpoints.client_to_server.spawn_unit
@@ -3041,6 +3033,10 @@ local spawnPositions = {
     Vector3.new(319.032, 125.597, -103.319)
 }
 
+local function isCloseEnough(pos1, pos2, tolerance)
+    return (pos1 - pos2).Magnitude <= tolerance
+end
+
 spawn(function()
     while wait() do
         pcall(function()
@@ -3049,7 +3045,7 @@ spawn(function()
                 for _, position in ipairs(spawnPositions) do
                     local isUnitPresent = false
                     for _, unit in pairs(units:GetChildren()) do
-                        if unit:FindFirstChild("HumanoidRootPart") and unit.HumanoidRootPart.Position == position then
+                        if unit:FindFirstChild("HumanoidRootPart") and isCloseEnough(unit.HumanoidRootPart.Position, position, 0.1) then
                             isUnitPresent = true
                             break
                         end
@@ -3065,6 +3061,7 @@ spawn(function()
         end)
     end
 end)
+
 
 local Map = Main:AddLabelRight("")
 spawn(function()
