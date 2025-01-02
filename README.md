@@ -9,7 +9,7 @@ function loadcheck()
     end
     end
     pcall(function()
-        _G.SST = {Select_Map = "",Select_Act = "",Select_Mode = "",Select_Friend_Only = false,Auto_Join = false,Auto_ReJoin = false
+        _G.SST = {Select_Map = "namek",Select_Act = "1",Select_Mode = "Normal",Select_Friend_Only = false,Auto_Join = false,Auto_ReJoin = false,Farm_Sukuna = false
             
         }
     end)
@@ -2841,15 +2841,32 @@ end
 
 ------------------------------------ Function -------------------------------
 function Tp(Pos)
-    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(Pos)
+    local py = game.Players.LocalPlayer
+    local Npy = py.Name
+    local character = workspace:FindFirstChild(Npy) -- ค้นหาโมเดลของผู้เล่นใน workspace
+
+    if character and character:FindFirstChild("HumanoidRootPart") then
+        if typeof(Pos) == "CFrame" then
+            character.HumanoidRootPart.CFrame = Pos -- หาก Pos เป็น CFrame ใช้ได้โดยตรง
+        elseif typeof(Pos) == "Vector3" then
+            character.HumanoidRootPart.CFrame = CFrame.new(Pos) -- หาก Pos เป็น Vector3 แปลงเป็น CFrame
+        else
+            warn("Invalid Pos type. Expected CFrame or Vector3.")
+        end
+    else
+        warn("Character or HumanoidRootPart not found for player: " .. Npy)
+    end
 end
+
+
 
     function Upgrade(PartUnit)
         game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(PartUnit)
     end
 
 function SelectMapJoin(Box,Map,Act,FriendOnly,Mode)
-    game:GetService("ReplicatedStorage").endpoints.client_to_server.request_lock_level:InvokeServer("_lobbytemplategreen"..Box,""..Map.."_"..Act.."",FriendOnly,""..Mode)
+
+    game:GetService("ReplicatedStorage").endpoints.client_to_server.request_lock_level:InvokeServer(Box,Map.."_"..Act.."",FriendOnly,""..Mode)
 end
 
 function PlaceUnit(CodeUnit,CFrameUnit)
@@ -2897,22 +2914,31 @@ Main:AddDropdownLeft("Select Act",ActList,_G.SST.Select_Act,function(Value)
     Select_Act = Value
     _G.SST.Select_Act = Select_Act
     SS()
-    if _G.SST.Select_Act == "1" then
-        Act_Select = "level_1"
-    elseif _G.SST.Select_Act == "2" then
-        Act_Select = "level_2"
-    elseif _G.SST.Select_Act == "3" then
-        Act_Select = "level_3"
-    elseif _G.SST.Select_Act == "4" then
-        Act_Select = "level_4"
-    elseif _G.SST.Select_Act == "5" then
-        Act_Select = "level_5"
-    elseif _G.SST.Select_Act == "6" then
-        Act_Select = "level_6"
-    elseif _G.SST.Select_Act == "Infinite" then
-        Act_Select = "infinite"
-    end
 end)
+spawn(function()
+	while true do
+		pcall(function()
+		    if _G.SST.Select_Act == "1" then
+        _G.Act_Select = "level_1"
+    elseif _G.SST.Select_Act == "2" then
+        _G.Act_Select = "level_2"
+    elseif _G.SST.Select_Act == "3" then
+        _G.Act_Select = "level_3"
+    elseif _G.SST.Select_Act == "4" then
+        _G.Act_Select = "level_4"
+    elseif _G.SST.Select_Act == "5" then
+        _G.Act_Select = "level_5"
+    elseif _G.SST.Select_Act == "6" then
+        _G.Act_Select = "level_6"
+    elseif _G.SST.Select_Act == "Infinite" then
+        _G.Act_Select = "infinite"
+    end
+	end)
+		wait()
+	end
+end)
+
+
 ModeList = {"Normal","Hard"}
 Main:AddDropdownLeft("Select Mode",ModeList,_G.SST.Select_Mode,function(Value)
     Select_Mode = Value
@@ -2925,13 +2951,22 @@ Main:AddToggleLeft("Select Friend Only",_G.SST.Select_Friend_Only,function(value
     _G.SST.Select_Friend_Only = Select_Friend_Only
     SS()
 end)
-
+spawn(function()
+	while wait() do
+		pcall(function()
+		if _G.SST.Select_Friend_Only then
+			_G.Fraiend_Only = "true"
+			else
+				_G.Fraiend_Only = "false"
+				end
+				end)
+		end
+	end)
 Main:AddToggleLeft("Auto Join",_G.SST.Auto_Join,function(value)
     Auto_Join = value
     _G.SST.Auto_Join = Auto_Join
     SS()
 end)
-
 spawn(function()
     while wait() do
         pcall(function()
@@ -2939,20 +2974,29 @@ spawn(function()
                 local Story = workspace._LOBBIES.Story
                 for i, Boxs in pairs(Story:GetChildren()) do
                     local Door = Boxs.Door
-                    if Door.Surface.Status.State.Text == "Empty" then
-					print(Door.CFrame)
-                        Tp(Door.CFrame) -- ใช้ TP กับประตูที่มีสถานะ "Empty"
-                        break -- หยุดลูปหลังเจอเป้าหมาย
+					print(Boxs)
+					bo:Set(Boxs)
+                    if Door:FindFirstChild("Surface") and Door.Surface:FindFirstChild("Status") and Door.Surface.Status:FindFirstChild("State") then
+                        local StateText = Door.Surface.Status.State.Text
+                        if StateText == "Empty" then
+                            Tp(Door.CFrame) -- ใช้ฟังก์ชัน TP โดยตรง
+                            print("Teleporting to the door...")
+                            game:GetService("ReplicatedStorage").endpoints.client_to_server.request_lock_level:InvokeServer(Boxs, _G.SST.Select_Map.."_"..Act_Select,  _G.SST.Select_Friend_Only, _G.SST.Select_Mode)
+						else
+                            local PlayersValue = Boxs.Players.Value -- ดึงค่าของ Players.Value
+                            print("Players found in lobby")
+                            game:GetService("ReplicatedStorage").endpoints.client_to_server.request_lock_level:InvokeServer(Boxs, _G.SST.Select_Map.."_"..Act_Select,  _G.SST.Select_Friend_Only, _G.SST.Select_Mode)
+
+					    end
                     else
-                        print("Remote")
-						SelectMapJoin(Boxs, _G.SST.Select_Map, Act_Select, _G.SST.Select_Friend_Only, _G.SST.Select_Mode)
-                   
-				    end
+                        warn("Door surface or status is missing")
+                    end
                 end
             end
         end)
     end
 end)
+
 
 Main:AddSeperatorRight("Game")
 Main:AddToggleRight("Auto ReJoin" ,_G.SST.Auto_ReJoin,function(value)
@@ -2970,3 +3014,92 @@ spawn(function()
 		end)
 	end
 end)
+
+Main:AddSeperatorRight("farm")
+
+Main:AddToggleRight("Auto Farm Curse",_G.SST.Farm_Sukuna,function(a)
+	Farm_Sukuna = a
+_G.SST.Farm_Sukuna = Farm_Sukuna
+SS()
+end)
+
+local spawnPositions = {
+    Vector3.new(316.823, 125.597, -99.345),
+    Vector3.new(319.000, 125.597, -96.916),
+    Vector3.new(320.497, 125.597, -100.160),
+    Vector3.new(319.032, 125.597, -103.319)
+}
+
+local unitId = "{8bf8f990-cb29-4b70-b382-da807acd100d}"
+local replicatedStorage = game:GetService("ReplicatedStorage")
+local spawnUnit = replicatedStorage.endpoints.client_to_server.spawn_unit
+
+local spawnPositions = {
+    Vector3.new(316.823, 125.597, -99.345),
+    Vector3.new(319.000, 125.597, -96.916),
+    Vector3.new(320.497, 125.597, -100.160),
+    Vector3.new(319.032, 125.597, -103.319)
+}
+
+spawn(function()
+    while wait() do
+        pcall(function()
+            if _G.SST.Farm_Sukuna then
+                local units = workspace._UNITS
+                for _, position in ipairs(spawnPositions) do
+                    local isUnitPresent = false
+                    for _, unit in pairs(units:GetChildren()) do
+                        if unit:FindFirstChild("HumanoidRootPart") and unit.HumanoidRootPart.Position == position then
+                            isUnitPresent = true
+                            break
+                        end
+                    end
+                    
+                    -- หากไม่มี Unit ในตำแหน่งนี้ ให้วาง Unit
+                    if not isUnitPresent then
+                        local cframe = CFrame.new(position) * CFrame.Angles(0, 0, 0)
+                        spawnUnit:InvokeServer(unitId, cframe)
+                    end
+                end
+            end
+        end)
+    end
+end)
+
+local Map = Main:AddLabelRight("")
+spawn(function()
+	while wait() do
+		pcall(function()
+			Map:Set(_G.SST.Select_Map)
+		end)
+	end
+end)
+
+local Act = Main:AddLabelRight("")
+spawn(function()
+	while wait() do
+		pcall(function()
+			Act:Set(_G.Act_Select)
+		end)
+	end
+end)
+
+local oyr = Main:AddLabelRight("")
+spawn(function()
+	while wait() do
+		pcall(function()
+			oyr:Set(_G.Fraiend_Only)
+		end)
+	end
+end)
+
+local mode = Main:AddLabelRight("")
+spawn(function()
+	while wait() do
+		pcall(function()
+			mode:Set(_G.SST.Select_Map)
+		end)
+	end
+end)
+
+local bo = Main:AddLabelRight("")
