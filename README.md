@@ -9,7 +9,7 @@ function loadcheck()
     end
     end
     pcall(function()
-        _G.SST = {Select_Map = "namek",Select_Act = "1",Select_Mode = "Normal",Select_Friend_Only = false,Auto_Join = false,Auto_ReJoin = false,Farm_Sukuna = false
+        _G.SST = {Select_Map = "namek",Select_Act = "1",Select_Mode = "Normal",Select_Friend_Only = false,Auto_Join = false,Auto_ReJoin = false,Farm_Sukuna = false,Select_Farme_Rate = "60",Auto_Rejoin = true,Boost_Fps = false
             
         }
     end)
@@ -2895,12 +2895,29 @@ Main:AddLineLeft("")
 
 Main:AddSeperatorLeft("Join Map")
 
-local MapList = {}
-for i, Map in pairs(game:GetService("Players").LocalPlayer.PlayerGui.LevelSelectGui.MapSelect.Main.Wrapper.Container:GetChildren()) do
-    if Map:IsA("ImageButton") then
-        table.insert(MapList, Map.Name)
-    end
-end
+local MapList = {
+    "namek",
+    "aot",
+    "demonslayer",
+    "naruto",
+    "marineford",
+    "tokyo_ghoul",
+    "hueco",
+    "hxhant",
+    "magnolia",
+    "jjk",
+    "clover",
+    "jojo",
+    "opm",
+    "7ds",
+    "mha",
+    "dressrosa",
+    "sao",
+    "berserk",
+    "overlord",
+    "fate",
+    "amegakure"
+}
 
 
 Main:AddDropdownLeft("Select Map",MapList,_G.SST.Select_Map,function(Value)
@@ -2955,9 +2972,9 @@ spawn(function()
 	while wait() do
 		pcall(function()
 		if _G.SST.Select_Friend_Only then
-			_G.Fraiend_Only = true
+			_G.Fraiend_Only = "true"
 			else
-				_G.Fraiend_Only = false
+				_G.Fraiend_Only = "false"
 				end
 				end)
 		end
@@ -2967,41 +2984,29 @@ Main:AddToggleLeft("Auto Join",_G.SST.Auto_Join,function(value)
     _G.SST.Auto_Join = Auto_Join
     SS()
 end)
-spawn(function()
-    while wait() do
-        pcall(function()
-            if _G.SST.Auto_Join then
-                for i, Boxs in pairs(workspace._LOBBIES.Story:GetChildren()) do
-					local Room = Boxs
-                    local Door = Boxs.Door
-                    if Door:FindFirstChild("Surface") and Door.Surface:FindFirstChild("Status") and Door.Surface.Status:FindFirstChild("State") then
-                        local StateText = Door.Surface.Status.State.Text
-                        if StateText == "Empty" then
-                            Tp(Door.CFrame) -- ใช้ฟังก์ชัน TP โดยตรง
-							game:GetService("ReplicatedStorage").endpoints.client_to_server.request_lock_level:InvokeServer(
-								Room, 
-								_G.SST.Select_Map .. "_" .. _G.Act_Select, 
-								tostring(_G.Friend_Only), 
-								_G.SST.Select_Mode
-							)
+
+	spawn(function()
+		while wait() do
+			pcall(function()
+				if _G.SST.Auto_Join then
+					for i, Room in pairs(workspace._LOBBIES.Story:GetChildren()) do
+						if Room:FindFirstChild("Timer").Value == -1 then
+							game:GetService("ReplicatedStorage").endpoints.client_to_server.request_join_lobby:InvokeServer(Room.Name)
+								local args = {
+									[1] = Room.Name,
+									[2] = _G.SST.Select_Map.."_".._G.Act_Select,
+									[3] = true,
+									[4] = _G.SST.Select_Mode
+								}
+								
+								game:GetService("ReplicatedStorage").endpoints.client_to_server.request_lock_level:InvokeServer(unpack(args))
 							break
-													else
-							game:GetService("ReplicatedStorage").endpoints.client_to_server.request_lock_level:InvokeServer(
-								Room, 
-								_G.SST.Select_Map .. "_" .. _G.Act_Select, 
-								tostring(_G.Friend_Only), 
-								_G.SST.Select_Mode
-							)
-							
-					    end
-                    else
-                        warn("Door surface or status is missing")
-                    end
-                end
-            end
-        end)
-    end
-end)
+						end
+					end
+				end
+			end)
+		end 
+	end)
 
 
 Main:AddSeperatorRight("Game")
@@ -3072,49 +3077,167 @@ spawn(function()
     while wait() do
         pcall(function()
             if _G.SST.Farm_Sukuna then
-				local units = workspace._UNITS
-				for i,v in pairs(units:GetChildren()) do
-					Upgrade(v.Name)
-				end
-			end
+                local units = workspace._UNITS:GetChildren()
+                for i, v in pairs(units) do
+                    Upgrade(v.Name)
+                    wait(0)
+                end
+            end
         end)
     end
 end)
-local Map = Main:AddLabelRight("")
-spawn(function()
-	while wait() do
-		pcall(function()
-			Map:Set(_G.SST.Select_Map)
-		end)
-	end
+
+
+Main:AddSeperatorRight("Fps")
+Main:AddToggleRight("Boost Fps",_G.SST.Boost_Fps,function(va)
+	Boost_Fps = va
+ _G.SST.Boost_Fps = Boost_Fps
+ SS()
 end)
 
-local Act = Main:AddLabelRight("")
-spawn(function()
-	while wait() do
-		pcall(function()
-			Act:Set(_G.Act_Select)
-		end)
-	end
-end)
+local Boosted = false -- ตัวแปรสถานะเพื่อตรวจสอบว่ารันแล้วหรือไม่
 
-local oyr = Main:AddLabelRight("")
 spawn(function()
     while wait() do
         pcall(function()
-            oyr:Set(tostring(_G.Friend_Only)) -- แปลงค่าเป็นข้อความก่อนส่งไปยัง Set()
+            if _G.SST.Boost_Fps and not Boosted then
+                Boosted = true -- ตั้งค่าให้รู้ว่าสคริปต์รันแล้ว
+                local decalsyeeted = true
+                local g = game
+                local w = g.Workspace
+                local l = g.Lighting
+                local t = w.Terrain
+
+                -- ปรับ Terrain
+                t.WaterWaveSize = 0
+                t.WaterWaveSpeed = 0
+                t.WaterReflectance = 0
+                t.WaterTransparency = 0
+
+                -- ปิด Lighting
+                l.GlobalShadows = false
+                l.FogEnd = 9e9
+                l.Brightness = 0
+
+                -- ลดคุณภาพการแสดงผล
+                settings().Rendering.QualityLevel = "Level01"
+
+                -- ปรับแต่งวัตถุ
+                for _, v in pairs(g:GetDescendants()) do
+                    if v:IsA("Part") or v:IsA("Union") or v:IsA("CornerWedgePart") or v:IsA("TrussPart") or v:IsA("MeshPart") then
+                        v.Material = "Plastic"
+                        v.Reflectance = 0
+                        if v:IsA("MeshPart") then
+                            v.TextureID = ""
+                        end
+                    elseif (v:IsA("Decal") or v:IsA("Texture")) and decalsyeeted then
+                        v:Destroy()
+                    elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
+                        v.Lifetime = NumberRange.new(0)
+                    elseif v:IsA("Fire") or v:IsA("SpotLight") or v:IsA("Smoke") or v:IsA("Sparkles") then
+                        v.Enabled = false
+                    elseif v:IsA("Sound") then
+                        v.Playing = false
+                    end
+                end
+
+                -- ปิด GUI
+                for _, v in pairs(game.Players.LocalPlayer.PlayerGui:GetDescendants()) do
+                    if v:IsA("Frame") or v:IsA("TextLabel") or v:IsA("TextButton") or v:IsA("ImageLabel") then
+                        v.Visible = false
+                    end
+                end
+
+                -- ปิดเอฟเฟคใน Lighting
+                for _, e in pairs(l:GetChildren()) do
+                    if e:IsA("BlurEffect") or e:IsA("SunRaysEffect") or e:IsA("ColorCorrectionEffect") or e:IsA("BloomEffect") or e:IsA("DepthOfFieldEffect") then
+                        e.Enabled = false
+                    end
+                end
+
+                -- ลบอุปกรณ์ที่ไม่จำเป็น
+                for _, v in pairs(g:GetDescendants()) do
+                    if v:IsA("Accessory") or v:IsA("Clothing") then
+                        v:Destroy()
+                    end
+                end
+            end
         end)
     end
 end)
-
-
-local mode = Main:AddLabelRight("")
-spawn(function()
-	while wait() do
-		pcall(function()
-			mode:Set(_G.SST.Select_Mode)
-		end)
-	end
+_G.SST.Select_Farme_Rate = "15"
+Main:AddSliderRight("Select Farme Rate", 0, 240, _G.SST.Select_Farme_Rate, function(a)
+	Select_Farme_Rate = a  -- ใช้ตัวแปร a แทนค่า Select_Farme_Rate
+	_G.SST.Select_Farme_Rate = Select_Farme_Rate
+	SS()
+end)
+Main:AddSeperatorRight("Misc")
+Main:AddToggleRight("Auto Rejoin",_G.SST.Auto_Rejoin ,function(a)
+	Auto_Rejoin  = a
+	_G.SST.Auto_Rejoin = Auto_Rejoin
+	SS()
 end)
 
-local bo = Main:AddLabelRight("")
+
+
+spawn(function()
+    while true do wait()
+        getgenv().rejoin = game:GetService("CoreGui").RobloxPromptGui.promptOverlay.ChildAdded:Connect(function(Kick)
+            if _G.SST.Auto_Rejoin then
+                if Kick.Name == 'ErrorPrompt' and Kick:FindFirstChild('MessageArea') and Kick.MessageArea:FindFirstChild("ErrorFrame") then
+                    game:GetService("TeleportService"):Teleport(game.PlaceId)
+                    wait(50)
+                end
+            end
+        end)
+    end
+end)
+-- สร้าง toggle เพื่อเปิด/ปิดการตั้งค่า FPS cap
+	while true do
+		setfpscap(_G.SST.Select_Farme_Rate) -- ตั้งค่าความเร็วเฟรมตามค่า Select_Farme_Rate
+		task.wait(1) -- รอ 1 วินาทีเพื่อไม่ให้ลูปทำงานหนักเกินไป
+	end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
