@@ -2955,9 +2955,9 @@ spawn(function()
 	while wait() do
 		pcall(function()
 		if _G.SST.Select_Friend_Only then
-			_G.Fraiend_Only = "true"
+			_G.Fraiend_Only = true
 			else
-				_G.Fraiend_Only = "false"
+				_G.Fraiend_Only = false
 				end
 				end)
 		end
@@ -2971,21 +2971,28 @@ spawn(function()
     while wait() do
         pcall(function()
             if _G.SST.Auto_Join then
-                local Story = workspace._LOBBIES.Story
-                for i, Boxs in pairs(Story:GetChildren()) do
+                for i, Boxs in pairs(workspace._LOBBIES.Story:GetChildren()) do
 					local Room = Boxs
                     local Door = Boxs.Door
                     if Door:FindFirstChild("Surface") and Door.Surface:FindFirstChild("Status") and Door.Surface.Status:FindFirstChild("State") then
                         local StateText = Door.Surface.Status.State.Text
                         if StateText == "Empty" then
                             Tp(Door.CFrame) -- ใช้ฟังก์ชัน TP โดยตรง
-                            print("Teleporting to the door...")
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.request_lock_level:InvokeServer(Boxs.Name, _G.SST.Select_Map.."_".._G.Act_Select,  _G.SST.Select_Friend_Only, _G.SST.Select_Mode)
-						else
-							print("Room : "..Room)
-                            print("Players found in lobby")
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.request_lock_level:InvokeServer(Boxs, _G.SST.Select_Map.."_".._G.Act_Select,  _G.SST.Select_Friend_Only, _G.SST.Select_Mode)
-
+							game:GetService("ReplicatedStorage").endpoints.client_to_server.request_lock_level:InvokeServer(
+								Room, 
+								_G.SST.Select_Map .. "_" .. _G.Act_Select, 
+								tostring(_G.Friend_Only), 
+								_G.SST.Select_Mode
+							)
+							break
+													else
+							game:GetService("ReplicatedStorage").endpoints.client_to_server.request_lock_level:InvokeServer(
+								Room, 
+								_G.SST.Select_Map .. "_" .. _G.Act_Select, 
+								tostring(_G.Friend_Only), 
+								_G.SST.Select_Mode
+							)
+							
 					    end
                     else
                         warn("Door surface or status is missing")
@@ -3061,8 +3068,18 @@ spawn(function()
         end)
     end
 end)
-
-
+spawn(function()
+    while wait() do
+        pcall(function()
+            if _G.SST.Farm_Sukuna then
+				local units = workspace._UNITS
+				for i,v in pairs(units:GetChildren()) do
+					Upgrade(v.Name)
+				end
+			end
+        end)
+    end
+end)
 local Map = Main:AddLabelRight("")
 spawn(function()
 	while wait() do
@@ -3083,18 +3100,19 @@ end)
 
 local oyr = Main:AddLabelRight("")
 spawn(function()
-	while wait() do
-		pcall(function()
-			oyr:Set(_G.Fraiend_Only)
-		end)
-	end
+    while wait() do
+        pcall(function()
+            oyr:Set(tostring(_G.Friend_Only)) -- แปลงค่าเป็นข้อความก่อนส่งไปยัง Set()
+        end)
+    end
 end)
+
 
 local mode = Main:AddLabelRight("")
 spawn(function()
 	while wait() do
 		pcall(function()
-			mode:Set(_G.SST.Select_Map)
+			mode:Set(_G.SST.Select_Mode)
 		end)
 	end
 end)
