@@ -1,3 +1,4 @@
+------------------aaa
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 ----------------------------------- save
@@ -2990,22 +2991,23 @@ end)
 			pcall(function()
 				if _G.SST.Auto_Join then
 					for i, Room in pairs(workspace._LOBBIES.Story:GetChildren()) do
-						if Room:FindFirstChild("Timer").Value == -1 then
+						if Room:FindFirstChild("Timer") and Room.Timer.Value == -1 then
+							-- ตรวจสอบค่า arguments ก่อนเรียกใช้
+							local args = {
+								[1] = Room.Name,
+								[2] = _G.SST.Select_Map.."_".._G.Act_Select,
+								[3] = true,
+								[4] = _G.SST.Select_Mode
+							}
+							print("Arguments: ", args[1], args[2], args[3], args[4])  -- ตรวจสอบค่าก่อนเรียก
 							game:GetService("ReplicatedStorage").endpoints.client_to_server.request_join_lobby:InvokeServer(Room.Name)
-								local args = {
-									[1] = Room.Name,
-									[2] = _G.SST.Select_Map.."_".._G.Act_Select,
-									[3] = true,
-									[4] = _G.SST.Select_Mode
-								}
-								
-								game:GetService("ReplicatedStorage").endpoints.client_to_server.request_lock_level:InvokeServer(unpack(args))
+							game:GetService("ReplicatedStorage").endpoints.client_to_server.request_lock_level:InvokeServer(unpack(args))
 							break
 						end
 					end
 				end
 			end)
-		end 
+		end
 	end)
 
 
