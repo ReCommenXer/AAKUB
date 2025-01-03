@@ -3215,13 +3215,15 @@ end)
 spawn(function()
     while wait() do
         pcall(function()
-            if _G.SST.Farm_Sukuna then
+            if _G.SST and _G.SST.Farm_Sukuna then -- ตรวจสอบ _G.SST และ _G.SST.Farm_Sukuna
                 local units = workspace._UNITS:GetChildren()
                 for i, v in pairs(units) do
-					local pet = v
-                    -- ตรวจสอบว่า Attribute "range_stst" มีอยู่ใน unit นี้
-                    if v:GetAttribute("range_stst") ~= nil then
-                        Upgrade(pet.Name)
+                    if v:IsA("Model") and v:GetAttribute("range_stst") ~= nil then -- ตรวจสอบว่า unit เป็น Model และมี Attribute "range_stst"
+                        if typeof(Upgrade) == "function" then -- ตรวจสอบว่า Upgrade เป็นฟังก์ชัน
+                            Upgrade(workspace._UNITS:GetChildren(v).Name) -- เรียกใช้ฟังก์ชัน Upgrade
+                        else
+                            warn("Upgrade function not defined.")
+                        end
                         wait(0) -- รอเล็กน้อยก่อนตรวจสอบ unit ถัดไป
                     end
                 end
