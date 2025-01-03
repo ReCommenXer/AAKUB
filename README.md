@@ -1,4 +1,4 @@
-------------------54545
+------------------sse
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 ----------------------------------- save
@@ -2954,8 +2954,8 @@ if WebHook ~= "" then
                             ["value"] = "```Mode : " .. ModeSelect .. "```"
                         },
                         {
-                            ["name"] = "Battle Pass",
-                            ["value"] = "```Level : " .. game:GetService("Players").LocalPlayer._stats.gem_amount.Value .. "```"
+                            ["name"] = "Gem",
+                            ["value"] = "```Gem : " .. game:GetService("Players").LocalPlayer._stats.gem_amount.Value .. "```"
                         },
                         {
                             ["name"] = "Elapsed Time",
@@ -3218,9 +3218,10 @@ spawn(function()
             if _G.SST.Farm_Sukuna then
                 local units = workspace._UNITS:GetChildren()
                 for i, v in pairs(units) do
+					local pet = v
                     -- ตรวจสอบว่า Attribute "range_stst" มีอยู่ใน unit นี้
                     if v:GetAttribute("range_stst") ~= nil then
-                        Upgrade(v.Name)
+                        Upgrade(pet.Name)
                         wait(0) -- รอเล็กน้อยก่อนตรวจสอบ unit ถัดไป
                     end
                 end
