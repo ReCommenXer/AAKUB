@@ -2876,7 +2876,7 @@ end
 local RenUi = Update:AddWindow("RebornXer Hub","10039618734",Enum.KeyCode.RightControl)
 
 local Main = RenUi:AddTab("Main","6026568198")
-local Teleport = RenUi:AddTab("Marco","6035190846")
+local Check = RenUi:AddTab("Check","6035190846")
 local Misc = RenUi:AddTab("Misc","6034509993")
 local Setting = RenUi:AddTab("","")
 
@@ -2888,6 +2888,15 @@ Main:AddLabelLeft("Map : Anime Adventures")
 Date = os.date("%d".." ".."%B".." ".."%Y")
 Main:AddLabelLeft("Day : "..Date)
 Main:AddLineLeft("")
+
+Check:AddSeperatorLeft("Player")
+local NamePlayer = game.Players.LocalPlayer.Name 
+Check:AddLabelLeft("Name : "..NamePlayer)
+local LevelPlayer = game:GetService("Players").LocalPlayer.PlayerGui.spawn_units.Lives.Main.Desc.Level.Text
+Check:AddLabelLeft("Level : "..LevelPlayer)
+local ExpPlayer = game:GetService("Players").LocalPlayer._stats.player_xp.Value
+Check:AddLabelLeft("Xp : "..ExpPlayer)
+local GemCheck = Check:AddLabelLeft("")
 
 Main:AddSeperatorLeft("Join Map")
 
@@ -3075,19 +3084,23 @@ spawn(function()
         end)
     end
 end)
+
 spawn(function()
     while wait() do
         pcall(function()
             if _G.SST.Farm_Sukuna then
                 local units = workspace._UNITS:GetChildren()
                 for i, v in pairs(units) do
-                    Upgrade(v.Name)
-                    wait(0)
+                    if v:FindFirstChild("Attributes") and v.Attributes:FindFirstChild("range_stst") then
+                        Upgrade(v.Name)
+                        wait(0)
+                    end
                 end
             end
         end)
     end
 end)
+
 
 
 Main:AddSeperatorRight("Fps")
@@ -3195,50 +3208,6 @@ spawn(function()
 end)
 -- สร้าง toggle เพื่อเปิด/ปิดการตั้งค่า FPS cap
 	while true do
-		setfpscap(_G.SST.Select_Farme_Rate) -- ตั้งค่าความเร็วเฟรมตามค่า Select_Farme_Rate
+		setfpscap(_G.SST.Select_Farme_Rate) -- ตั้งค่าความเร็วเฟรมตามค่า 
 		task.wait(1) -- รอ 1 วินาทีเพื่อไม่ให้ลูปทำงานหนักเกินไป
 	end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
