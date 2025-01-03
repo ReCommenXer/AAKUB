@@ -1,4 +1,4 @@
-------------------ssd
+------------------sse
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 ----------------------------------- save
@@ -3052,6 +3052,9 @@ spawn(function()
     while wait() do
         pcall(function()
             if _G.SST.Farm_Sukuna then
+				if game:GetService("Players").LocalPlayer.PlayerGui.VoteStart.Enabled == true then
+					game:GetService("ReplicatedStorage").endpoints.client_to_server.vote_start:InvokeServer()
+				end
                 local units = workspace._UNITS
                 for _, position in ipairs(spawnPositions) do
                     local isUnitPresent = false
