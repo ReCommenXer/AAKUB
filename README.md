@@ -1,4 +1,4 @@
-------------------aaa
+------------------ssd
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 ----------------------------------- save
@@ -10,17 +10,12 @@ function loadcheck()
     end
     end
     pcall(function()
-        _G.SST = {Select_Map = "namek",Select_Act = "1",Select_Mode = "Normal",Select_Friend_Only = false,Auto_Join = false,Auto_ReJoin = false,Farm_Sukuna = false,Select_Farme_Rate = "60",Auto_Rejoin = true,Boost_Fps = false
-            
+        _G.SST = {Select_Map = "",Select_Act = "",Select_Mode = "",Select_Friend_Only = false,Auto_Join = false,Auto_ReJoin = false,Farm_Sukuna = false,Select_Farme_Rate = "60",Auto_Rejoin_Kick = true,Boost_Fps = false
         }
     end)
     function LoadSetting()
         if isfile("RebornXer Hub Anime Adventures"..game.Players.LocalPlayer.Name..".json") then
-            -- โหลดไฟล์
             local fileContent = readfile("RebornXer Hub Anime Adventures"..game.Players.LocalPlayer.Name..".json")
-            print("Loaded file content: ", fileContent) -- ตรวจสอบเนื้อหาของไฟล์
-            
-            -- แปลงไฟล์จาก JSON
             local success, decoded = pcall(function()
                 return game:GetService("HttpService"):JSONDecode(fileContent)
             end)
@@ -3169,16 +3164,15 @@ spawn(function()
         end)
     end
 end)
-_G.SST.Select_Farme_Rate = "15"
 Main:AddSliderRight("Select Farme Rate", 0, 240, _G.SST.Select_Farme_Rate, function(a)
 	Select_Farme_Rate = a  -- ใช้ตัวแปร a แทนค่า Select_Farme_Rate
 	_G.SST.Select_Farme_Rate = Select_Farme_Rate
 	SS()
 end)
 Main:AddSeperatorRight("Misc")
-Main:AddToggleRight("Auto Rejoin",_G.SST.Auto_Rejoin ,function(a)
+Main:AddToggleRight("Auto Rejoin [Kick]",_G.SST.Auto_Rejoin_Kick ,function(a)
 	Auto_Rejoin  = a
-	_G.SST.Auto_Rejoin = Auto_Rejoin
+	_G.SST.Auto_Rejoin_Kick = Auto_Rejoin_Kick
 	SS()
 end)
 
@@ -3187,9 +3181,9 @@ end)
 spawn(function()
     while true do wait()
         getgenv().rejoin = game:GetService("CoreGui").RobloxPromptGui.promptOverlay.ChildAdded:Connect(function(Kick)
-            if _G.SST.Auto_Rejoin then
+            if _G.SST.Auto_Rejoin_Kick then
                 if Kick.Name == 'ErrorPrompt' and Kick:FindFirstChild('MessageArea') and Kick.MessageArea:FindFirstChild("ErrorFrame") then
-                    game:GetService("TeleportService"):Teleport(game.PlaceId)
+                    game:GetService("TeleportService"):Teleport(8304191830)
                     wait(50)
                 end
             end
