@@ -1,4 +1,4 @@
-------------------sse
+------------------sasad
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 ----------------------------------- save
@@ -3007,6 +3007,7 @@ end)
 							game:GetService("ReplicatedStorage").endpoints.client_to_server.request_join_lobby:InvokeServer(Room.Name)
 
 							game:GetService("ReplicatedStorage").endpoints.client_to_server.request_lock_level:InvokeServer(unpack(args))
+							wait(2)
        game:GetService("ReplicatedStorage").endpoints.client_to_server.request_start_game:InvokeServer(Room.Name)
 							
 						end
