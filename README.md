@@ -1,4 +1,4 @@
-------------------kkl
+------------------ssewewqwq
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 ----------------------------------- save
@@ -10,7 +10,7 @@ function loadcheck()
     end
     end
     pcall(function()
-        _G.SST = {Select_Map = "",Select_Act = "",Select_Mode = "",Select_Friend_Only = false,Auto_Join = false,Auto_ReJoin = false,Farm_Sukuna = false,Select_Farme_Rate = "60",Auto_Rejoin_Kick = true,Boost_Fps = false
+        _G.SST = {Select_Map = "",Select_Act = "",Select_Mode = "",Select_Friend_Only = false,Auto_Join = false,Auto_ReJoin = false,Farm_Sukuna = false,Select_Farme_Rate = "60",Auto_Rejoin_Kick = true,Boost_Fps = false,Black_Screen = false
         }
     end)
     function LoadSetting()
@@ -2902,6 +2902,7 @@ spawn(function()
 while wait() do
 	pcall(function()
 		GemCheck:Set("Gem : "..game:GetService("Players").LocalPlayer._stats.gem_amount.Value)
+		GoldCheck:Set("Gold : "..game:GetService("Players").LocalPlayer._stats.gold_amount.Value)
 	end)
 end
 end)
@@ -3112,6 +3113,39 @@ end)
 
 
 Main:AddSeperatorRight("Fps")
+local player = game:GetService("Players").LocalPlayer
+
+local blackscreen = function(enable)
+    local playerGui = player:WaitForChild("PlayerGui")
+    if not enable then
+        local sUi = playerGui:FindFirstChild("Blackscreen")
+        if sUi then sUi:Destroy() end
+        return
+    elseif playerGui:FindFirstChild("Blackscreen") then
+        return
+    end
+    local sUi = Instance.new("ScreenGui", playerGui)
+    sUi.Name = "Blackscreen"
+    sUi.DisplayOrder = -727
+
+    local uiFrame = Instance.new("Frame", sUi)
+    uiFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    uiFrame.Size = UDim2.new(0, 72727, 0, 72727)
+    uiFrame.Position = UDim2.new(0, 0, -5, 0)
+end
+    
+Main:AddToggleRight("Black Screen",_G.SST.Black_Screen,function(value)
+    Black_Screen = value
+	_G.SST.Black_Screen = Black_Screen
+	SS()
+if _G.SST.Black_Screen == true then
+    game:GetService("RunService"):Set3dRenderingEnabled(false)
+    blackscreen(true)
+elseif _G.SST.Black_Screen == false then
+    game:GetService("RunService"):Set3dRenderingEnabled(true)
+    blackscreen(false)
+end
+end)
 Main:AddToggleRight("Boost Fps",_G.SST.Boost_Fps,function(va)
 	Boost_Fps = va
  _G.SST.Boost_Fps = Boost_Fps
