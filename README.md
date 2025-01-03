@@ -1,4 +1,4 @@
-------------------wwwdqfq
+------------------kkl
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 ----------------------------------- save
@@ -2897,7 +2897,14 @@ Check:AddLabelLeft("Level : "..LevelPlayer)
 local ExpPlayer = game:GetService("Players").LocalPlayer._stats.player_xp.Value
 Check:AddLabelLeft("Xp : "..ExpPlayer)
 local GemCheck = Check:AddLabelLeft("")
-
+local GoldCheck = Check:AddLabelLeft("")
+spawn(function()
+while wait() do
+	pcall(function()
+		GemCheck:Set("Gem : "..game:GetService("Players").LocalPlayer._stats.gem_amount.Value)
+	end)
+end
+end)
 Main:AddSeperatorLeft("Join Map")
 
 local MapList = {
