@@ -1,4 +1,4 @@
-------------------sse444
+------------------54545
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 ----------------------------------- save
@@ -2955,7 +2955,7 @@ if WebHook ~= "" then
                         },
                         {
                             ["name"] = "Battle Pass",
-                            ["value"] = "```Level : " .. BattlePassLevel .. " [" .. FurthestRoom .. "]```"
+                            ["value"] = "```Level : " .. game:GetService("Players").LocalPlayer._stats.gem_amount.Value .. "```"
                         },
                         {
                             ["name"] = "Elapsed Time",
