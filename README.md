@@ -1,4 +1,4 @@
-------------------sse
+------------------dfg
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 ----------------------------------- save
@@ -3218,12 +3218,21 @@ spawn(function()
             if _G.SST and _G.SST.Farm_Sukuna then -- ตรวจสอบ _G.SST และ _G.SST.Farm_Sukuna
                 local units = workspace._UNITS:GetChildren()
                 for i, v in pairs(units) do
-                    if v:IsA("Model") and v:GetAttribute("range_stst") ~= nil then -- ตรวจสอบว่า unit เป็น Model และมี Attribute "range_stst"
-                        if typeof(Upgrade) == "function" then -- ตรวจสอบว่า Upgrade เป็นฟังก์ชัน
-                            Upgrade(workspace._UNITS:GetChildren(v).Name) -- เรียกใช้ฟังก์ชัน Upgrade
-                        else
-                            warn("Upgrade function not defined.")
+                    if v:IsA("Model") and v:GetAttribute("range_stat") ~= nil then -- ตรวจสอบว่า unit เป็น Model และมี Attribute "range_stat"
+                        print("Pet: " .. v.Name) -- ใช้ v.Name เพื่อพิมพ์ชื่อ Model
+
+                        local up = {
+                            [1] = v -- ใช้ Instance โดยตรง
+                        }
+                        -- เรียกฟังก์ชัน sell_unit_ingame
+                        local success, err = pcall(function()
+                            game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(unpack(up))
+                        end)
+
+                        if not success then
+                            warn("Error invoking sell_unit_ingame: " .. tostring(err))
                         end
+
                         wait(0) -- รอเล็กน้อยก่อนตรวจสอบ unit ถัดไป
                     end
                 end
