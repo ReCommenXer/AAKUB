@@ -1,4 +1,4 @@
-------------------sasad
+------------------wwwdqfq
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 ----------------------------------- save
@@ -3092,16 +3092,16 @@ spawn(function()
             if _G.SST.Farm_Sukuna then
                 local units = workspace._UNITS:GetChildren()
                 for i, v in pairs(units) do
-                    if v:FindFirstChild("Attributes") and v.Attributes:FindFirstChild("range_stst") then
+                    -- ตรวจสอบว่า Attribute "range_stst" มีอยู่ใน unit นี้
+                    if v:GetAttribute("range_stst") ~= nil then
                         Upgrade(v.Name)
-                        wait(0)
+                        wait(0) -- รอเล็กน้อยก่อนตรวจสอบ unit ถัดไป
                     end
                 end
             end
         end)
     end
 end)
-
 
 
 Main:AddSeperatorRight("Fps")
