@@ -1,4 +1,4 @@
-------------------dfg
+------------------eerf
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 ----------------------------------- save
@@ -2943,19 +2943,19 @@ if WebHook ~= "" then
                     ["fields"] = {
                         {
                             ["name"] = Name,
-                            ["value"] = "```Level : " ..game:GetService("Players").LocalPlayer.PlayerGui.spawn_units.Lives.Main.Desc.Level.Text .. "```"
+                            ["value"] = "```" ..game:GetService("Players").LocalPlayer.PlayerGui.spawn_units.Lives.Main.Desc.Level.Text .. "```"
                         },
-                        {
-                            ["name"] = "Map",
-                            ["value"] = "```Map : " .. NameMap .. "```"
+						{
+                            ["name"] = "Wave",
+                            ["value"] = "```" .. game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Holder.Middle.WavesCompleted.Text .. "```"
                         },
                         {
                             ["name"] = "Mode Select",
-                            ["value"] = "```Mode : " .. ModeSelect .. "```"
+                            ["value"] = "```Mode: " .. ModeSelect .. "```"
                         },
                         {
                             ["name"] = "Gem",
-                            ["value"] = "```Gem : " .. game:GetService("Players").LocalPlayer._stats.gem_amount.Value .. "```"
+                            ["value"] = "```Gem: " .. game:GetService("Players").LocalPlayer._stats.gem_amount.Value .. "```"
                         },
                         {
                             ["name"] = "Elapsed Time",
@@ -2963,7 +2963,7 @@ if WebHook ~= "" then
                         },
                         {
                             ["name"] = "Rewards",
-                            ["value"] = "```Gems: " .. GemRewards .. " | XP: " .. XpRewards .. "```"
+                            ["value"] = "```Gems: " .. GemRewards .. "   XP: " .. XpRewards .. "```"
                         }
                     }
                 }
@@ -3281,7 +3281,27 @@ Main:AddToggleRight("Boost Fps",_G.SST.Boost_Fps,function(va)
  _G.SST.Boost_Fps = Boost_Fps
  SS()
 end)
-
+spawn(function()
+	while wait() do
+		pcall(function()
+			if _G.SST.Boost_Fps then
+				game:GetService("Players").LocalPlayer._settings.disable_effects.Value = true
+				game:GetService("Players").LocalPlayer._settings.disable_kill_fx.Value = true
+				game:GetService("Players").LocalPlayer._settings.disable_other_fx.Value = true
+				game:GetService("Players").LocalPlayer._settings.low_quality.Value = true
+				game:GetService("Players").LocalPlayer._settings.low_quality_shadows.Value = true
+				game:GetService("Players").LocalPlayer._settings.low_quality_textures.Value = true
+			else
+				game:GetService("Players").LocalPlayer._settings.disable_effects.Value = false
+				game:GetService("Players").LocalPlayer._settings.disable_kill_fx.Value = false
+				game:GetService("Players").LocalPlayer._settings.disable_other_fx.Value = false
+				game:GetService("Players").LocalPlayer._settings.low_quality.Value = false
+				game:GetService("Players").LocalPlayer._settings.low_quality_shadows.Value = false
+				game:GetService("Players").LocalPlayer._settings.low_quality_textures.Value = false
+			end
+		end)
+	end
+end)
 local Boosted = false -- ตัวแปรสถานะเพื่อตรวจสอบว่ารันแล้วหรือไม่
 
 spawn(function()
