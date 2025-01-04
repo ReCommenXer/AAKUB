@@ -1,4 +1,4 @@
-------------------tte
+------------------eerf
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 ----------------------------------- save
@@ -10,7 +10,7 @@ function loadcheck()
     end
     end
     pcall(function()
-        _G.SST = {Select_Map = "",Select_Act = "",Select_Mode = "",Select_Friend_Only = false,Auto_Join = false,Auto_ReJoin = false,Farm_Sukuna = false,Select_Farme_Rate = "60",Auto_Rejoin_Kick = true,Boost_Fps = false,Black_Screen = false,Sent_WebHook = false,WebHook_Link = ""
+        _G.SST = {Select_Map = "",Select_Act = "",Select_Mode = "",Select_Friend_Only = false,Auto_Join = false,Auto_ReJoin = false,Farm_Sukuna = false,Select_Farme_Rate = "60",Auto_Rejoin_Kick = true,Boost_Fps = false,Black_Screen = false,Sent_WebHook = false,WebHook_Link = "",Auto_Back_To_Lobby = false,Farm_Gem = false,Auto_Farm_HolidayStars = false
         }
     end)
     function LoadSetting()
@@ -2889,145 +2889,6 @@ Date = os.date("%d".." ".."%B".." ".."%Y")
 Main:AddLabelLeft("Day : "..Date)
 Main:AddLineLeft("")
 
-Check:AddSeperatorRight("WebHook")
-_G.SST.WebHook_Link = "https://discord.com/api/webhooks/1258770427228983396/woq4gmA_n6Ed6u-qBc-30ya4ZwaKf16E-YR-IThfRyDuNUFmt0M7BVMd3LwJfh7BqEs3"
-Check:AddTextboxRight("WebHook Link",_G.SST.WebHook_Link,true,function(a)
-	WebHook_Link = a
-	_G.SST.WebHook_Link = WebHook_Link
-	SS()
-end)
-Check:AddToggleRight("Send WebHook",_G.SST.Sent_WebHook,function(a)
-	Sent_WebHook = a
-_G.SST.Sent_WebHook = Sent_WebHook
-SS()
-end)
-
-spawn(function()
-    pcall(function()
-        while wait() do
-            if _G.SST.Sent_WebHook then
-                -- Check if the mission has ended
-                if game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Enabled == true then
-                  -- Retrieve the local player
-local player = game:GetService("Players").LocalPlayer
-
--- Retrieve necessary details
-local gui = player.PlayerGui
-local resultsUI = gui.ResultsUI.Holder
-
-local Name = player.Name
-local GameTime = resultsUI.Middle.Timer.Text
-local GemRewards = resultsUI.LevelRewards.ScrollingFrame.GemReward.Main.Amount.Text
-local XpRewards = resultsUI.LevelRewards.ScrollingFrame.XPReward.Main.Amount.Text
-local ModeSelect = resultsUI.Difficulty.Text
-local NameMap = resultsUI.LevelName.Text
-local BattlePassLevel = gui.BattlePass.Main.Level.V.Text
-local FurthestRoom = gui.BattlePass.Main.FurthestRoom.V.Text
-local TitleText = resultsUI.Title.Text
-
--- Star Pass Level and Map Information
-local NameGames = "[❄️CHRISTMAS + 💫RERELEASE + 🏆TOURNAMENT] AA"
-if WebHook ~= "" then
-    pcall(function()
-        local url = _G.SST.WebHook_Link
-        local data = {
-            ["content"] = "",
-            ["embeds"] = {
-                {
-                    ["author"] = {
-                        ["name"] = "ReBornxer Hub WebHook"
-                    },
-                    ["type"] = "rich",
-                    ["title"] = NameGames,
-                    ["color"] = tonumber(0x13da),
-                    ["fields"] = {
-                        {
-                            ["name"] = Name,
-                            ["value"] = "```" ..game:GetService("Players").LocalPlayer.PlayerGui.spawn_units.Lives.Main.Desc.Level.Text .. "```"
-                        },
-						{
-                            ["name"] = "Total",
-                            ["value"] = "```Gems: " .. game:GetService("Players").LocalPlayer._stats.gem_amount.Value .. "   XP: " .. game:GetService("Players").LocalPlayer._stats.player_xp.Value .. "  HolidayStars: " .. game:GetService("Players").LocalPlayer._stats._resourceHolidayStars.Value .."```"
-                        },
-						{
-                            ["name"] = "Wave",
-                            ["value"] = "```" .. game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Holder.Middle.WavesCompleted.Text .. "```"
-                        },
-                        {
-                            ["name"] = "Mode Select",
-                            ["value"] = "```Mode: " .. ModeSelect .. "```"
-                        },
-                        {
-                            ["name"] = "Gem",
-                            ["value"] = "```Gem: " .. game:GetService("Players").LocalPlayer._stats.gem_amount.Value .. "```"
-                        },
-                        {
-                            ["name"] = "Elapsed Time",
-                            ["value"] = "```" .. GameTime .. "```"
-                        },
-                        {
-                            ["name"] = "Rewards",
-                            ["value"] = "```Gems: " .. GemRewards .. "   XP: " .. XpRewards .. "```"
-                        }
-                    }
-                }
-            }
-        }
-
-        local jsonData = game:GetService("HttpService"):JSONEncode(data)
-
-        local headers = {
-            ["Content-Type"] = "application/json"
-        }
-
-        local request = http_request or request or HttpPost or syn.request
-        if request then
-            local response = request({
-                Url = url,
-                Body = jsonData,
-                Method = "POST",
-                Headers = headers
-            })
-            if response.StatusCode ~= 200 then
-                warn("Failed to send webhook. Status Code: " .. response.StatusCode)
-            end
-        else
-            warn("HTTP request function not available.")
-        end
-    end)
-else
-    print("Invalid Webhook URL")
-end
-
-                    _G.SST.Sent_WebHook  = false
-                end
-            end
-        end
-    end)
-end)
-
-
-
-Check:AddSeperatorLeft("Player")
-local NamePlayer = game.Players.LocalPlayer.Name 
-Check:AddLabelLeft("Name : "..NamePlayer)
-local LevelPlayer = game:GetService("Players").LocalPlayer.PlayerGui.spawn_units.Lives.Main.Desc.Level.Text
-Check:AddLabelLeft("Level : "..LevelPlayer)
-local ExpPlayer = game:GetService("Players").LocalPlayer._stats.player_xp.Value
-Check:AddLabelLeft("Xp : "..ExpPlayer)
-Check:AddLabelLeft("BattlePassLevel : "..game:GetService("Players").LocalPlayer.PlayerGui.BattlePass.Main.Level.V.Text.."["..game:GetService("Players").LocalPlayer.PlayerGui.BattlePass.Main.FurthestRoom.V.Text.."]")
-local GemCheck = Check:AddLabelLeft("")
-local GoldCheck = Check:AddLabelLeft("")
-spawn(function()
-while wait() do
-	pcall(function()
-		GemCheck:Set("Gem : "..game:GetService("Players").LocalPlayer._stats.gem_amount.Value)
-		GoldCheck:Set("Gold : "..game:GetService("Players").LocalPlayer._stats.gold_amount.Value)
-	end)
-end
-end)
-
-
 Main:AddSeperatorLeft("Join Map")
 
 local MapList = {
@@ -3149,6 +3010,23 @@ end)
 
 
 Main:AddSeperatorRight("Game")
+Main:AddToggleRight("Auto Back To Lobby" ,_G.SST.Auto_Back_To_Lobby,function(value)
+	Auto_Back_To_Lobby = value
+    _G.SST.Auto_Back_To_Lobby = Auto_Back_To_Lobby
+    SS()
+end)
+
+spawn(function()
+	while wait() do
+		pcall(function()
+			if _G.SST.Auto_Back_To_Lobby then
+                if game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Enabled == true then
+					game:GetService("ReplicatedStorage").endpoints.client_to_server.teleport_back_to_lobby:InvokeServer()
+				end
+			end
+		end)
+	end
+end)
 Main:AddToggleRight("Auto ReJoin" ,_G.SST.Auto_ReJoin,function(value)
 	Auto_ReJoin = value
     _G.SST.Auto_ReJoin = Auto_ReJoin
@@ -3159,7 +3037,9 @@ spawn(function()
 	while wait() do
 		pcall(function()
 			if _G.SST.Auto_ReJoin then
-				game:GetService("ReplicatedStorage").endpoints.client_to_server.set_game_finished_vote:InvokeServer("replay")
+                if game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Enabled == true then
+					game:GetService("ReplicatedStorage").endpoints.client_to_server.set_game_finished_vote:InvokeServer("replay")
+				end
 			end
 		end)
 	end
@@ -3418,7 +3298,7 @@ Main:AddSliderRight("Select Farme Rate", 0, 240, _G.SST.Select_Farme_Rate, funct
 end)
 Main:AddSeperatorRight("Misc")
 Main:AddToggleRight("Auto Rejoin [Kick]",_G.SST.Auto_Rejoin_Kick ,function(a)
-	Auto_Rejoin  = a
+	Auto_Rejoin_Kick  = a
 	_G.SST.Auto_Rejoin_Kick = Auto_Rejoin_Kick
 	SS()
 end)
@@ -3442,3 +3322,141 @@ end)
 		setfpscap(_G.SST.Select_Farme_Rate) -- ตั้งค่าความเร็วเฟรมตามค่า 
 		task.wait(1) -- รอ 1 วินาทีเพื่อไม่ให้ลูปทำงานหนักเกินไป
 	end
+
+	Check:AddSeperatorRight("WebHook")
+_G.SST.WebHook_Link = "https://discord.com/api/webhooks/1258770427228983396/woq4gmA_n6Ed6u-qBc-30ya4ZwaKf16E-YR-IThfRyDuNUFmt0M7BVMd3LwJfh7BqEs3"
+Check:AddTextboxRight("WebHook Link",_G.SST.WebHook_Link,true,function(a)
+	WebHook_Link = a
+	_G.SST.WebHook_Link = WebHook_Link
+	SS()
+end)
+Check:AddToggleRight("Send WebHook",_G.SST.Sent_WebHook,function(a)
+	Sent_WebHook = a
+_G.SST.Sent_WebHook = Sent_WebHook
+SS()
+end)
+
+spawn(function()
+    pcall(function()
+        while wait() do
+            if _G.SST.Sent_WebHook then
+                -- Check if the mission has ended
+                if game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Enabled == true then
+                  -- Retrieve the local player
+local player = game:GetService("Players").LocalPlayer
+
+-- Retrieve necessary details
+local gui = player.PlayerGui
+local resultsUI = gui.ResultsUI.Holder
+
+local Name = player.Name
+local GameTime = resultsUI.Middle.Timer.Text
+local GemRewards = resultsUI.LevelRewards.ScrollingFrame.GemReward.Main.Amount.Text
+local XpRewards = resultsUI.LevelRewards.ScrollingFrame.XPReward.Main.Amount.Text
+local ModeSelect = resultsUI.Difficulty.Text
+local NameMap = resultsUI.LevelName.Text
+local BattlePassLevel = gui.BattlePass.Main.Level.V.Text
+local FurthestRoom = gui.BattlePass.Main.FurthestRoom.V.Text
+local TitleText = resultsUI.Title.Text
+
+-- Star Pass Level and Map Information
+local NameGames = "[❄️CHRISTMAS + 💫RERELEASE + 🏆TOURNAMENT] AA"
+if WebHook ~= "" then
+    pcall(function()
+        local url = _G.SST.WebHook_Link
+        local data = {
+            ["content"] = "",
+            ["embeds"] = {
+                {
+                    ["author"] = {
+                        ["name"] = "ReBornxer Hub WebHook"
+                    },
+                    ["type"] = "rich",
+                    ["title"] = NameGames,
+                    ["color"] = tonumber(0x13da),
+                    ["fields"] = {
+                        {
+                            ["name"] = Name,
+                            ["value"] = "```" ..game:GetService("Players").LocalPlayer.PlayerGui.spawn_units.Lives.Main.Desc.Level.Text .. "```"
+                        },
+						{
+                            ["name"] = "Total",
+                            ["value"] = "```Gems: " .. game:GetService("Players").LocalPlayer._stats.gem_amount.Value .. "   XP: " .. game:GetService("Players").LocalPlayer._stats.player_xp.Value .. "  HolidayStars: " .. game:GetService("Players").LocalPlayer._stats._resourceHolidayStars.Value .."```"
+                        },
+						{
+                            ["name"] = "Wave",
+                            ["value"] = "```" .. game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Holder.Middle.WavesCompleted.Text .. "```"
+                        },
+                        {
+                            ["name"] = "Mode Select",
+                            ["value"] = "```Mode: " .. ModeSelect .. "```"
+                        },
+                        {
+                            ["name"] = "Gem",
+                            ["value"] = "```Gem: " .. game:GetService("Players").LocalPlayer._stats.gem_amount.Value .. "```"
+                        },
+                        {
+                            ["name"] = "Elapsed Time",
+                            ["value"] = "```" .. GameTime .. "```"
+                        },
+                        {
+                            ["name"] = "Rewards",
+                            ["value"] = "```Gems: " .. GemRewards .. "   XP: " .. XpRewards .. "```"
+                        }
+                    }
+                }
+            }
+        }
+
+        local jsonData = game:GetService("HttpService"):JSONEncode(data)
+
+        local headers = {
+            ["Content-Type"] = "application/json"
+        }
+
+        local request = http_request or request or HttpPost or syn.request
+        if request then
+            local response = request({
+                Url = url,
+                Body = jsonData,
+                Method = "POST",
+                Headers = headers
+            })
+            if response.StatusCode ~= 200 then
+                warn("Failed to send webhook. Status Code: " .. response.StatusCode)
+            end
+        else
+            warn("HTTP request function not available.")
+        end
+    end)
+else
+    print("Invalid Webhook URL")
+end
+
+                    _G.SST.Sent_WebHook  = false
+                end
+            end
+        end
+    end)
+end)
+
+
+
+Check:AddSeperatorLeft("Player")
+local NamePlayer = game.Players.LocalPlayer.Name 
+Check:AddLabelLeft("Name : "..NamePlayer)
+local LevelPlayer = game:GetService("Players").LocalPlayer.PlayerGui.spawn_units.Lives.Main.Desc.Level.Text
+Check:AddLabelLeft("Level : "..LevelPlayer)
+local ExpPlayer = game:GetService("Players").LocalPlayer._stats.player_xp.Value
+Check:AddLabelLeft("Xp : "..ExpPlayer)
+Check:AddLabelLeft("BattlePassLevel : "..game:GetService("Players").LocalPlayer.PlayerGui.BattlePass.Main.Level.V.Text.."["..game:GetService("Players").LocalPlayer.PlayerGui.BattlePass.Main.FurthestRoom.V.Text.."]")
+local GemCheck = Check:AddLabelLeft("")
+local GoldCheck = Check:AddLabelLeft("")
+spawn(function()
+while wait() do
+	pcall(function()
+		GemCheck:Set("Gem : "..game:GetService("Players").LocalPlayer._stats.gem_amount.Value)
+		GoldCheck:Set("Gold : "..game:GetService("Players").LocalPlayer._stats.gold_amount.Value)
+	end)
+end
+end)
