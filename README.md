@@ -1,4 +1,4 @@
-------------------4532
+------------------rrr
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 ----------------------------------- save
@@ -10,7 +10,7 @@ function loadcheck()
     end
     end
     pcall(function()
-        _G.SST = {Select_Map = "",Select_Act = "",Select_Mode = "",Select_Friend_Only = false,Auto_Join = false,Auto_ReJoin = false,Farm_Sukuna = false,Select_Farme_Rate = "60",Auto_Rejoin_Kick = true,Boost_Fps = false,Black_Screen = false,Sent_WebHook = false,WebHook_Link = "",Auto_Back_To_Lobby = false,Farm_Gem = false,Auto_Farm_HolidayStars = false
+        _G.SST = {Select_Map = "",Select_Act = "",Select_Mode = "",Select_Friend_Only = false,Auto_Join = false,Auto_ReJoin = false,Farm_Sukuna = false,Select_Farme_Rate = "60",Auto_Rejoin_Kick = true,Boost_Fps = false,Black_Screen = false,Sent_WebHook = false,WebHook_Link = "",Auto_Back_To_Lobby = false,Farm_Gem = false,Auto_Farm_HolidayStars = false,Farm_Level = false
         }
     end)
     function LoadSetting()
