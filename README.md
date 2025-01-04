@@ -1,4 +1,4 @@
-------------------rrr
+------------------rrrssdsds
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 ----------------------------------- save
@@ -10,7 +10,7 @@ function loadcheck()
     end
     end
     pcall(function()
-        _G.SST = {Select_Map = "",Select_Act = "",Select_Mode = "",Select_Friend_Only = false,Auto_Join = false,Auto_ReJoin = false,Farm_Sukuna = false,Select_Farme_Rate = "60",Auto_Rejoin_Kick = true,Boost_Fps = false,Black_Screen = false,Sent_WebHook = false,WebHook_Link = "",Auto_Back_To_Lobby = false,Farm_Gem = false,Auto_Farm_HolidayStars = false,Farm_Level = false
+        _G.SST = {Select_Map = "",Select_Act = "",Select_Mode = "",Select_Friend_Only = false,Auto_Join = false,Auto_ReJoin = false,Farm_Sukuna = false,Select_Farme_Rate = "60",Auto_Rejoin_Kick = true,Boost_Fps = false,Black_Screen = false,Sent_WebHook = false,WebHook_Link = "",Auto_Back_To_Lobby = false,Farm_Gem = false,Auto_Farm_HolidayStars = false,Farm_Level = false,Anti_AFK = true
         }
     end)
     function LoadSetting()
@@ -3344,6 +3344,7 @@ spawn(function()
     while wait() do
         pcall(function()
             if _G.SST.Boost_Fps and not Boosted then
+				game:GetService("Players").LocalPlayer.PlayerGui.MessageGui:Destroy()
                 Boosted = true -- ตั้งค่าให้รู้ว่าสคริปต์รันแล้ว
                 local decalsyeeted = true
                 local g = game
@@ -3413,8 +3414,23 @@ Main:AddToggleRight("Auto Rejoin [Kick]",_G.SST.Auto_Rejoin_Kick ,function(a)
 	SS()
 end)
 
+Main:AddToggleRight("Anti AFK",_G.SST.Anti_AFK,function()
+	Anti_AFK  = a
+	_G.SST.Anti_AFK = Anti_AFK
+	SS()
+end)
 
-
+spawn(function()
+    while wait(30) do -- ทำงานทุก 30 วินาที
+        pcall(function()
+            if _G.SST.Anti_AFK then
+                local VirtualUser = game:service("VirtualUser")
+                VirtualUser:CaptureController()
+                VirtualUser:ClickButton2(Vector2.new()) -- จำลองการคลิกขวา
+            end
+        end)
+    end
+end)
 
 	Check:AddSeperatorRight("WebHook")
 _G.SST.WebHook_Link = "https://discord.com/api/webhooks/1258770427228983396/woq4gmA_n6Ed6u-qBc-30ya4ZwaKf16E-YR-IThfRyDuNUFmt0M7BVMd3LwJfh7BqEs3"
