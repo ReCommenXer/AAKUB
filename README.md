@@ -1,4 +1,4 @@
-------------------rrrssdsds
+------------------rrr
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 ----------------------------------- save
@@ -10,7 +10,7 @@ function loadcheck()
     end
     end
     pcall(function()
-        _G.SST = {Select_Map = "",Select_Act = "",Select_Mode = "",Select_Friend_Only = false,Auto_Join = false,Auto_ReJoin = false,Farm_Sukuna = false,Select_Farme_Rate = "60",Auto_Rejoin_Kick = true,Boost_Fps = false,Black_Screen = false,Sent_WebHook = false,WebHook_Link = "",Auto_Back_To_Lobby = false,Farm_Gem = false,Auto_Farm_HolidayStars = false,Farm_Level = false,Anti_AFK = true
+        _G.SST = {Select_Map = "",Select_Act = "",Select_Mode = "",Select_Friend_Only = false,Auto_Join = false,Auto_ReJoin = false,Farm_Sukuna = false,Select_Farme_Rate = "60",Auto_Rejoin_Kick = true,Boost_Fps = false,Black_Screen = false,Sent_WebHook = false,WebHook_Link = "",Auto_Back_To_Lobby = false,Farm_Gem = false,Auto_Farm_HolidayStars = false,Farm_Level = false,Anti_AFK = true,Auto_Upgrade_Unit = false,Select_To_Upgrade = "All Unit"
         }
     end)
     function LoadSetting()
@@ -3044,6 +3044,75 @@ spawn(function()
 		end)
 	end
 end)
+Main:AddSeperatorRight("Game")
+Main:AddDropdownRight("Select To upgrade",{"All Unit","Cost Unit"},_G.SST.Select_To_Upgrade,function(a)
+	Select_To_Upgrade = a
+_G.SST.Select_To_Upgrade = Select_To_Upgrade
+SS()
+end)
+
+
+	
+Main:AddToggleRight("Auto Upgrade Unit",_G.SST.Auto_Upgrade_Unit,function(a)
+	Auto_Upgrade_Unit = a
+	_G.SST.Auto_Upgrade_Unit = Auto_Upgrade_Unit
+	SS()
+end)
+
+spawn(function()
+    while wait() do
+        pcall(function()
+            if _G.SST and _G.SST.Auto_Upgrade_Unit and _G.SST.Select_To_Upgrade == "Cost Unit" then -- ตรวจสอบ _G.SST และ _G.SST.Farm_Sukuna
+                local units = workspace._UNITS:GetChildren()
+                for i, v in pairs(units) do
+                    if v:IsA("Model") and v:GetAttribute("range_stat") ~= nil then -- ตรวจสอบว่า unit เป็น Model และมี Attribute "range_stat"
+                        if v.name == "Bulby" or v.Name == "C.E.O." then
+						local up = {
+                            [1] = v -- ใช้ Instance โดยตรง
+                        }
+                        -- เรียกฟังก์ชัน sell_unit_ingame
+                        local success, err = pcall(function()
+                            game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(unpack(up))
+                        end)
+
+                        if not success then
+                            warn("Error invoking sell_unit_ingame: " .. tostring(err))
+                        end
+					end
+                        wait(0) -- รอเล็กน้อยก่อนตรวจสอบ unit ถัดไป
+                    end
+                end
+            end
+        end)
+    end
+end)
+
+spawn(function()
+    while wait() do
+        pcall(function()
+            if _G.SST and _G.SST.Auto_Upgrade_Unit and _G.SST.Select_To_Upgrade == "All Unit" then -- ตรวจสอบ _G.SST และ _G.SST.Farm_Sukuna
+                local units = workspace._UNITS:GetChildren()
+                for i, v in pairs(units) do
+                    if v:IsA("Model") and v:GetAttribute("range_stat") ~= nil then -- ตรวจสอบว่า unit เป็น Model และมี Attribute "range_stat"
+						local up = {
+                            [1] = v -- ใช้ Instance โดยตรง
+                        }
+                        -- เรียกฟังก์ชัน sell_unit_ingame
+                        local success, err = pcall(function()
+                            game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(unpack(up))
+                        end)
+
+                        if not success then
+                            warn("Error invoking sell_unit_ingame: " .. tostring(err))
+                        end
+                        wait(0) -- รอเล็กน้อยก่อนตรวจสอบ unit ถัดไป
+                    end
+                end
+            end
+        end)
+    end
+end)
+
 
 Main:AddSeperatorRight("farm")
 
