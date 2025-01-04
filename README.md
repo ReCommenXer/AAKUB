@@ -3078,8 +3078,9 @@ spawn(function()
                         if not success then
                             warn("Error invoking sell_unit_ingame: " .. tostring(err))
                         end
-					end
+					
                         wait(0) -- รอเล็กน้อยก่อนตรวจสอบ unit ถัดไป
+						end
                     end
                 end
             end
