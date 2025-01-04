@@ -3084,10 +3084,10 @@ local replicatedStorage = game:GetService("ReplicatedStorage")
 local spawnUnit = replicatedStorage.endpoints.client_to_server.spawn_unit
 
 local spawnPositionsFarm = {
-    Vector3.new(316.823, 125.597, -99.345),
-    Vector3.new(319.000, 125.597, -96.916),
-    Vector3.new(320.497, 125.597, -100.160),
-    Vector3.new(319.032, 125.597, -103.319)
+    Vector3.new(-2939.32568359375, 91.80620574951172, -704.94287109375),
+    Vector3.new(-2938.983642578125, 91.80620574951172, -707.9991455078125),
+    Vector3.new(-2941.4306640625, 91.80620574951172, -708.3591918945312),
+    Vector3.new(-2942.264892578125, 91.80620574951172, -705.732177734375)
 }
 
 local function isCloseEnough(pos1, pos2, tolerance)
