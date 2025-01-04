@@ -3426,7 +3426,6 @@ spawn(function()
 end)
 
 	Check:AddSeperatorRight("WebHook")
-_G.SST.WebHook_Link = "https://discord.com/api/webhooks/1258770427228983396/woq4gmA_n6Ed6u-qBc-30ya4ZwaKf16E-YR-IThfRyDuNUFmt0M7BVMd3LwJfh7BqEs3"
 Check:AddTextboxRight("WebHook Link",_G.SST.WebHook_Link,true,function(a)
 	WebHook_Link = a
 	_G.SST.WebHook_Link = WebHook_Link
