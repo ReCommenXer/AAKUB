@@ -1,4 +1,4 @@
-------------------ddfq1
+------------------rrr
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 ----------------------------------- save
@@ -10,7 +10,7 @@ function loadcheck()
     end
     end
     pcall(function()
-        _G.SST = {Select_Map = "",Select_Act = "",Select_Mode = "",Select_Friend_Only = false,Auto_Join = false,Auto_ReJoin = false,Farm_Sukuna = false,Select_Farme_Rate = "60",Auto_Rejoin_Kick = true,Boost_Fps = false,Black_Screen = false,Sent_WebHook = false,WebHook_Link = "",Auto_Back_To_Lobby = false,Farm_Gem = false,Auto_Farm_HolidayStars = false,Farm_Level = false,Anti_AFK = true,Auto_Upgrade_Unit = false,Select_To_Upgrade = "All Unit"
+        _G.SST = {Select_Map = "",Select_Act = "",Select_Mode = "",Select_Friend_Only = false,Auto_Join = false,Auto_ReJoin = false,Farm_Sukuna = false,Select_Farme_Rate = "60",Auto_Rejoin_Kick = true,Boost_Fps = false,Black_Screen = false,Sent_WebHook = false,WebHook_Link = "",Auto_Back_To_Lobby = false,Farm_Gem = false,Auto_Farm_HolidayStars = false,Farm_Level = false,Anti_AFK = true,Auto_Upgrade_Unit = false,Select_To_Upgrade = "All Unit",Feed_Easter = false,Claim_Easter = false
         }
     end)
     function LoadSetting()
@@ -3149,6 +3149,8 @@ spawn(function()
 		end
 	end)
 
+
+	
 	local unitId = "{46c72326-665b-4a1c-9bf4-24fbee7317a1}"
 local replicatedStorage = game:GetService("ReplicatedStorage")
 local spawnUnit = replicatedStorage.endpoints.client_to_server.spawn_unit
@@ -3221,6 +3223,42 @@ spawn(function()
     end
 end)
 
+Main:AddSeperatorLeft("Event")
+
+Main:AddToggleLeft("Auto Feed Easter",_G.SST.Feed_Easter,function(a)
+	Feed_Easter = a
+_G.SST.Feed_Easter = Feed_Easter
+SS()
+end)
+
+spawn(function()
+	while wait() do
+		pcall(function()
+			if _G.SST.Feed_Easter then
+				game:GetService("ReplicatedStorage").endpoints.client_to_server.feed_easter_meter:InvokeServer()
+				_G.SST.Feed_Easter = false
+			end
+		end)
+	end
+end)
+
+Main:AddToggleLeft("Auto Claim Easter",_G.SST.Claim_Easter,function(a)
+	Claim_Easter = a
+_G.SST.Claim_Easter = Claim_Easter
+SS()
+end)
+
+spawn(function()
+	while wait() do
+		pcall(function()
+			if _G.SST.Claim_Easter then
+				game:GetService("ReplicatedStorage").endpoints.client_to_server.claim_easter_meter:InvokeServer()
+				_G.SST.Claim_Easter = false
+			end
+		end)
+	end
+end)
+
 Main:AddSeperatorLeft("Gem")
 
 Main:AddToggleLeft("Auto Farm Gem",_G.SST.Farm_Gem,function(a)
@@ -3249,7 +3287,7 @@ spawn(function()
 
 							game:GetService("ReplicatedStorage").endpoints.client_to_server.request_lock_level:InvokeServer(unpack(args))
 							wait(2)
-       game:GetService("ReplicatedStorage").endpoints.client_to_server.request_start_game:InvokeServer(Room.Name)
+      						 game:GetService("ReplicatedStorage").endpoints.client_to_server.request_start_game:InvokeServer(Room.Name)
 							
 						end
 					end
