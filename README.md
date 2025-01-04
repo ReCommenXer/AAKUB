@@ -1,4 +1,4 @@
-------------------rrr
+------------------445454
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 ----------------------------------- save
@@ -3115,9 +3115,9 @@ spawn(function()
 end)
 
 
-Main:AddSeperatorRight("farm")
+Main:AddSeperatorLeft("Farm")
 
-Main:AddToggleRight("Auto Farm Level",_G.SST.Farm_Level,function(a)
+Main:AddToggleLeft("Auto Farm Level",_G.SST.Farm_Level,function(a)
 	Farm_Level = a
 _G.SST.Farm_Level = Farm_Level
 SS()
@@ -3221,7 +3221,68 @@ spawn(function()
     end
 end)
 
-Main:AddToggleRight("Auto Farm Curse",_G.SST.Farm_Sukuna,function(a)
+Main:AddSeperatorLeft("Gem")
+
+Main:AddToggleLeft("Auto Farm Gem",_G.SST.Farm_Gem,function(a)
+	Farm_Gem = a
+_G.SST.Farm_Gem = Farm_Gem
+SS()
+end)
+spawn(function()
+		while wait() do
+			pcall(function()
+				if _G.SST.Farm_Gem then
+					if game:GetService("Players").LocalPlayer.PlayerGui.VoteStart.Enabled == true then
+						game:GetService("ReplicatedStorage").endpoints.client_to_server.vote_start:InvokeServer()
+					end
+					for i, Room in pairs(workspace._LOBBIES.Story:GetChildren()) do
+						if Room:FindFirstChild("Timer") and Room.Timer.Value == -1 then
+							-- ตรวจสอบค่า arguments ก่อนเรียกใช้
+							local args = {
+								[1] = Room.Name,
+								[2] = "aot_infinite",
+								[3] = true,
+								[4] = "Hard"
+							}
+							print("Arguments: ", args[1], args[2], args[3], args[4])  -- ตรวจสอบค่าก่อนเรียก
+							game:GetService("ReplicatedStorage").endpoints.client_to_server.request_join_lobby:InvokeServer(Room.Name)
+
+							game:GetService("ReplicatedStorage").endpoints.client_to_server.request_lock_level:InvokeServer(unpack(args))
+							wait(2)
+       game:GetService("ReplicatedStorage").endpoints.client_to_server.request_start_game:InvokeServer(Room.Name)
+							
+						end
+					end
+				end
+			end)
+		end
+	end)
+	Main:AddSeperatorLeft("Holiday Stars")
+
+	Main:AddToggleLeft("Auto Farm HolidayStars",_G.SST.Auto_Farm_HolidayStars,function(a)
+		Auto_Farm_HolidayStars = a
+		_G.SST.Auto_Farm_HolidayStars = Auto_Farm_HolidayStars
+		SS()
+	end)
+	
+	spawn(function()
+		while wait() do
+			pcall(function()
+				if _G.SST.Auto_Farm_HolidayStars then
+					if game:GetService("Players").LocalPlayer.PlayerGui.VoteStart.Enabled == true then
+						game:GetService("ReplicatedStorage").endpoints.client_to_server.vote_start:InvokeServer()
+					end
+					if workspace._EVENT_CHALLENGES.Lobbies._lobbytemplate_event3:FindFirstChild("Timer").Value == -1 then
+						game:GetService("ReplicatedStorage").endpoints.client_to_server.request_join_lobby:InvokeServer("_lobbytemplate_event3")
+					end
+				end
+			end)
+		end
+	end)
+
+Main:AddSeperatorLeft("Curse Key")
+
+Main:AddToggleLeft("Auto Farm Curse",_G.SST.Farm_Sukuna,function(a)
 	Farm_Sukuna = a
 _G.SST.Farm_Sukuna = Farm_Sukuna
 SS()
@@ -3299,184 +3360,8 @@ spawn(function()
     end
 end)
 
-Main:AddToggleRight("Auto Farm Gem",_G.SST.Farm_Gem,function(a)
-	Farm_Gem = a
-_G.SST.Farm_Gem = Farm_Gem
-SS()
-end)
-spawn(function()
-		while wait() do
-			pcall(function()
-				if _G.SST.Farm_Gem then
-					if game:GetService("Players").LocalPlayer.PlayerGui.VoteStart.Enabled == true then
-						game:GetService("ReplicatedStorage").endpoints.client_to_server.vote_start:InvokeServer()
-					end
-					for i, Room in pairs(workspace._LOBBIES.Story:GetChildren()) do
-						if Room:FindFirstChild("Timer") and Room.Timer.Value == -1 then
-							-- ตรวจสอบค่า arguments ก่อนเรียกใช้
-							local args = {
-								[1] = Room.Name,
-								[2] = "aot_infinite",
-								[3] = true,
-								[4] = "Hard"
-							}
-							print("Arguments: ", args[1], args[2], args[3], args[4])  -- ตรวจสอบค่าก่อนเรียก
-							game:GetService("ReplicatedStorage").endpoints.client_to_server.request_join_lobby:InvokeServer(Room.Name)
 
-							game:GetService("ReplicatedStorage").endpoints.client_to_server.request_lock_level:InvokeServer(unpack(args))
-							wait(2)
-       game:GetService("ReplicatedStorage").endpoints.client_to_server.request_start_game:InvokeServer(Room.Name)
-							
-						end
-					end
-				end
-			end)
-		end
-	end)
 
-Main:AddToggleRight("Auto Farm HolidayStars",_G.SST.Auto_Farm_HolidayStars,function(a)
-	Auto_Farm_HolidayStars = a
-	_G.SST.Auto_Farm_HolidayStars = Auto_Farm_HolidayStars
-	SS()
-end)
-
-spawn(function()
-	while wait() do
-		pcall(function()
-			if _G.SST.Auto_Farm_HolidayStars then
-				if game:GetService("Players").LocalPlayer.PlayerGui.VoteStart.Enabled == true then
-					game:GetService("ReplicatedStorage").endpoints.client_to_server.vote_start:InvokeServer()
-				end
-				if workspace._EVENT_CHALLENGES.Lobbies._lobbytemplate_event3:FindFirstChild("Timer").Value == -1 then
-					game:GetService("ReplicatedStorage").endpoints.client_to_server.request_join_lobby:InvokeServer("_lobbytemplate_event3")
-				end
-			end
-		end)
-	end
-end)
-
-Main:AddSeperatorRight("Fps")
-local player = game:GetService("Players").LocalPlayer
-
-local blackscreen = function(enable)
-    local playerGui = player:WaitForChild("PlayerGui")
-    if not enable then
-        local sUi = playerGui:FindFirstChild("Blackscreen")
-        if sUi then sUi:Destroy() end
-        return
-    elseif playerGui:FindFirstChild("Blackscreen") then
-        return
-    end
-    local sUi = Instance.new("ScreenGui", playerGui)
-    sUi.Name = "Blackscreen"
-    sUi.DisplayOrder = -727
-
-    local uiFrame = Instance.new("Frame", sUi)
-    uiFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-    uiFrame.Size = UDim2.new(0, 72727, 0, 72727)
-    uiFrame.Position = UDim2.new(0, 0, -5, 0)
-end
-    
-Main:AddToggleRight("Black Screen",_G.SST.Black_Screen,function(value)
-    Black_Screen = value
-	_G.SST.Black_Screen = Black_Screen
-	SS()
-if _G.SST.Black_Screen == true then
-    game:GetService("RunService"):Set3dRenderingEnabled(false)
-    blackscreen(true)
-elseif _G.SST.Black_Screen == false then
-    game:GetService("RunService"):Set3dRenderingEnabled(true)
-    blackscreen(false)
-end
-end)
-Main:AddToggleRight("Boost Fps",_G.SST.Boost_Fps,function(va)
-	Boost_Fps = va
- _G.SST.Boost_Fps = Boost_Fps
- SS()
-end)
-spawn(function()
-	while wait() do
-		pcall(function()
-			if _G.SST.Boost_Fps then
-				game:GetService("Players").LocalPlayer._settings.disable_effects.Value = true
-				game:GetService("Players").LocalPlayer._settings.disable_kill_fx.Value = true
-				game:GetService("Players").LocalPlayer._settings.disable_other_fx.Value = true
-				game:GetService("Players").LocalPlayer._settings.low_quality.Value = true
-				game:GetService("Players").LocalPlayer._settings.low_quality_shadows.Value = true
-				game:GetService("Players").LocalPlayer._settings.low_quality_textures.Value = true
-			end
-		end)
-	end
-end)
-local Boosted = false -- ตัวแปรสถานะเพื่อตรวจสอบว่ารันแล้วหรือไม่
-
-spawn(function()
-    while wait() do
-        pcall(function()
-            if _G.SST.Boost_Fps and not Boosted then
-				game:GetService("Players").LocalPlayer.PlayerGui.MessageGui:Destroy()
-                Boosted = true -- ตั้งค่าให้รู้ว่าสคริปต์รันแล้ว
-                local decalsyeeted = true
-                local g = game
-                local w = g.Workspace
-                local l = g.Lighting
-                local t = w.Terrain
-
-                -- ปรับ Terrain
-                t.WaterWaveSize = 0
-                t.WaterWaveSpeed = 0
-                t.WaterReflectance = 0
-                t.WaterTransparency = 0
-
-                -- ปิด Lighting
-                l.GlobalShadows = false
-                l.FogEnd = 9e9
-                l.Brightness = 0
-
-                -- ลดคุณภาพการแสดงผล
-                settings().Rendering.QualityLevel = "Level01"
-
-                -- ปรับแต่งวัตถุ
-                for _, v in pairs(g:GetDescendants()) do
-                    if v:IsA("Part") or v:IsA("Union") or v:IsA("CornerWedgePart") or v:IsA("TrussPart") or v:IsA("MeshPart") then
-                        v.Material = "Plastic"
-                        v.Reflectance = 0
-                        if v:IsA("MeshPart") then
-                            v.TextureID = ""
-                        end
-                    elseif (v:IsA("Decal") or v:IsA("Texture")) and decalsyeeted then
-                        v:Destroy()
-                    elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
-                        v.Lifetime = NumberRange.new(0)
-                    elseif v:IsA("Fire") or v:IsA("SpotLight") or v:IsA("Smoke") or v:IsA("Sparkles") then
-                        v.Enabled = false
-                    elseif v:IsA("Sound") then
-                        v.Playing = false
-                    end
-                end
-
-                -- ปิดเอฟเฟคใน Lighting
-                for _, e in pairs(l:GetChildren()) do
-                    if e:IsA("BlurEffect") or e:IsA("SunRaysEffect") or e:IsA("ColorCorrectionEffect") or e:IsA("BloomEffect") or e:IsA("DepthOfFieldEffect") then
-                        e.Enabled = false
-                    end
-                end
-
-                -- ลบอุปกรณ์ที่ไม่จำเป็น
-                for _, v in pairs(g:GetDescendants()) do
-                    if v:IsA("Accessory") or v:IsA("Clothing") then
-                        v:Destroy()
-                    end
-                end
-            end
-        end)
-    end
-end)
-Main:AddSliderRight("Select Farme Rate", 0, 240, _G.SST.Select_Farme_Rate, function(a)
-	Select_Farme_Rate = a  -- ใช้ตัวแปร a แทนค่า Select_Farme_Rate
-	_G.SST.Select_Farme_Rate = Select_Farme_Rate
-	SS()
-end)
 Misc:AddSeperatorLeft("Misc")
 Misc:AddToggleLeft("Auto Rejoin [Kick]",_G.SST.Auto_Rejoin_Kick ,function(a)
 	Auto_Rejoin_Kick  = a
@@ -3638,6 +3523,129 @@ while wait() do
 		GoldCheck:Set("Gold : "..game:GetService("Players").LocalPlayer._stats.gold_amount.Value)
 	end)
 end
+end)
+
+Misc:AddSeperatorRight("Fps")
+local player = game:GetService("Players").LocalPlayer
+
+local blackscreen = function(enable)
+    local playerGui = player:WaitForChild("PlayerGui")
+    if not enable then
+        local sUi = playerGui:FindFirstChild("Blackscreen")
+        if sUi then sUi:Destroy() end
+        return
+    elseif playerGui:FindFirstChild("Blackscreen") then
+        return
+    end
+    local sUi = Instance.new("ScreenGui", playerGui)
+    sUi.Name = "Blackscreen"
+    sUi.DisplayOrder = -727
+
+    local uiFrame = Instance.new("Frame", sUi)
+    uiFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    uiFrame.Size = UDim2.new(0, 72727, 0, 72727)
+    uiFrame.Position = UDim2.new(0, 0, -5, 0)
+end
+    
+Misc:AddToggleRight("Black Screen",_G.SST.Black_Screen,function(value)
+    Black_Screen = value
+	_G.SST.Black_Screen = Black_Screen
+	SS()
+if _G.SST.Black_Screen == true then
+    game:GetService("RunService"):Set3dRenderingEnabled(false)
+    blackscreen(true)
+elseif _G.SST.Black_Screen == false then
+    game:GetService("RunService"):Set3dRenderingEnabled(true)
+    blackscreen(false)
+end
+end)
+Misc:AddToggleRight("Boost Fps",_G.SST.Boost_Fps,function(va)
+	Boost_Fps = va
+ _G.SST.Boost_Fps = Boost_Fps
+ SS()
+end)
+spawn(function()
+	while wait() do
+		pcall(function()
+			if _G.SST.Boost_Fps then
+				game:GetService("Players").LocalPlayer._settings.disable_effects.Value = true
+				game:GetService("Players").LocalPlayer._settings.disable_kill_fx.Value = true
+				game:GetService("Players").LocalPlayer._settings.disable_other_fx.Value = true
+				game:GetService("Players").LocalPlayer._settings.low_quality.Value = true
+				game:GetService("Players").LocalPlayer._settings.low_quality_shadows.Value = true
+				game:GetService("Players").LocalPlayer._settings.low_quality_textures.Value = true
+			end
+		end)
+	end
+end)
+local Boosted = false -- ตัวแปรสถานะเพื่อตรวจสอบว่ารันแล้วหรือไม่
+
+spawn(function()
+    while wait() do
+        pcall(function()
+            if _G.SST.Boost_Fps and not Boosted then
+				game:GetService("Players").LocalPlayer.PlayerGui.MessageGui:Destroy()
+                Boosted = true -- ตั้งค่าให้รู้ว่าสคริปต์รันแล้ว
+                local decalsyeeted = true
+                local g = game
+                local w = g.Workspace
+                local l = g.Lighting
+                local t = w.Terrain
+
+                -- ปรับ Terrain
+                t.WaterWaveSize = 0
+                t.WaterWaveSpeed = 0
+                t.WaterReflectance = 0
+                t.WaterTransparency = 0
+
+                -- ปิด Lighting
+                l.GlobalShadows = false
+                l.FogEnd = 9e9
+                l.Brightness = 0
+
+                -- ลดคุณภาพการแสดงผล
+                settings().Rendering.QualityLevel = "Level01"
+
+                -- ปรับแต่งวัตถุ
+                for _, v in pairs(g:GetDescendants()) do
+                    if v:IsA("Part") or v:IsA("Union") or v:IsA("CornerWedgePart") or v:IsA("TrussPart") or v:IsA("MeshPart") then
+                        v.Material = "Plastic"
+                        v.Reflectance = 0
+                        if v:IsA("MeshPart") then
+                            v.TextureID = ""
+                        end
+                    elseif (v:IsA("Decal") or v:IsA("Texture")) and decalsyeeted then
+                        v:Destroy()
+                    elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
+                        v.Lifetime = NumberRange.new(0)
+                    elseif v:IsA("Fire") or v:IsA("SpotLight") or v:IsA("Smoke") or v:IsA("Sparkles") then
+                        v.Enabled = false
+                    elseif v:IsA("Sound") then
+                        v.Playing = false
+                    end
+                end
+
+                -- ปิดเอฟเฟคใน Lighting
+                for _, e in pairs(l:GetChildren()) do
+                    if e:IsA("BlurEffect") or e:IsA("SunRaysEffect") or e:IsA("ColorCorrectionEffect") or e:IsA("BloomEffect") or e:IsA("DepthOfFieldEffect") then
+                        e.Enabled = false
+                    end
+                end
+
+                -- ลบอุปกรณ์ที่ไม่จำเป็น
+                for _, v in pairs(g:GetDescendants()) do
+                    if v:IsA("Accessory") or v:IsA("Clothing") then
+                        v:Destroy()
+                    end
+                end
+            end
+        end)
+    end
+end)
+Misc:AddSliderRight("Select Farme Rate", 0, 240, _G.SST.Select_Farme_Rate, function(a)
+	Select_Farme_Rate = a  -- ใช้ตัวแปร a แทนค่า Select_Farme_Rate
+	_G.SST.Select_Farme_Rate = Select_Farme_Rate
+	SS()
 end)
 
 spawn(function()
