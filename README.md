@@ -1,4 +1,4 @@
-------------------eerf
+------------------4444
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 ----------------------------------- save
@@ -3134,6 +3134,9 @@ spawn(function()
 		while wait() do
 			pcall(function()
 				if _G.SST.Farm_Gem then
+					if game:GetService("Players").LocalPlayer.PlayerGui.VoteStart.Enabled == true then
+						game:GetService("ReplicatedStorage").endpoints.client_to_server.vote_start:InvokeServer()
+					end
 					for i, Room in pairs(workspace._LOBBIES.Story:GetChildren()) do
 						if Room:FindFirstChild("Timer") and Room.Timer.Value == -1 then
 							-- ตรวจสอบค่า arguments ก่อนเรียกใช้
@@ -3167,6 +3170,9 @@ spawn(function()
 	while wait() do
 		pcall(function()
 			if _G.SST.Auto_Farm_HolidayStars then
+				if game:GetService("Players").LocalPlayer.PlayerGui.VoteStart.Enabled == true then
+					game:GetService("ReplicatedStorage").endpoints.client_to_server.vote_start:InvokeServer()
+				end
 				if workspace._EVENT_CHALLENGES.Lobbies._lobbytemplate_event3:FindFirstChild("Timer").Value == -1 then
 					game:GetService("ReplicatedStorage").endpoints.client_to_server.request_join_lobby:InvokeServer("_lobbytemplate_event3")
 				end
@@ -3305,23 +3311,6 @@ end)
 
 
 
-spawn(function()
-    while true do wait()
-        getgenv().rejoin = game:GetService("CoreGui").RobloxPromptGui.promptOverlay.ChildAdded:Connect(function(Kick)
-            if _G.SST.Auto_Rejoin_Kick then
-                if Kick.Name == 'ErrorPrompt' and Kick:FindFirstChild('MessageArea') and Kick.MessageArea:FindFirstChild("ErrorFrame") then
-                    game:GetService("TeleportService"):Teleport(8304191830)
-                    wait(50)
-                end
-            end
-        end)
-    end
-end)
--- สร้าง toggle เพื่อเปิด/ปิดการตั้งค่า FPS cap
-	while true do
-		setfpscap(_G.SST.Select_Farme_Rate) -- ตั้งค่าความเร็วเฟรมตามค่า 
-		task.wait(1) -- รอ 1 วินาทีเพื่อไม่ให้ลูปทำงานหนักเกินไป
-	end
 
 	Check:AddSeperatorRight("WebHook")
 _G.SST.WebHook_Link = "https://discord.com/api/webhooks/1258770427228983396/woq4gmA_n6Ed6u-qBc-30ya4ZwaKf16E-YR-IThfRyDuNUFmt0M7BVMd3LwJfh7BqEs3"
@@ -3459,4 +3448,25 @@ while wait() do
 		GoldCheck:Set("Gold : "..game:GetService("Players").LocalPlayer._stats.gold_amount.Value)
 	end)
 end
+end)
+
+spawn(function()
+    while true do wait()
+        _G.SST.Auto_Rejoin_Kick = game:GetService("CoreGui").RobloxPromptGui.promptOverlay.ChildAdded:Connect(function(Kick)
+            if _G.SST.Auto_Rejoin_Kick then
+                if Kick.Name == 'ErrorPrompt' and Kick:FindFirstChild('MessageArea') and Kick.MessageArea:FindFirstChild("ErrorFrame") then
+                    game:GetService("TeleportService"):Teleport(8304191830)
+                    wait(50)
+                end
+            end
+        end)
+    end
+end)
+-- สร้าง toggle เพื่อเปิด/ปิดการตั้งค่า FPS cap
+spwan(function()
+	while task.wait(1) do
+		pcall(function()
+		setfpscap(_G.SST.Select_Farme_Rate) -- ตั้งค่าความเร็วเฟรมตามค่า 
+		end)
+	end
 end)
