@@ -1,4 +1,4 @@
-------------------4444
+------------------4532
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 ----------------------------------- save
@@ -3046,6 +3046,110 @@ spawn(function()
 end)
 
 Main:AddSeperatorRight("farm")
+
+Main:AddToggleRight("Auto Farm Level",_G.SST.Farm_Level,function(a)
+	Farm_Level = a
+_G.SST.Farm_Level = Farm_Level
+SS()
+end)
+spawn(function()
+		while wait() do
+			pcall(function()
+				if _G.SST.Farm_Level then
+					for i, Room in pairs(workspace._LOBBIES.Story:GetChildren()) do
+						if Room:FindFirstChild("Timer") and Room.Timer.Value == -1 then
+							-- ตรวจสอบค่า arguments ก่อนเรียกใช้
+							local args = {
+								[1] = Room.Name,
+								[2] = "namek_level_1",
+								[3] = true,
+								[4] = "Hard"
+							}
+							print("Arguments: ", args[1], args[2], args[3], args[4])  -- ตรวจสอบค่าก่อนเรียก
+							game:GetService("ReplicatedStorage").endpoints.client_to_server.request_join_lobby:InvokeServer(Room.Name)
+
+							game:GetService("ReplicatedStorage").endpoints.client_to_server.request_lock_level:InvokeServer(unpack(args))
+							wait(2)
+      						game:GetService("ReplicatedStorage").endpoints.client_to_server.request_start_game:InvokeServer(Room.Name)
+							
+						end
+					end
+				end
+			end)
+		end
+	end)
+
+	local unitId = "{bb314d9e-a006-4684-a859-281c0f0268b9}"
+local replicatedStorage = game:GetService("ReplicatedStorage")
+local spawnUnit = replicatedStorage.endpoints.client_to_server.spawn_unit
+
+local spawnPositionsFarm = {
+    Vector3.new(316.823, 125.597, -99.345),
+    Vector3.new(319.000, 125.597, -96.916),
+    Vector3.new(320.497, 125.597, -100.160),
+    Vector3.new(319.032, 125.597, -103.319)
+}
+
+local function isCloseEnough(pos1, pos2, tolerance)
+    return (pos1 - pos2).Magnitude <= tolerance
+end
+
+spawn(function()
+    while wait() do
+        pcall(function()
+            if _G.SST.Farm_Level then
+				if game:GetService("Players").LocalPlayer.PlayerGui.VoteStart.Enabled == true then
+					game:GetService("ReplicatedStorage").endpoints.client_to_server.vote_start:InvokeServer()
+				end
+                local units = workspace._UNITS
+                for _, position in ipairs(spawnPositionsFarm) do
+                    local isUnitPresent = false
+                    for _, unit in pairs(units:GetChildren()) do
+                        if unit:FindFirstChild("HumanoidRootPart") and isCloseEnough(unit.HumanoidRootPart.Position, position, 0.1) then
+                            isUnitPresent = true
+                            break
+                        end
+                    end
+                    
+                    -- หากไม่มี Unit ในตำแหน่งนี้ ให้วาง Unit
+                    if not isUnitPresent then
+                        local cframe = CFrame.new(position) * CFrame.Angles(0, 0, 0)
+                        spawnUnit:InvokeServer(unitId, cframe)
+                    end
+                end
+            end
+        end)
+    end
+end)
+
+spawn(function()
+    while wait() do
+        pcall(function()
+            if _G.SST and _G.SST.Farm_Level then -- ตรวจสอบ _G.SST และ _G.SST.Farm_Sukuna
+                local units = workspace._UNITS:GetChildren()
+                for i, v in pairs(units) do
+                    if v:IsA("Model") and v:GetAttribute("range_stat") ~= nil then -- ตรวจสอบว่า unit เป็น Model และมี Attribute "range_stat"
+                        print("Pet: " .. v.Name) -- ใช้ v.Name เพื่อพิมพ์ชื่อ Model
+
+                        local up = {
+                            [1] = v -- ใช้ Instance โดยตรง
+                        }
+                        -- เรียกฟังก์ชัน sell_unit_ingame
+                        local success, err = pcall(function()
+                            game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(unpack(up))
+                        end)
+
+                        if not success then
+                            warn("Error invoking sell_unit_ingame: " .. tostring(err))
+                        end
+
+                        wait(0) -- รอเล็กน้อยก่อนตรวจสอบ unit ถัดไป
+                    end
+                end
+            end
+        end)
+    end
+end)
 
 Main:AddToggleRight("Auto Farm Curse",_G.SST.Farm_Sukuna,function(a)
 	Farm_Sukuna = a
