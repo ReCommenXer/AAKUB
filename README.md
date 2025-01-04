@@ -3066,7 +3066,7 @@ spawn(function()
                 local units = workspace._UNITS:GetChildren()
                 for i, v in pairs(units) do
                     if v:IsA("Model") and v:GetAttribute("range_stat") ~= nil then -- ตรวจสอบว่า unit เป็น Model และมี Attribute "range_stat"
-                        if v.name == "Bulby" or v.Name == "C.E.O." then
+                        if v.name == "Bulby" or v.Name == "speedwagon" then
 						local up = {
                             [1] = v -- ใช้ Instance โดยตรง
                         }
@@ -3477,14 +3477,14 @@ Main:AddSliderRight("Select Farme Rate", 0, 240, _G.SST.Select_Farme_Rate, funct
 	_G.SST.Select_Farme_Rate = Select_Farme_Rate
 	SS()
 end)
-Main:AddSeperatorRight("Misc")
-Main:AddToggleRight("Auto Rejoin [Kick]",_G.SST.Auto_Rejoin_Kick ,function(a)
+Misc:AddSeperatorLeft("Misc")
+Misc:AddToggleLeft("Auto Rejoin [Kick]",_G.SST.Auto_Rejoin_Kick ,function(a)
 	Auto_Rejoin_Kick  = a
 	_G.SST.Auto_Rejoin_Kick = Auto_Rejoin_Kick
 	SS()
 end)
 
-Main:AddToggleRight("Anti AFK",_G.SST.Anti_AFK,function()
+Misc:AddToggleLeft("Anti AFK",_G.SST.Anti_AFK,function()
 	Anti_AFK  = a
 	_G.SST.Anti_AFK = Anti_AFK
 	SS()
