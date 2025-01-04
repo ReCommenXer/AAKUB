@@ -1,4 +1,4 @@
-------------------eerf
+------------------tte
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 ----------------------------------- save
@@ -2946,6 +2946,10 @@ if WebHook ~= "" then
                             ["value"] = "```" ..game:GetService("Players").LocalPlayer.PlayerGui.spawn_units.Lives.Main.Desc.Level.Text .. "```"
                         },
 						{
+                            ["name"] = "Total",
+                            ["value"] = "```Gems: " .. game:GetService("Players").LocalPlayer._stats.gem_amount.Value .. "   XP: " .. game:GetService("Players").LocalPlayer._stats.player_xp.Value .. "  HolidayStars: " .. game:GetService("Players").LocalPlayer._stats._resourceHolidayStars.Value .."```"
+                        },
+						{
                             ["name"] = "Wave",
                             ["value"] = "```" .. game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Holder.Middle.WavesCompleted.Text .. "```"
                         },
@@ -3241,6 +3245,55 @@ spawn(function()
     end
 end)
 
+Main:AddToggleRight("Auto Farm Gem",_G.SST.Farm_Gem,function(a)
+	Farm_Gem = a
+_G.SST.Farm_Gem = Farm_Gem
+SS()
+end)
+spawn(function()
+		while wait() do
+			pcall(function()
+				if _G.SST.Farm_Gem then
+					for i, Room in pairs(workspace._LOBBIES.Story:GetChildren()) do
+						if Room:FindFirstChild("Timer") and Room.Timer.Value == -1 then
+							-- ตรวจสอบค่า arguments ก่อนเรียกใช้
+							local args = {
+								[1] = Room.Name,
+								[2] = "aot_infinite",
+								[3] = true,
+								[4] = "Hard"
+							}
+							print("Arguments: ", args[1], args[2], args[3], args[4])  -- ตรวจสอบค่าก่อนเรียก
+							game:GetService("ReplicatedStorage").endpoints.client_to_server.request_join_lobby:InvokeServer(Room.Name)
+
+							game:GetService("ReplicatedStorage").endpoints.client_to_server.request_lock_level:InvokeServer(unpack(args))
+							wait(2)
+       game:GetService("ReplicatedStorage").endpoints.client_to_server.request_start_game:InvokeServer(Room.Name)
+							
+						end
+					end
+				end
+			end)
+		end
+	end)
+
+Main:AddToggleRight("Auto Farm HolidayStars",_G.SST.Auto_Farm_HolidayStars,function(a)
+	Auto_Farm_HolidayStars = a
+	_G.SST.Auto_Farm_HolidayStars = Auto_Farm_HolidayStars
+	SS()
+end)
+
+spawn(function()
+	while wait() do
+		pcall(function()
+			if _G.SST.Auto_Farm_HolidayStars then
+				if workspace._EVENT_CHALLENGES.Lobbies._lobbytemplate_event3:FindFirstChild("Timer").Value == -1 then
+					game:GetService("ReplicatedStorage").endpoints.client_to_server.request_join_lobby:InvokeServer("_lobbytemplate_event3")
+				end
+			end
+		end)
+	end
+end)
 
 Main:AddSeperatorRight("Fps")
 local player = game:GetService("Players").LocalPlayer
@@ -3291,13 +3344,6 @@ spawn(function()
 				game:GetService("Players").LocalPlayer._settings.low_quality.Value = true
 				game:GetService("Players").LocalPlayer._settings.low_quality_shadows.Value = true
 				game:GetService("Players").LocalPlayer._settings.low_quality_textures.Value = true
-			else
-				game:GetService("Players").LocalPlayer._settings.disable_effects.Value = false
-				game:GetService("Players").LocalPlayer._settings.disable_kill_fx.Value = false
-				game:GetService("Players").LocalPlayer._settings.disable_other_fx.Value = false
-				game:GetService("Players").LocalPlayer._settings.low_quality.Value = false
-				game:GetService("Players").LocalPlayer._settings.low_quality_shadows.Value = false
-				game:GetService("Players").LocalPlayer._settings.low_quality_textures.Value = false
 			end
 		end)
 	end
@@ -3345,13 +3391,6 @@ spawn(function()
                         v.Enabled = false
                     elseif v:IsA("Sound") then
                         v.Playing = false
-                    end
-                end
-
-                -- ปิด GUI
-                for _, v in pairs(game.Players.LocalPlayer.PlayerGui:GetDescendants()) do
-                    if v:IsA("Frame") or v:IsA("TextLabel") or v:IsA("TextButton") or v:IsA("ImageLabel") then
-                        v.Visible = false
                     end
                 end
 
