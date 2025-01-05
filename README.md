@@ -1,4 +1,4 @@
-------------------หหพ
+------------------rrr
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 ----------------------------------- save
@@ -3060,100 +3060,59 @@ Main:AddToggleRight("Auto Upgrade Unit",_G.SST.Auto_Upgrade_Unit,function(a)
 end)
 
 spawn(function()
-    while task.wait(0.1) do -- ใช้ task.wait เพื่อเพิ่มประสิทธิภาพ
+    while wait() do
         pcall(function()
-            if _G.SST and _G.SST.Auto_Upgrade_Unit and _G.SST.Select_To_Upgrade == "Cost Unit" then
+            if _G.SST and _G.SST.Auto_Upgrade_Unit and _G.SST.Select_To_Upgrade == "Cost Unit" then -- ตรวจสอบ _G.SST และ _G.SST.Farm_Sukuna
                 local units = workspace._UNITS:GetChildren()
-                local playerName = game:GetService("Players").LocalPlayer.Name
+                for i, v in pairs(units) do
+                    if v:IsA("Model") and v:GetAttribute("range_stat") ~= nil then -- ตรวจสอบว่า unit เป็น Model และมี Attribute "range_stat"
+                        if v.name == "Bulby" or v.Name == "speedwagon" then
+						local up = {
+                            [1] = v -- ใช้ Instance โดยตรง
+                        }
+                        -- เรียกฟังก์ชัน sell_unit_ingame
+                        local success, err = pcall(function()
+                            game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(unpack(up))
+                        end)
 
-                for _, v in pairs(units) do
-                    if v:IsA("Model") and v:FindFirstChild("_stats") then
-                        local stats = v._stats
-                        local player = stats:FindFirstChild("player")
-                        if player then
-                            if player.Value == playerName then
-                                if v.Name == "Bulby" or v.Name == "speedwagon" then
-                                    print("Found unit to upgrade:", v.Name)
-
-                                    local up = { v } -- ใช้ Instance โดยตรง
-                                    local success, err = pcall(function()
-                                        game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(unpack(up))
-                                    end)
-
-                                    if success then
-                                        print("Successfully upgraded:", v.Name)
-                                    else
-                                        warn("Error invoking upgrade_unit_ingame for", v.Name, ":", tostring(err))
-                                    end
-
-                                    task.wait(0.1) -- รอเล็กน้อยก่อนตรวจสอบ unit ถัดไป
-                                end
-                            else
-                                print("Unit does not belong to player:", v.Name)
-                            end
-                        else
-                            print("No 'player' stat found for Unit:", v.Name)
+                        if not success then
+                            warn("Error invoking sell_unit_ingame: " .. tostring(err))
                         end
+					
+                        wait(0) -- รอเล็กน้อยก่อนตรวจสอบ unit ถัดไป
+						end
                     end
                 end
             end
         end)
     end
 end)
-
 
 spawn(function()
-    while task.wait(0.1) do
-        local success, err = pcall(function()
-            if _G.SST and _G.SST.Auto_Upgrade_Unit and _G.SST.Select_To_Upgrade == "All Unit" then
-                print("Auto Upgrade Triggered")
+    while wait() do
+        pcall(function()
+            if _G.SST and _G.SST.Auto_Upgrade_Unit and _G.SST.Select_To_Upgrade == "All Unit" then -- ตรวจสอบ _G.SST และ _G.SST.Farm_Sukuna
                 local units = workspace._UNITS:GetChildren()
-                local playerName = game:GetService("Players").LocalPlayer.Name
+                for i, v in pairs(units) do
+                    if v:IsA("Model") and v:GetAttribute("range_stat") ~= nil then -- ตรวจสอบว่า unit เป็น Model และมี Attribute "range_stat"
+						local up = {
+                            [1] = v -- ใช้ Instance โดยตรง
+                        }
+                        -- เรียกฟังก์ชัน sell_unit_ingame
+                        local success, err = pcall(function()
+                            game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(unpack(up))
+                        end)
 
-                for _, v in pairs(units) do
-                    if v:IsA("Model") and v:FindFirstChild("_stats") then
-                        local stats = v._stats
-                        local player = stats:FindFirstChild("player")
-                        if player then
-                            print("Player for Unit:", v.Name, "=", player.Value)
-                            if player.Value == playerName then
-                                print("Found Unit:", v.Name)
-
-                                if v:GetAttribute("range_stat") then
-                                    print("Upgrading Unit:", v.Name)
-
-                                    local up = { v }
-                                    local upgradeSuccess, upgradeErr = pcall(function()
-                                        game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(unpack(up))
-                                    end)
-
-                                    if not upgradeSuccess then
-                                        warn("Error invoking upgrade_unit_ingame:", tostring(upgradeErr))
-                                    else
-                                        print("Unit upgraded successfully:", v.Name)
-                                    end
-                                else
-                                    print("Unit has no 'range_stat':", v.Name)
-                                end
-                            else
-                                print("Unit does not belong to player:", v.Name)
-                            end
-                        else
-                            print("No 'player' stat found for Unit:", v.Name)
+                        if not success then
+                            warn("Error invoking sell_unit_ingame: " .. tostring(err))
                         end
+                        wait(0) -- รอเล็กน้อยก่อนตรวจสอบ unit ถัดไป
                     end
                 end
             end
         end)
-
-        if not success then
-            warn("Error in Auto Upgrade loop:", tostring(err))
-        end
     end
 end)
-
-
-
 
 
 Main:AddSeperatorLeft("Farm")
@@ -3361,7 +3320,7 @@ spawn(function()
 
 Main:AddSeperatorLeft("Curse Key")
 
-Main:AddToggleLeft("Auto Farm Curse Key",_G.SST.Farm_Sukuna,function(a)
+Main:AddToggleLeft("Auto Farm Curse",_G.SST.Farm_Sukuna,function(a)
 	Farm_Sukuna = a
 _G.SST.Farm_Sukuna = Farm_Sukuna
 SS()
