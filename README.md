@@ -3062,58 +3062,67 @@ end)
 spawn(function()
     while wait() do
         pcall(function()
-            if _G.SST and _G.SST.Auto_Upgrade_Unit and _G.SST.Select_To_Upgrade == "Cost Unit" then -- ตรวจสอบ _G.SST และ _G.SST.Farm_Sukuna
+            if _G.SST and _G.SST.Auto_Upgrade_Unit and _G.SST.Select_To_Upgrade == "Cost Unit" then
                 local units = workspace._UNITS:GetChildren()
                 for i, v in pairs(units) do
-                    if v:IsA("Model") and v:GetAttribute("range_stat") ~= nil then -- ตรวจสอบว่า unit เป็น Model และมี Attribute "range_stat"
-                        if v.name == "Bulby" or v.Name == "speedwagon" then
-						local up = {
-                            [1] = v -- ใช้ Instance โดยตรง
-                        }
-                        -- เรียกฟังก์ชัน sell_unit_ingame
-                        local success, err = pcall(function()
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(unpack(up))
-                        end)
+                    if v:IsA("Model") and v:GetAttribute("range_stat") ~= nil then
+                        -- ตรวจสอบว่า v.Name เป็น "Bulby" หรือ "speedwagon"
+                        if v.Name == "Bulby" or v.Name == "speedwagon" then
+                            -- ตรวจสอบว่า _stats.player เป็นชื่อของเรา
+                            local playerName = v:FindFirstChild("_stats") and v._stats:FindFirstChild("player") and v._stats.player.Value
+                            if playerName == game.Players.LocalPlayer.Name then
+                                local up = {
+                                    [1] = v -- ใช้ Instance โดยตรง
+                                }
+                                -- เรียกฟังก์ชัน upgrade_unit_ingame
+                                local success, err = pcall(function()
+                                    game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(unpack(up))
+                                end)
 
-                        if not success then
-                            warn("Error invoking sell_unit_ingame: " .. tostring(err))
+                                if not success then
+                                    warn("Error invoking upgrade_unit_ingame: " .. tostring(err))
+                                end
+
+                                wait(0) -- รอเล็กน้อยก่อนตรวจสอบ unit ถัดไป
+                            end
                         end
-					
-                        wait(0) -- รอเล็กน้อยก่อนตรวจสอบ unit ถัดไป
-						end
                     end
                 end
             end
         end)
     end
 end)
+
 
 spawn(function()
     while wait() do
         pcall(function()
-            if _G.SST and _G.SST.Auto_Upgrade_Unit and _G.SST.Select_To_Upgrade == "All Unit" then -- ตรวจสอบ _G.SST และ _G.SST.Farm_Sukuna
+            if _G.SST and _G.SST.Auto_Upgrade_Unit and _G.SST.Select_To_Upgrade == "All Unit" then
                 local units = workspace._UNITS:GetChildren()
                 for i, v in pairs(units) do
-                    if v:IsA("Model") and v:GetAttribute("range_stat") ~= nil then -- ตรวจสอบว่า unit เป็น Model และมี Attribute "range_stat"
-						local up = {
-                            [1] = v -- ใช้ Instance โดยตรง
-                        }
-                        -- เรียกฟังก์ชัน sell_unit_ingame
-                        local success, err = pcall(function()
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(unpack(up))
-                        end)
+                    if v:IsA("Model") and v:GetAttribute("range_stat") ~= nil then
+                        -- ตรวจสอบว่า unit มี _stats.player และเป็นชื่อของเรา
+                        local playerName = v:FindFirstChild("_stats") and v._stats:FindFirstChild("player") and v._stats.player.Value
+                        if playerName == game.Players.LocalPlayer.Name then
+                            local up = {
+                                [1] = v -- ใช้ Instance โดยตรง
+                            }
+                            -- เรียกฟังก์ชัน upgrade_unit_ingame
+                            local success, err = pcall(function()
+                                game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(unpack(up))
+                            end)
 
-                        if not success then
-                            warn("Error invoking sell_unit_ingame: " .. tostring(err))
+                            if not success then
+                                warn("Error invoking upgrade_unit_ingame: " .. tostring(err))
+                            end
+                            wait(0) -- รอเล็กน้อยก่อนตรวจสอบ unit ถัดไป
                         end
-                        wait(0) -- รอเล็กน้อยก่อนตรวจสอบ unit ถัดไป
                     end
                 end
             end
         end)
     end
 end)
-
 
 Main:AddSeperatorLeft("Farm")
 
@@ -3699,7 +3708,7 @@ spawn(function()
 end)
 -- สร้าง toggle เพื่อเปิด/ปิดการตั้งค่า FPS cap
 spwan(function()
-	while task.wait(1) do
+	while wait(1) do
 		pcall(function()
 		setfpscap(_G.SST.Select_Farme_Rate) -- ตั้งค่าความเร็วเฟรมตามค่า 
 		end)
