@@ -1,4 +1,4 @@
-------------------ๅๅๅๅ
+------------------rrr
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 ----------------------------------- save
@@ -3091,31 +3091,28 @@ end)
 spawn(function()
     while wait() do
         pcall(function()
-            if _G.SST and _G.SST.Auto_Upgrade_Unit and _G.SST.Select_To_Upgrade == "All Unit" then 
+            if _G.SST and _G.SST.Auto_Upgrade_Unit and _G.SST.Select_To_Upgrade == "All Unit" then -- ตรวจสอบ _G.SST และ _G.SST.Farm_Sukuna
                 local units = workspace._UNITS:GetChildren()
                 for i, v in pairs(units) do
-                    if v._stats.player.Value == game:GetService("Players").LocalPlayer.Name then
-                        print("กำลังตรวจสอบยูนิต: " .. v.Name)  -- การพิมพ์เพื่อดีบัก
-                        if v:IsA("Model") and v:GetAttribute("range_stat") ~= nil then
-                            local up = {
-                                [1] = v -- ใช้ Instance โดยตรง
-                            }
-                            -- เรียกฟังก์ชัน upgrade
-                            local success, err = pcall(function()
-                                game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(unpack(up))
-                            end)
+                    if v:IsA("Model") and v:GetAttribute("range_stat") ~= nil then -- ตรวจสอบว่า unit เป็น Model และมี Attribute "range_stat"
+						local up = {
+                            [1] = v -- ใช้ Instance โดยตรง
+                        }
+                        -- เรียกฟังก์ชัน sell_unit_ingame
+                        local success, err = pcall(function()
+                            game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(unpack(up))
+                        end)
 
-                            if not success then
-                                warn("เกิดข้อผิดพลาดในการเรียกฟังก์ชัน upgrade_unit_ingame: " .. tostring(err))
-                            end
+                        if not success then
+                            warn("Error invoking sell_unit_ingame: " .. tostring(err))
                         end
+                        wait(0) -- รอเล็กน้อยก่อนตรวจสอบ unit ถัดไป
                     end
                 end
             end
         end)
     end
 end)
-
 
 
 Main:AddSeperatorLeft("Farm")
