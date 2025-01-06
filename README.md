@@ -1,4 +1,4 @@
-------------------ssr
+------------------rrr
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 ----------------------------------- save
@@ -3111,37 +3111,43 @@ spawn(function()
                 local units = workspace._UNITS:GetChildren()
                 for i, v in pairs(units) do
                     if v:IsA("Model") and v:GetAttribute("range_stat") ~= nil then
-                        print("Found unit:", v.Name) -- Debug: แสดงชื่อ unit ที่พบ
+                        print("Found unit:", v.Name)  -- Debug: แสดงชื่อ unit ที่พบ
 
                         -- ตรวจสอบว่า unit มี _stats.player และเป็นชื่อของเรา
                         local stats = v:FindFirstChild("_stats")
                         local player = stats and stats:FindFirstChild("player")
 
                         if player and player.Value == game.Players.LocalPlayer.Name then
-                            print("Upgrading unit owned by player:", v.Name) -- Debug: unit เป็นของผู้เล่น
+                            print("Upgrading unit owned by player:", v.Name)  -- Debug: unit เป็นของผู้เล่น
                             local up = {
                                 [1] = v -- ใช้ Instance โดยตรง
                             }
 
                             -- เรียกฟังก์ชัน upgrade_unit_ingame
                             local success, err = pcall(function()
-                                game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(unpack(up))
+                                local result = game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(unpack(up))
+                                print("Server result:", result)  -- Debug: แสดงผลลัพธ์จากเซิร์ฟเวอร์
+                                return result
                             end)
 
                             if success then
-                                print("Successfully upgraded unit:", v.Name)
+                                if err then
+                                    print("Error invoking upgrade_unit_ingame:", err)  -- แสดงข้อผิดพลาดจากเซิร์ฟเวอร์
+                                else
+                                    print("Successfully upgraded unit:", v.Name)  -- แสดงเมื่ออัปเกรดสำเร็จ
+                                end
                             else
-                                warn("Error invoking upgrade_unit_ingame:", tostring(err))
+                                warn("Error invoking upgrade_unit_ingame:", tostring(err))  -- แสดงข้อผิดพลาดของฟังก์ชัน
                             end
 
-                            wait(0) -- รอเล็กน้อยก่อนตรวจสอบ unit ถัดไป
+                            wait(0)  -- รอเล็กน้อยก่อนตรวจสอบ unit ถัดไป
                         else
                             if not stats then
-                                warn("Missing _stats for unit:", v.Name)
+                                warn("Missing _stats for unit:", v.Name)  -- ถ้าไม่มี _stats
                             elseif not player then
-                                warn("Missing player attribute in _stats for unit:", v.Name)
+                                warn("Missing player attribute in _stats for unit:", v.Name)  -- ถ้าไม่มี player
                             else
-                                print("Unit is not owned by the player:", v.Name)
+                                print("Unit is not owned by the player:", v.Name)  -- unit ไม่ใช่ของผู้เล่น
                             end
                         end
                     end
