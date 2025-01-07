@@ -1,4 +1,4 @@
-------------------456789
+------------------ำำำำ
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 repeat wait() until game:GetService("Players").LocalPlayer._stats
@@ -3511,9 +3511,11 @@ spawn(function()
 end)
 
 	Check:AddSeperatorRight("WebHook")
-Check:AddTextboxRight("WebHook Link",_G.SST.WebHook_Link or "Paste Discord WebHook",true,function(a)
+		_G.SST.WebHook_Link = WebHook_Link
+Check:AddTextboxRight("WebHook Link",_G.SST.WebHook_Link,true,function(a)
 	WebHook_Link = a
-	_G.SST.WebHook_Link = WebHook_Link
+		_G.SST.WebHook_Link = WebHook_Link
+
 	SS()
 end)
 Check:AddToggleRight("Send WebHook",_G.SST.Sent_WebHook,function(a)
@@ -3526,100 +3528,97 @@ spawn(function()
     pcall(function()
         while wait() do
             if _G.SST.Sent_WebHook then
-                -- Check if the mission has ended
-                if game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Enabled == true then
-                  -- Retrieve the local player
-local player = game:GetService("Players").LocalPlayer
+                -- ตรวจสอบว่าภารกิจสิ้นสุดแล้ว
+                local player = game:GetService("Players").LocalPlayer
+                local gui = player.PlayerGui
+                local resultsUI = gui.ResultsUI.Holder
 
--- Retrieve necessary details
-local gui = player.PlayerGui
-local resultsUI = gui.ResultsUI.Holder
+                if resultsUI.Enabled == true then
+                    -- ดึงข้อมูลที่จำเป็น
+                    local Name = player.Name
+                    local GameTime = resultsUI.Middle.Timer.Text
+                    local GemRewards = resultsUI.LevelRewards.ScrollingFrame.GemReward.Main.Amount.Text
+                    local XpRewards = resultsUI.LevelRewards.ScrollingFrame.XPReward.Main.Amount.Text
+                    local ModeSelect = resultsUI.Difficulty.Text
+                    local NameMap = resultsUI.LevelName.Text
+                    local BattlePassLevel = gui.BattlePass.Main.Level.V.Text
+                    local FurthestRoom = gui.BattlePass.Main.FurthestRoom.V.Text
+                    local TitleText = resultsUI.Title.Text
 
-local Name = player.Name
-local GameTime = resultsUI.Middle.Timer.Text
-local GemRewards = resultsUI.LevelRewards.ScrollingFrame.GemReward.Main.Amount.Text
-local XpRewards = resultsUI.LevelRewards.ScrollingFrame.XPReward.Main.Amount.Text
-local ModeSelect = resultsUI.Difficulty.Text
-local NameMap = resultsUI.LevelName.Text
-local BattlePassLevel = gui.BattlePass.Main.Level.V.Text
-local FurthestRoom = gui.BattlePass.Main.FurthestRoom.V.Text
-local TitleText = resultsUI.Title.Text
+                    -- ข้อมูลเกี่ยวกับ Star Pass และแผนที่
+                    local NameGames = "[❄️CHRISTMAS + 💫RERELEASE + 🏆TOURNAMENT] AA"
 
--- Star Pass Level and Map Information
-local NameGames = "[❄️CHRISTMAS + 💫RERELEASE + 🏆TOURNAMENT] AA"
-if WebHook ~= "" then
-    pcall(function()
-        local url = _G.SST.WebHook_Link
-        local data = {
-            ["content"] = "",
-            ["embeds"] = {
-                {
-                    ["author"] = {
-                        ["name"] = "ReBornxer Hub WebHook"
-                    },
-                    ["type"] = "rich",
-                    ["title"] = NameGames,
-                    ["color"] = tonumber(0x13da),
-                    ["fields"] = {
-                        {
-                            ["name"] = Name,
-                            ["value"] = "```" ..game:GetService("Players").LocalPlayer.PlayerGui.spawn_units.Lives.Main.Desc.Level.Text .. "```"
-                        },
-						{
-                            ["name"] = "Total",
-                            ["value"] = "```Gems: " .. game:GetService("Players").LocalPlayer._stats.gem_amount.Value .. "   XP: " .. game:GetService("Players").LocalPlayer._stats.player_xp.Value .. "  HolidayStars: " .. game:GetService("Players").LocalPlayer._stats._resourceHolidayStars.Value .."```"
-                        },
-						{
-                            ["name"] = "Wave",
-                            ["value"] = "```" .. game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Holder.Middle.WavesCompleted.Text .. "```"
-                        },
-                        {
-                            ["name"] = "Mode Select",
-                            ["value"] = "```Mode: " .. ModeSelect .. "```"
-                        },
-                        {
-                            ["name"] = "Gem",
-                            ["value"] = "```Gem: " .. game:GetService("Players").LocalPlayer._stats.gem_amount.Value .. "```"
-                        },
-                        {
-                            ["name"] = "Elapsed Time",
-                            ["value"] = "```" .. GameTime .. "```"
-                        },
-                        {
-                            ["name"] = "Rewards",
-                            ["value"] = "```Gems: " .. GemRewards .. "   XP: " .. XpRewards .. "```"
+                    if _G.SST.WebHook_Link ~= "" then
+                        local url = _G.SST.WebHook_Link
+                        local data = {
+                            ["content"] = "",
+                            ["embeds"] = {
+                                {
+                                    ["author"] = {
+                                        ["name"] = "ReBornxer Hub WebHook"
+                                    },
+                                    ["type"] = "rich",
+                                    ["title"] = NameGames,
+                                    ["color"] = tonumber(0x13da),
+                                    ["fields"] = {
+                                        {
+                                            ["name"] = Name,
+                                            ["value"] = "```" .. player.PlayerGui.spawn_units.Lives.Main.Desc.Level.Text .. "```"
+                                        },
+                                        {
+                                            ["name"] = "Total",
+                                            ["value"] = "```Gems: " .. player._stats.gem_amount.Value .. "   XP: " .. player._stats.player_xp.Value .. "  HolidayStars: " .. player._stats._resourceHolidayStars.Value .."```"
+                                        },
+                                        {
+                                            ["name"] = "Wave",
+                                            ["value"] = "```" .. resultsUI.Middle.WavesCompleted.Text .. "```"
+                                        },
+                                        {
+                                            ["name"] = "Mode Select",
+                                            ["value"] = "```Mode: " .. ModeSelect .. "```"
+                                        },
+                                        {
+                                            ["name"] = "Gem",
+                                            ["value"] = "```Gem: " .. player._stats.gem_amount.Value .. "```"
+                                        },
+                                        {
+                                            ["name"] = "Elapsed Time",
+                                            ["value"] = "```" .. GameTime .. "```"
+                                        },
+                                        {
+                                            ["name"] = "Rewards",
+                                            ["value"] = "```Gems: " .. GemRewards .. "   XP: " .. XpRewards .. "```"
+                                        }
+                                    }
+                                }
+                            }
                         }
-                    }
-                }
-            }
-        }
 
-        local jsonData = game:GetService("HttpService"):JSONEncode(data)
+                        local jsonData = game:GetService("HttpService"):JSONEncode(data)
 
-        local headers = {
-            ["Content-Type"] = "application/json"
-        }
+                        local headers = {
+                            ["Content-Type"] = "application/json"
+                        }
 
-        local request = http_request or request or HttpPost or syn.request
-        if request then
-            local response = request({
-                Url = url,
-                Body = jsonData,
-                Method = "POST",
-                Headers = headers
-            })
-            if response.StatusCode ~= 200 then
-                warn("Failed to send webhook. Status Code: " .. response.StatusCode)
-            end
-        else
-            warn("HTTP request function not available.")
-        end
-    end)
-else
-    print("Invalid Webhook URL")
-end
+                        local request = http_request or request or HttpPost or syn.request
+                        if request then
+                            local response = request({
+                                Url = url,
+                                Body = jsonData,
+                                Method = "POST",
+                                Headers = headers
+                            })
+                            if response.StatusCode ~= 200 then
+                                warn("Failed to send webhook. Status Code: " .. response.StatusCode)
+                            end
+                        else
+                            warn("HTTP request function not available.")
+                        end
+                    else
+                        print("Invalid Webhook URL")
+                    end
 
-                    _G.SST.Sent_WebHook  = false
+                    _G.SST.Sent_WebHook = false
                 end
             end
         end
