@@ -1,6 +1,9 @@
-------------------rrr
+------------------555
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
+repeat wait() until game:GetService("Players").LocalPlayer._stats
+repeat wait() until workspace._PETS
+
 ----------------------------------- save
 function loadcheck()
     if isfile("RebornXer Hub Anime Adventures"..game.Players.LocalPlayer.Name..".json") then
@@ -3398,6 +3401,53 @@ spawn(function()
     end
 end)
 
+Misc:AddSeperatorRight("Fps")
+local player = game:GetService("Players").LocalPlayer
+
+local blackscreen = function(enable)
+    local playerGui = player:WaitForChild("PlayerGui")
+    if not enable then
+        local sUi = playerGui:FindFirstChild("Blackscreen")
+        if sUi then sUi:Destroy() end
+        return
+    elseif playerGui:FindFirstChild("Blackscreen") then
+        return
+    end
+    local sUi = Instance.new("ScreenGui", playerGui)
+    sUi.Name = "Blackscreen"
+    sUi.DisplayOrder = -727
+
+    local uiFrame = Instance.new("Frame", sUi)
+    uiFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    uiFrame.Size = UDim2.new(0, 72727, 0, 72727)
+    uiFrame.Position = UDim2.new(0, 0, -5, 0)
+end
+    
+Misc:AddToggleRight("Black Screen",_G.SST.Black_Screen,function(value)
+    Black_Screen = value
+	_G.SST.Black_Screen = Black_Screen
+	SS()
+if _G.SST.Black_Screen == true then
+    game:GetService("RunService"):Set3dRenderingEnabled(false)
+    blackscreen(true)
+elseif _G.SST.Black_Screen == false then
+    game:GetService("RunService"):Set3dRenderingEnabled(true)
+    blackscreen(false)
+end
+end)
+
+Misc:AddToggleRight("Boost Fps",_G.SST.Boost_Fps,function(va)
+	Boost_Fps = va
+ _G.SST.Boost_Fps = Boost_Fps
+ SS()
+end)
+
+
+Misc:AddSliderRight("Select Farme Rate", 0, 240, _G.SST.Select_Farme_Rate, function(a)
+	Select_Farme_Rate = a  -- ใช้ตัวแปร a แทนค่า Select_Farme_Rate
+	_G.SST.Select_Farme_Rate = Select_Farme_Rate
+	SS()
+end)
 
 
 Misc:AddSeperatorLeft("Misc")
@@ -3426,7 +3476,7 @@ spawn(function()
 end)
 
 	Check:AddSeperatorRight("WebHook")
-Check:AddTextboxRight("WebHook Link",_G.SST.WebHook_Link,true,function(a)
+Check:AddTextboxRight("WebHook Link",_G.SST.WebHook_Link or "Paste Discord WebHook",true,function(a)
 	WebHook_Link = a
 	_G.SST.WebHook_Link = WebHook_Link
 	SS()
@@ -3562,45 +3612,6 @@ while wait() do
 end
 end)
 
-Misc:AddSeperatorRight("Fps")
-local player = game:GetService("Players").LocalPlayer
-
-local blackscreen = function(enable)
-    local playerGui = player:WaitForChild("PlayerGui")
-    if not enable then
-        local sUi = playerGui:FindFirstChild("Blackscreen")
-        if sUi then sUi:Destroy() end
-        return
-    elseif playerGui:FindFirstChild("Blackscreen") then
-        return
-    end
-    local sUi = Instance.new("ScreenGui", playerGui)
-    sUi.Name = "Blackscreen"
-    sUi.DisplayOrder = -727
-
-    local uiFrame = Instance.new("Frame", sUi)
-    uiFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-    uiFrame.Size = UDim2.new(0, 72727, 0, 72727)
-    uiFrame.Position = UDim2.new(0, 0, -5, 0)
-end
-    
-Misc:AddToggleRight("Black Screen",_G.SST.Black_Screen,function(value)
-    Black_Screen = value
-	_G.SST.Black_Screen = Black_Screen
-	SS()
-if _G.SST.Black_Screen == true then
-    game:GetService("RunService"):Set3dRenderingEnabled(false)
-    blackscreen(true)
-elseif _G.SST.Black_Screen == false then
-    game:GetService("RunService"):Set3dRenderingEnabled(true)
-    blackscreen(false)
-end
-end)
-Misc:AddToggleRight("Boost Fps",_G.SST.Boost_Fps,function(va)
-	Boost_Fps = va
- _G.SST.Boost_Fps = Boost_Fps
- SS()
-end)
 spawn(function()
 	while wait() do
 		pcall(function()
@@ -3678,11 +3689,6 @@ spawn(function()
             end
         end)
     end
-end)
-Misc:AddSliderRight("Select Farme Rate", 0, 240, _G.SST.Select_Farme_Rate, function(a)
-	Select_Farme_Rate = a  -- ใช้ตัวแปร a แทนค่า Select_Farme_Rate
-	_G.SST.Select_Farme_Rate = Select_Farme_Rate
-	SS()
 end)
 
 spawn(function()
