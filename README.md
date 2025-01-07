@@ -1,4 +1,4 @@
-------------------rrr
+------------------กกก
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 repeat wait() until game:GetService("Players").LocalPlayer._stats
@@ -3594,24 +3594,55 @@ end)
 
 
 
+-- เช็คว่าข้อมูล PlayerGui ถูกโหลดหรือยัง
+repeat wait() until game:GetService("Players").LocalPlayer:FindFirstChild("PlayerGui")
+
+-- เพิ่ม Separator
 Check:AddSeperatorLeft("Player")
-local NamePlayer = game.Players.LocalPlayer.Name 
-Check:AddLabelLeft("Name : "..NamePlayer)
-local LevelPlayer = game:GetService("Players").LocalPlayer.PlayerGui.spawn_units.Lives.Main.Desc.Level.Text
-Check:AddLabelLeft("Level : "..LevelPlayer)
-local ExpPlayer = game:GetService("Players").LocalPlayer._stats.player_xp.Value
-Check:AddLabelLeft("Xp : "..ExpPlayer)
-Check:AddLabelLeft("BattlePassLevel : "..game:GetService("Players").LocalPlayer.PlayerGui.BattlePass.Main.Level.V.Text.."["..game:GetService("Players").LocalPlayer.PlayerGui.BattlePass.Main.FurthestRoom.V.Text.."]")
-local GemCheck = Check:AddLabelLeft("")
-local GoldCheck = Check:AddLabelLeft("")
-spawn(function()
-while wait() do
-	pcall(function()
-		GemCheck:Set("Gem : "..game:GetService("Players").LocalPlayer._stats.gem_amount.Value)
-		GoldCheck:Set("Gold : "..game:GetService("Players").LocalPlayer._stats.gold_amount.Value)
-	end)
-end
+
+-- ชื่อผู้เล่น
+local NamePlayer = game.Players.LocalPlayer.Name
+Check:AddLabelLeft("Name : " .. NamePlayer)
+
+-- เช็ค Level ของผู้เล่น
+local LevelPlayer = nil
+pcall(function()
+    LevelPlayer = game:GetService("Players").LocalPlayer.PlayerGui.spawn_units.Lives.Main.Desc.Level.Text
 end)
+Check:AddLabelLeft("Level : " .. (LevelPlayer or "Loading..."))
+
+-- เช็ค XP ของผู้เล่น
+local ExpPlayer = nil
+pcall(function()
+    ExpPlayer = game:GetService("Players").LocalPlayer._stats.player_xp.Value
+end)
+Check:AddLabelLeft("Xp : " .. (ExpPlayer or "Loading..."))
+
+-- เช็ค BattlePass Level และ Furthest Room
+local BattlePassLevel = nil
+local FurthestRoom = nil
+pcall(function()
+    BattlePassLevel = game:GetService("Players").LocalPlayer.PlayerGui.BattlePass.Main.Level.V.Text
+    FurthestRoom = game:GetService("Players").LocalPlayer.PlayerGui.BattlePass.Main.FurthestRoom.V.Text
+end)
+Check:AddLabelLeft("BattlePassLevel : " .. (BattlePassLevel or "Loading...") .. "[" .. (FurthestRoom or "Loading...") .. "]")
+
+-- สร้าง Label สำหรับ Gems และ Gold
+local GemCheck = Check:AddLabelLeft("Gem : Loading...")
+local GoldCheck = Check:AddLabelLeft("Gold : Loading...")
+
+-- ลูปการอัปเดต Gems และ Gold
+spawn(function()
+    while wait(1) do -- ลดความถี่การอัปเดตเป็น 1 วินาทีเพื่อประหยัดทรัพยากร
+        pcall(function()
+            local GemAmount = game:GetService("Players").LocalPlayer._stats.gem_amount.Value
+            local GoldAmount = game:GetService("Players").LocalPlayer._stats.gold_amount.Value
+            GemCheck:Set("Gem : " .. GemAmount)
+            GoldCheck:Set("Gold : " .. GoldAmount)
+        end)
+    end
+end)
+
 
 spawn(function()
 	while wait() do
