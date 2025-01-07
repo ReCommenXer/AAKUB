@@ -1,4 +1,4 @@
-------------------rrr
+------------------แแแ
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 repeat wait() until game:GetService("Players").LocalPlayer._stats
@@ -3478,10 +3478,9 @@ Misc:AddToggleRight("Boost Fps",_G.SST.Boost_Fps,function(va)
  SS()
 end)
 
-
+_G.SST.Select_Farme_Rate = Select_Farme_Rate
 Misc:AddSliderRight("Select Farme Rate", 0, 240, _G.SST.Select_Farme_Rate, function(a)
 	Select_Farme_Rate = a  -- ใช้ตัวแปร a แทนค่า Select_Farme_Rate
-	_G.SST.Select_Farme_Rate = Select_Farme_Rate
 	SS()
 end)
 
