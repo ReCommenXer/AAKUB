@@ -1,4 +1,4 @@
-------------------sdg
+------------------rrr
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 repeat wait() until game:GetService("Players").LocalPlayer._stats
@@ -3511,6 +3511,7 @@ spawn(function()
 end)
 
 	Check:AddSeperatorRight("WebHook")
+			_G.SST.WebHook_Link = _G.SST.WebHook_Link
 Check:AddTextboxRight("WebHook Link",_G.SST.WebHook_Link,true,function(a)
 	WebHook_Link = a
 		_G.SST.WebHook_Link = WebHook_Link
