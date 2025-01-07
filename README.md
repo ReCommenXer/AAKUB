@@ -4,45 +4,74 @@ repeat wait() until game:GetService("Players")
 repeat wait() until game:GetService("Players").LocalPlayer._stats
 repeat wait() until workspace._PETS
 repeat wait() until game:GetService("Players").LocalPlayer.PlayerGui
-wait(3)
+
 ----------------------------------- save
 function loadcheck()
-    if isfile("RebornXer Hub Anime Adventures"..game.Players.LocalPlayer.Name..".json") then
-    else
-    writefile("RebornXer Hub Anime Adventures"..game.Players.LocalPlayer.Name..".json",game:GetService("HttpService"):JSONEncode(_G.SST))
-    return
-    end
-    end
-    pcall(function()
-        _G.SST = {Select_Map = "",Select_Act = "",Select_Mode = "",Select_Friend_Only = false,Auto_Join = false,Auto_ReJoin = false,Farm_Sukuna = false,Select_Farme_Rate = 60,Auto_Rejoin_Kick = true,Boost_Fps = false,Black_Screen = false,Sent_WebHook = false,WebHook_Link = "",Auto_Back_To_Lobby = false,Farm_Gem = false,Auto_Farm_HolidayStars = false,Farm_Level = false,Anti_AFK = true,Auto_Upgrade_Unit = false,Select_To_Upgrade = "All Unit",Feed_Easter = false,Claim_Easter = false
-        }
-    end)
-    function LoadSetting()
-        if isfile("RebornXer Hub Anime Adventures"..game.Players.LocalPlayer.Name..".json") then
-            local fileContent = readfile("RebornXer Hub Anime Adventures"..game.Players.LocalPlayer.Name..".json")
-            local success, decoded = pcall(function()
-                return game:GetService("HttpService"):JSONDecode(fileContent)
-            end)
-            
-            if success then
-                _G.SST = decoded
-            else
-            end
-        else
-            SS()
-        end
-    end
-    function SS()
-
-    if isfile("RebornXer Hub Anime Adventures"..game.Players.LocalPlayer.Name..".json") then
-    writefile("RebornXer Hub Anime Adventures"..game.Players.LocalPlayer.Name..".json",game:GetService("HttpService"):JSONEncode(_G.SST))
-    else
-    loadcheck()
-    end
-    end
+    local fileName = "RebornXer Hub Anime Adventures" .. game.Players.LocalPlayer.Name .. ".json"
     
-    loadcheck()
-    LoadSetting()
+    if not isfile(fileName) then
+        writefile(fileName, game:GetService("HttpService"):JSONEncode(_G.SST))
+        return
+    end
+end
+
+pcall(function()
+    _G.SST = {
+        Select_Map = "",
+        Select_Act = "",
+        Select_Mode = "",
+        Select_Friend_Only = false,
+        Auto_Join = false,
+        Auto_ReJoin = false,
+        Farm_Sukuna = false,
+        Select_Farme_Rate = 60,
+        Auto_Rejoin_Kick = true,
+        Boost_Fps = false,
+        Black_Screen = false,
+        Sent_WebHook = false,
+        WebHook_Link = "",
+        Auto_Back_To_Lobby = false,
+        Farm_Gem = false,
+        Auto_Farm_HolidayStars = false,
+        Farm_Level = false,
+        Anti_AFK = true,
+        Auto_Upgrade_Unit = false,
+        Select_To_Upgrade = "All Unit",
+        Feed_Easter = false,
+        Claim_Easter = false
+    }
+end)
+
+function LoadSetting()
+    local fileName = "RebornXer Hub Anime Adventures" .. game.Players.LocalPlayer.Name .. ".json"
+    
+    if isfile(fileName) then
+        local fileContent = readfile(fileName)
+        local success, decoded = pcall(function()
+            return game:GetService("HttpService"):JSONDecode(fileContent)
+        end)
+        
+        if success then
+            _G.SST = decoded
+        end
+    else
+        SS()
+    end
+end
+
+function SS()
+    local fileName = "RebornXer Hub Anime Adventures" .. game.Players.LocalPlayer.Name .. ".json"
+    
+    if isfile(fileName) then
+        writefile(fileName, game:GetService("HttpService"):JSONEncode(_G.SST))
+    else
+        loadcheck()
+    end
+end
+
+loadcheck()
+LoadSetting()
+
 
 ---------------------------------------------------- Ui
 local ZenHub = Instance.new("ScreenGui")
@@ -3064,59 +3093,58 @@ Main:AddToggleRight("Auto Upgrade Unit",_G.SST.Auto_Upgrade_Unit,function(a)
 end)
 
 spawn(function()
-    while wait() do
+    while true do
         pcall(function()
-            if _G.SST and _G.SST.Auto_Upgrade_Unit and _G.SST.Select_To_Upgrade == "Cost Unit" then -- ตรวจสอบ _G.SST และ _G.SST.Farm_Sukuna
+            if _G.SST and _G.SST.Auto_Upgrade_Unit and _G.SST.Select_To_Upgrade == "Cost Unit" then
                 local units = workspace._UNITS:GetChildren()
                 for i, v in pairs(units) do
-                    if v:IsA("Model") and v:GetAttribute("range_stat") ~= nil then -- ตรวจสอบว่า unit เป็น Model และมี Attribute "range_stat"
-                        if v.name == "Bulby" or v.Name == "speedwagon" then
-						local up = {
-                            [1] = v -- ใช้ Instance โดยตรง
-                        }
-                        -- เรียกฟังก์ชัน sell_unit_ingame
-                        local success, err = pcall(function()
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(unpack(up))
-                        end)
+                    if v:IsA("Model") and v:GetAttribute("range_stat") ~= nil then
+                        if v.Name == "Bulby" or v.Name == "speedwagon" then
+                            local up = { v }
 
-                        if not success then
-                            warn("Error invoking sell_unit_ingame: " .. tostring(err))
+                            -- เรียกฟังก์ชัน upgrade_unit_ingame
+                            local success, err = pcall(function()
+                                game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(unpack(up))
+                            end)
+
+                            if not success then
+                                warn("Error invoking upgrade_unit_ingame: " .. tostring(err))
+                            end
                         end
-					
-                        wait(0) -- รอเล็กน้อยก่อนตรวจสอบ unit ถัดไป
-						end
                     end
                 end
             end
         end)
+        task.wait(0.1) -- รอเล็กน้อยก่อนทำงานรอบถัดไป
     end
 end)
+
 
 spawn(function()
-    while wait() do
+    while true do
         pcall(function()
-            if _G.SST and _G.SST.Auto_Upgrade_Unit and _G.SST.Select_To_Upgrade == "All Unit" then -- ตรวจสอบ _G.SST และ _G.SST.Farm_Sukuna
+            if _G.SST and _G.SST.Auto_Upgrade_Unit and _G.SST.Select_To_Upgrade == "All Unit" then
                 local units = workspace._UNITS:GetChildren()
                 for i, v in pairs(units) do
-                    if v:IsA("Model") and v:GetAttribute("range_stat") ~= nil then -- ตรวจสอบว่า unit เป็น Model และมี Attribute "range_stat"
-						local up = {
-                            [1] = v -- ใช้ Instance โดยตรง
-                        }
+                    if v:IsA("Model") and v:GetAttribute("range_stat") ~= nil then
+                        local up = { v }
+                        
                         -- เรียกฟังก์ชัน sell_unit_ingame
                         local success, err = pcall(function()
                             game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(unpack(up))
                         end)
 
                         if not success then
-                            warn("Error invoking sell_unit_ingame: " .. tostring(err))
+                            warn("Error invoking upgrade_unit_ingame: " .. tostring(err))
                         end
-                        wait(0) -- รอเล็กน้อยก่อนตรวจสอบ unit ถัดไป
                     end
                 end
             end
         end)
+        task.wait(0.1) -- ลดการรอให้รอบเกิดเร็วขึ้น แต่ไม่ให้บล็อคการทำงานเกินไป
     end
 end)
+
 
 
 Main:AddSeperatorLeft("Farm")
