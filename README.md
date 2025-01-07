@@ -1,4 +1,4 @@
-------------------ำำำำ
+------------------sdg
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 repeat wait() until game:GetService("Players").LocalPlayer._stats
@@ -3511,7 +3511,6 @@ spawn(function()
 end)
 
 	Check:AddSeperatorRight("WebHook")
-		_G.SST.WebHook_Link = WebHook_Link
 Check:AddTextboxRight("WebHook Link",_G.SST.WebHook_Link,true,function(a)
 	WebHook_Link = a
 		_G.SST.WebHook_Link = WebHook_Link
@@ -3527,6 +3526,7 @@ end)
 spawn(function()
     pcall(function()
         while wait() do
+            -- ตรวจสอบว่า Webhook ถูกตั้งค่าให้ส่งข้อมูลหรือไม่
             if _G.SST.Sent_WebHook then
                 -- ตรวจสอบว่าภารกิจสิ้นสุดแล้ว
                 local player = game:GetService("Players").LocalPlayer
@@ -3534,7 +3534,7 @@ spawn(function()
                 local resultsUI = gui.ResultsUI.Holder
 
                 if resultsUI.Enabled == true then
-                    -- ดึงข้อมูลที่จำเป็น
+                    -- ดึงข้อมูลที่จำเป็นจาก UI
                     local Name = player.Name
                     local GameTime = resultsUI.Middle.Timer.Text
                     local GemRewards = resultsUI.LevelRewards.ScrollingFrame.GemReward.Main.Amount.Text
@@ -3545,11 +3545,14 @@ spawn(function()
                     local FurthestRoom = gui.BattlePass.Main.FurthestRoom.V.Text
                     local TitleText = resultsUI.Title.Text
 
-                    -- ข้อมูลเกี่ยวกับ Star Pass และแผนที่
+                    -- ข้อมูลเกี่ยวกับเกม
                     local NameGames = "[❄️CHRISTMAS + 💫RERELEASE + 🏆TOURNAMENT] AA"
 
+                    -- ตรวจสอบ URL ของ WebHook
                     if _G.SST.WebHook_Link ~= "" then
                         local url = _G.SST.WebHook_Link
+
+                        -- ข้อมูลที่จะส่งไปยัง Webhook
                         local data = {
                             ["content"] = "",
                             ["embeds"] = {
@@ -3562,24 +3565,20 @@ spawn(function()
                                     ["color"] = tonumber(0x13da),
                                     ["fields"] = {
                                         {
-                                            ["name"] = Name,
-                                            ["value"] = "```" .. player.PlayerGui.spawn_units.Lives.Main.Desc.Level.Text .. "```"
+                                            ["name"] = "Player Name",
+                                            ["value"] = "```" .. Name .. "```"
                                         },
                                         {
-                                            ["name"] = "Total",
-                                            ["value"] = "```Gems: " .. player._stats.gem_amount.Value .. "   XP: " .. player._stats.player_xp.Value .. "  HolidayStars: " .. player._stats._resourceHolidayStars.Value .."```"
+                                            ["name"] = "Total Stats",
+                                            ["value"] = "```Gems: " .. player._stats.gem_amount.Value .. " | XP: " .. player._stats.player_xp.Value .. " | HolidayStars: " .. player._stats._resourceHolidayStars.Value .. "```"
                                         },
                                         {
-                                            ["name"] = "Wave",
+                                            ["name"] = "Wave Completed",
                                             ["value"] = "```" .. resultsUI.Middle.WavesCompleted.Text .. "```"
                                         },
                                         {
-                                            ["name"] = "Mode Select",
-                                            ["value"] = "```Mode: " .. ModeSelect .. "```"
-                                        },
-                                        {
-                                            ["name"] = "Gem",
-                                            ["value"] = "```Gem: " .. player._stats.gem_amount.Value .. "```"
+                                            ["name"] = "Mode",
+                                            ["value"] = "```" .. ModeSelect .. "```"
                                         },
                                         {
                                             ["name"] = "Elapsed Time",
@@ -3587,19 +3586,22 @@ spawn(function()
                                         },
                                         {
                                             ["name"] = "Rewards",
-                                            ["value"] = "```Gems: " .. GemRewards .. "   XP: " .. XpRewards .. "```"
+                                            ["value"] = "```Gems: " .. GemRewards .. " | XP: " .. XpRewards .. "```"
                                         }
                                     }
                                 }
                             }
                         }
 
+                        -- แปลงข้อมูลเป็น JSON
                         local jsonData = game:GetService("HttpService"):JSONEncode(data)
 
+                        -- ตั้งค่าหัวข้อของ HTTP Request
                         local headers = {
                             ["Content-Type"] = "application/json"
                         }
 
+                        -- ส่ง HTTP Request ไปยัง Webhook
                         local request = http_request or request or HttpPost or syn.request
                         if request then
                             local response = request({
@@ -3608,6 +3610,7 @@ spawn(function()
                                 Method = "POST",
                                 Headers = headers
                             })
+                            -- ตรวจสอบผลลัพธ์จากการส่ง Webhook
                             if response.StatusCode ~= 200 then
                                 warn("Failed to send webhook. Status Code: " .. response.StatusCode)
                             end
@@ -3615,15 +3618,18 @@ spawn(function()
                             warn("HTTP request function not available.")
                         end
                     else
+                        -- แสดงข้อความหาก WebHook URL ไม่ถูกต้อง
                         print("Invalid Webhook URL")
                     end
 
+                    -- ตั้งค่าว่าไม่ต้องส่งข้อมูล WebHook อีกครั้ง
                     _G.SST.Sent_WebHook = false
                 end
             end
         end
     end)
 end)
+
 
 
 
