@@ -3,7 +3,7 @@ repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 repeat wait() until game:GetService("Players").LocalPlayer._stats
 repeat wait() until workspace._PETS
-repeat wait() until game:GetService("Players").LocalPlayer.PlayerGui
+repeat wait() until game:GetService("Players").LocalPlayer:FindFirstChild("PlayerGui")
 
 ----------------------------------- save
 function loadcheck()
@@ -3432,37 +3432,44 @@ end)
 
 Misc:AddSeperatorRight("Fps")
 local player = game:GetService("Players").LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+local blackScreenUI = nil
 
-local blackscreen = function(enable)
-    local playerGui = player:WaitForChild("PlayerGui")
+local function toggleBlackScreen(enable)
+    -- If we're disabling the black screen
     if not enable then
-        local sUi = playerGui:FindFirstChild("Blackscreen")
-        if sUi then sUi:Destroy() end
-        return
-    elseif playerGui:FindFirstChild("Blackscreen") then
+        if blackScreenUI then
+            blackScreenUI:Destroy()
+            blackScreenUI = nil
+        end
         return
     end
-    local sUi = Instance.new("ScreenGui", playerGui)
-    sUi.Name = "Blackscreen"
-    sUi.DisplayOrder = -727
 
-    local uiFrame = Instance.new("Frame", sUi)
+    -- If the black screen already exists, do nothing
+    if blackScreenUI then return end
+
+    -- Create the black screen UI
+    blackScreenUI = Instance.new("ScreenGui", playerGui)
+    blackScreenUI.Name = "Blackscreen"
+    blackScreenUI.DisplayOrder = -727
+
+    local uiFrame = Instance.new("Frame", blackScreenUI)
     uiFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-    uiFrame.Size = UDim2.new(0, 72727, 0, 72727)
-    uiFrame.Position = UDim2.new(0, 0, -5, 0)
+    uiFrame.Size = UDim2.new(1, 0, 1, 0)  -- Adjust size to fill screen
+    uiFrame.Position = UDim2.new(0, 0, 0, 0)  -- Center it to the screen
 end
-    
-Misc:AddToggleRight("Black Screen",_G.SST.Black_Screen,function(value)
-    Black_Screen = value
-	_G.SST.Black_Screen = Black_Screen
-	SS()
-if _G.SST.Black_Screen == true then
-    game:GetService("RunService"):Set3dRenderingEnabled(false)
-    blackscreen(true)
-elseif _G.SST.Black_Screen == false then
-    game:GetService("RunService"):Set3dRenderingEnabled(true)
-    blackscreen(false)
-end
+
+Misc:AddToggleRight("Black Screen", _G.SST.Black_Screen, function(value)
+    _G.SST.Black_Screen = value
+    SS()  -- Assuming this function handles any additional logic
+
+    if value then
+        game:GetService("RunService"):Set3dRenderingEnabled(false)
+        toggleBlackScreen(true)
+    else
+        game:GetService("RunService"):Set3dRenderingEnabled(true)
+        toggleBlackScreen(false)
+    end
 end)
 
 Misc:AddToggleRight("Boost Fps",_G.SST.Boost_Fps,function(va)
@@ -3623,7 +3630,6 @@ end)
 
 
 -- เช็คว่าข้อมูล PlayerGui ถูกโหลดหรือยัง
-repeat wait() until game:GetService("Players").LocalPlayer:FindFirstChild("PlayerGui")
 
 -- เพิ่ม Separator
 Check:AddSeperatorLeft("Player")
