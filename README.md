@@ -1,8 +1,9 @@
-------------------555
+------------------rrr
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 repeat wait() until game:GetService("Players").LocalPlayer._stats
 repeat wait() until workspace._PETS
+repeat wait() until game:GetService("Players").LocalPlayer.PlayerGui
 
 ----------------------------------- save
 function loadcheck()
