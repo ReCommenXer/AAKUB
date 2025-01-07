@@ -1,4 +1,4 @@
-------------------แแแ
+------------------456789
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 repeat wait() until game:GetService("Players").LocalPlayer._stats
@@ -24,7 +24,7 @@ pcall(function()
         Auto_Join = false,
         Auto_ReJoin = false,
         Farm_Sukuna = false,
-        Select_Farme_Rate = 60,
+        Select_Farme_Rate = "60",
         Auto_Rejoin_Kick = true,
         Boost_Fps = false,
         Black_Screen = false,
@@ -3478,9 +3478,9 @@ Misc:AddToggleRight("Boost Fps",_G.SST.Boost_Fps,function(va)
  SS()
 end)
 
-_G.SST.Select_Farme_Rate = Select_Farme_Rate
+_G.SST.Select_Farme_Rate = _G.SST.Select_Farme_Rate
 Misc:AddSliderRight("Select Farme Rate", 0, 240, _G.SST.Select_Farme_Rate, function(a)
-	Select_Farme_Rate = a  -- ใช้ตัวแปร a แทนค่า Select_Farme_Rate
+	_G.Select_Farme_Rate = a  -- ใช้ตัวแปร a แทนค่า Select_Farme_Rate
 	SS()
 end)
 
