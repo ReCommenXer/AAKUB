@@ -3558,23 +3558,22 @@ spawn(function()
     end
 end)
 
-Misc:AddToggleLeft("Anti AFK",_G.SST.Anti_AFK,function(a)
-	Anti_AFK  = a
+Misc:AddToggleLeft("Anti AFK", _G.SST.Anti_AFK, function(isEnabled)
+    Anti_AFK = isEnabled
 	_G.SST.Anti_AFK = Anti_AFK
-	SS()
+    SS()
 end)
 
 spawn(function()
-    while wait(30) do -- ทำงานทุก 30 วินาที
+    while _G.SST.Anti_AFK and task.wait(30) do
         pcall(function()
-            if _G.SST.Anti_AFK then
-                local VirtualUser = game:service("VirtualUser")
-                VirtualUser:CaptureController()
-                VirtualUser:ClickButton2(Vector2.new()) -- จำลองการคลิกขวา
-            end
+            local VirtualUser = game:GetService("VirtualUser")
+            VirtualUser:CaptureController()
+            VirtualUser:ClickButton2(Vector2.new()) -- จำลองการคลิกขวา
         end)
     end
 end)
+
 
 	Check:AddSeperatorRight("WebHook")
 Check:AddTextboxRight("WebHook Link",_G.SST.WebHook_Link,true,function(a)
@@ -3801,7 +3800,7 @@ spawn(function()
                 end
 
                 -- ลบอุปกรณ์ที่ไม่จำเป็น
-                for _, v in pairs(g:GetDescendants()) do
+                for _, v i n pairs(g:GetDescendants()) do
                     if v:IsA("Accessory") or v:IsA("Clothing") then
                         v:Destroy()
                     end
@@ -3810,5 +3809,4 @@ spawn(function()
         end)
     end
 end)
-
 
