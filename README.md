@@ -1,4 +1,4 @@
-------------------yyy
+------------------aaaa
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 repeat wait() until game:GetService("Players").LocalPlayer._stats
@@ -3099,7 +3099,7 @@ spawn(function()
                 local units = workspace._UNITS:GetChildren()
                 for i, v in pairs(units) do
                     if v:IsA("Model") and v:GetAttribute("range_stat") ~= nil then
-                        if v.Name == "Bulby" or v.Name == "speedwagon" or v.Name == "speedwagon:Shiny" or v.Name == "speedwagon:Shiny:Golden" or v.Name == "speedwagon:Golden" then
+                        if v.Name == "bulma" or v.Name == "bulma:shiny" or v.Name == "bulma:shiny:golden" or v.Name == "speedwagon" or v.Name == "speedwagon:shiny" or v.Name == "speedwagon:shiny:golden" or v.Name == "speedwagon:golden" then
                             local up = { v }
 
                             -- เรียกฟังก์ชัน upgrade_unit_ingame
@@ -3609,6 +3609,32 @@ spawn(function()
                     if _G.SST.WebHook_Link and _G.SST.WebHook_Link ~= "" then
                         pcall(function()
                             local url = _G.SST.WebHook_Link
+                            local fields = {}
+
+                            -- Add Total field
+                            table.insert(fields, {
+                                ["name"] = "Total",
+                                ["value"] = "```Name          : " .. Name ..
+                                            "\nGem           : " .. player._stats.gem_amount.Value ..
+                                            "\nGold          : " .. player._stats.gold_amount.Value ..
+                                            "\nXP            : " .. player._stats.player_xp.Value ..
+                                            "\nHolidayStars  : " .. player._stats._resourceHolidayStars.Value .. "```"
+                            })
+
+                            -- Add Time field
+                            table.insert(fields, {
+                                ["name"] = "⌛Time⌛",
+                                ["value"] = "```" .. GameTime .. "```"
+                            })
+
+                            -- Add Rewards field only if conditions are met
+                            if GemRewards ~= "+99999" or XpRewards ~= "+99999 XP" then
+                                table.insert(fields, {
+                                    ["name"] = "Rewards",
+                                    ["value"] = "```Gems: " .. GemRewards .. "   XP: " .. XpRewards .. "```"
+                                })
+                            end
+
                             local data = {
                                 ["content"] = "",
                                 ["embeds"] = {
@@ -3617,25 +3643,7 @@ spawn(function()
                                         ["type"] = "rich",
                                         ["title"] = NameGames,
                                         ["color"] = tonumber(0x13da),
-                                        ["fields"] = {
-                                           	{
-												["name"] = "Total",
-												["value"] = "```Name          : " .. Name ..
-															"\nGem           : " .. player._stats.gem_amount.Value ..
-															"\nGold          : " .. player._stats.gold_amount.Value ..
-															"\nXP            : " .. player._stats.player_xp.Value ..
-															"\nHolidayStars  : " .. player._stats._resourceHolidayStars.Value .. "```"
-											},
-
-                                            {
-                                                ["name"] = "Elapsed Time",
-                                                ["value"] = "```" .. GameTime .. "```"
-                                            },
-                                            {
-                                                ["name"] = "Rewards",
-                                                ["value"] = "```Gems: " .. GemRewards .. "   XP: " .. XpRewards .. "```"
-                                            }
-                                        }
+                                        ["fields"] = fields
                                     }
                                 }
                             }
@@ -3668,7 +3676,6 @@ spawn(function()
         end
     end)
 end)
-
 
 -- เพิ่ม Separator
 Check:AddSeperatorLeft("Player")
