@@ -1,4 +1,4 @@
-------------------666
+------------------yyy
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 repeat wait() until game:GetService("Players").LocalPlayer._stats
@@ -3618,13 +3618,15 @@ spawn(function()
                                         ["title"] = NameGames,
                                         ["color"] = tonumber(0x13da),
                                         ["fields"] = {
-                                            {
-                                                ["name"] = "Total",
-                                                ["value"] = "```Gem: " .. player._stats.gem_amount.Value ..
-                                                            "\nGold: " .. player._stats.gem_amount.Value ..
-                                                            "\nXP: " .. player._stats.player_xp.Value ..
-                                                            "\nHolidayStars: " .. player._stats._resourceHolidayStars.Value .. "```"
-                                            },
+                                           	{
+												["name"] = "Total",
+												["value"] = "```Name          : " .. Name ..
+															"\nGem           : " .. player._stats.gem_amount.Value ..
+															"\nGold          : " .. player._stats.gold_amount.Value ..
+															"\nXP            : " .. player._stats.player_xp.Value ..
+															"\nHolidayStars  : " .. player._stats._resourceHolidayStars.Value .. "```"
+											},
+
                                             {
                                                 ["name"] = "Elapsed Time",
                                                 ["value"] = "```" .. GameTime .. "```"
