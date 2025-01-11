@@ -1,4 +1,4 @@
-------------------555
+------------------rrr
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 repeat wait() until game:GetService("Players").LocalPlayer._stats
@@ -3099,7 +3099,7 @@ spawn(function()
                 local units = workspace._UNITS:GetChildren()
                 for i, v in pairs(units) do
                     if v:IsA("Model") and v:GetAttribute("range_stat") ~= nil then
-                        if v.Name == "Bulby" or v.Name == "speedwagon" then
+                        if v.Name == "Bulby" or v.Name == "speedwagon" or v.Name == "speedwagon:Shiny" or v.Name == "speedwagon:Shiny:Golden" or v.Name == "speedwagon:Golden" then
                             local up = { v }
 
                             -- เรียกฟังก์ชัน upgrade_unit_ingame
@@ -3435,10 +3435,10 @@ local player = game:GetService("Players").LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 local blackScreenUI = nil
 
--- Function to toggle the black screen
+-- ฟังก์ชันสำหรับเปิด/ปิดจอดำ
 local function toggleBlackScreen(enable)
     if not enable then
-        -- If disabling, remove the black screen UI
+        -- ถ้าปิดจอดำ ให้ลบ UI ออก
         if blackScreenUI then
             blackScreenUI:Destroy()
             blackScreenUI = nil
@@ -3446,40 +3446,42 @@ local function toggleBlackScreen(enable)
         return
     end
 
-    -- If the black screen already exists, do nothing
+    -- ถ้าจอดำมีอยู่แล้ว ไม่ต้องทำอะไร
     if blackScreenUI then return end
 
-    -- Create the black screen UI
+    -- สร้าง UI จอดำ
     blackScreenUI = Instance.new("ScreenGui")
     blackScreenUI.Name = "Blackscreen"
-    blackScreenUI.DisplayOrder = 1000 -- Ensures it's on top of other UIs
-    blackScreenUI.ResetOnSpawn = false -- Keeps the UI persistent if the character respawns
+    blackScreenUI.DisplayOrder = 1000 -- ให้แสดงอยู่เหนือ UI อื่นๆ
+    blackScreenUI.ResetOnSpawn = false -- UI จะไม่หายไปเมื่อผู้เล่นตายหรือเกิดใหม่
+    blackScreenUI.IgnoreGuiInset = true -- ให้จอดำครอบคลุมพื้นที่เต็มจอ
     blackScreenUI.Parent = playerGui
 
-    -- Create the black frame
+    -- สร้างเฟรมสีดำ
     local uiFrame = Instance.new("Frame")
-    uiFrame.BackgroundColor3 = Color3.new(0, 0, 0) -- Pure black
-    uiFrame.Size = UDim2.new(1, 0, 1, 0) -- Full screen
-    uiFrame.Position = UDim2.new(0, 0, 0, 0) -- Top-left corner
-    uiFrame.BorderSizePixel = 0 -- No borders
+    uiFrame.BackgroundColor3 = Color3.new(0, 0, 0) -- สีดำสนิท
+    uiFrame.Size = UDim2.new(1, 0, 1, 0) -- เต็มหน้าจอ
+    uiFrame.Position = UDim2.new(0, 0, 0, 0) -- มุมบนซ้าย
+    uiFrame.BorderSizePixel = 0 -- ไม่มีขอบ
     uiFrame.Parent = blackScreenUI
 end
 
--- Add a toggle function (assuming Misc:AddToggleRight is part of a library)
+-- เพิ่มปุ่ม toggle (สมมติว่า Misc:AddToggleRight เป็นฟังก์ชันจากระบบที่ใช้งานอยู่)
 Misc:AddToggleRight("Black Screen", _G.SST.Black_Screen, function(value)
     _G.SST.Black_Screen = value
-    SS() -- Assuming this is a custom function for additional logic
+    SS() -- ฟังก์ชันเพิ่มเติมที่คุณมีในระบบ
 
     if value then
-        -- Disable 3D rendering and enable black screen
+        -- ปิดการแสดงผล 3D และเปิดจอดำ
         game:GetService("RunService"):Set3dRenderingEnabled(false)
         toggleBlackScreen(true)
     else
-        -- Enable 3D rendering and disable black screen
+        -- เปิดการแสดงผล 3D และปิดจอดำ
         game:GetService("RunService"):Set3dRenderingEnabled(true)
         toggleBlackScreen(false)
     end
 end)
+
 
 Misc:AddToggleRight("Boost Fps",_G.SST.Boost_Fps,function(va)
 	Boost_Fps = va
@@ -3487,10 +3489,24 @@ Misc:AddToggleRight("Boost Fps",_G.SST.Boost_Fps,function(va)
  SS()
 end)
 
-_G.SST.Select_Farme_Rate = _G.SST.Select_Farme_Rate
-Misc:AddSliderRight("Select Farme Rate", 0, 240, _G.SST.Select_Farme_Rate, function(a)
-	_G.Select_Farme_Rate = a  -- ใช้ตัวแปร a แทนค่า Select_Farme_Rate
-	SS()
+-- สร้าง Slider สำหรับการเลือก Frame Rate
+Misc:AddSliderRight("Select Frame Rate", 0, 240, _G.SST.Select_Farme_Rate, function(a)
+    Select_Farme_Rate = a -- ใช้ตัวแปร a แทนค่า Select_Farme_Rate
+	_G.SST.Select_Farme_Rate = Select_Farme_Rate
+    SS() -- ฟังก์ชันเพิ่มเติม
+end)
+
+-- เริ่มฟังก์ชัน spawn สำหรับการตั้งค่า FPS
+spawn(function()
+    while task.wait(1) do
+        pcall(function()
+            if type(_G.SST.Select_Farme_Rate) == "number" and _G.SST.Select_Farme_Rate > 0 then
+                setfpscap(_G.SST.Select_Farme_Rate) -- ตั้งค่าความเร็วเฟรมตามค่า
+            else
+                setfpscap(60) -- ตั้งค่าเริ่มต้นหากไม่มีค่า
+            end
+        end)
+    end
 end)
 
 
@@ -3499,6 +3515,47 @@ Misc:AddToggleLeft("Auto Rejoin [Kick]",_G.SST.Auto_Rejoin_Kick ,function(a)
 	Auto_Rejoin_Kick  = a
 	_G.SST.Auto_Rejoin_Kick = Auto_Rejoin_Kick
 	SS()
+end)
+local teleportService = game:GetService("TeleportService")
+local coreGui = game:GetService("CoreGui")
+local rejoinConnection = nil
+
+-- ฟังก์ชันสำหรับเริ่มการตรวจจับการเตะ
+local function startAutoRejoin()
+    if rejoinConnection then return end -- ป้องกันการสร้างการเชื่อมต่อซ้ำ
+
+    rejoinConnection = coreGui.RobloxPromptGui.promptOverlay.ChildAdded:Connect(function(child)
+        -- ตรวจสอบว่ามีหน้าต่าง ErrorPrompt หรือไม่
+        if child.Name == "ErrorPrompt" and child:FindFirstChild("MessageArea") and child.MessageArea:FindFirstChild("ErrorFrame") then
+            -- ถ้าเปิดใช้งาน Auto_Rejoin ให้ส่งผู้เล่นกลับเซิร์ฟเวอร์
+            if _G.SST.Auto_Rejoin_Kick then
+                teleportService:Teleport(8304191830)
+                wait(50) -- รอ 50 วินาทีเพื่อป้องกันการวนลูป
+            end
+        end
+    end)
+end
+
+-- ฟังก์ชันสำหรับหยุดการตรวจจับการเตะ
+local function stopAutoRejoin()
+    if rejoinConnection then
+        rejoinConnection:Disconnect()
+        rejoinConnection = nil
+    end
+end
+
+-- เริ่มต้นการทำงาน
+spawn(function()
+    while true do
+        wait(1) -- เพิ่มระยะเวลาเพื่อประหยัดทรัพยากร
+        pcall(function()
+            if _G.SST.Auto_Rejoin_Kick then
+                startAutoRejoin()
+            else
+                stopAutoRejoin()
+            end
+        end)
+    end
 end)
 
 Misc:AddToggleLeft("Anti AFK",_G.SST.Anti_AFK,function()
@@ -3754,25 +3811,4 @@ spawn(function()
     end
 end)
 
-spawn(function()
-    while true do wait()
-		pcall(function()
-        	_G.SST.Auto_Rejoin_Kick = game:GetService("CoreGui").RobloxPromptGui.promptOverlay.ChildAdded:Connect(function(Kick)
-            	if _G.SST.Auto_Rejoin_Kick then
-                	if Kick.Name == 'ErrorPrompt' and Kick:FindFirstChild('MessageArea') and Kick.MessageArea:FindFirstChild("ErrorFrame") then
-                   	 	game:GetService("TeleportService"):Teleport(8304191830)
-                    	wait(50)
-                	end
-            	end
-			end)
-        end)
-    end
-end)
--- สร้าง toggle เพื่อเปิด/ปิดการตั้งค่า FPS cap
-spwan(function()
-	while task.wait(1) do
-		pcall(function()
-		setfpscap(_G.SST.Select_Farme_Rate) -- ตั้งค่าความเร็วเฟรมตามค่า 
-		end)
-	end
-end)
+
