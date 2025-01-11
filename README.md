@@ -1,4 +1,4 @@
-------------------rrr
+------------------555
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 repeat wait() until game:GetService("Players").LocalPlayer._stats
@@ -3435,9 +3435,10 @@ local player = game:GetService("Players").LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 local blackScreenUI = nil
 
+-- Function to toggle the black screen
 local function toggleBlackScreen(enable)
-    -- If we're disabling the black screen
     if not enable then
+        -- If disabling, remove the black screen UI
         if blackScreenUI then
             blackScreenUI:Destroy()
             blackScreenUI = nil
@@ -3449,24 +3450,32 @@ local function toggleBlackScreen(enable)
     if blackScreenUI then return end
 
     -- Create the black screen UI
-    blackScreenUI = Instance.new("ScreenGui", playerGui)
+    blackScreenUI = Instance.new("ScreenGui")
     blackScreenUI.Name = "Blackscreen"
-    blackScreenUI.DisplayOrder = -727
+    blackScreenUI.DisplayOrder = 1000 -- Ensures it's on top of other UIs
+    blackScreenUI.ResetOnSpawn = false -- Keeps the UI persistent if the character respawns
+    blackScreenUI.Parent = playerGui
 
-    local uiFrame = Instance.new("Frame", blackScreenUI)
-    uiFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-    uiFrame.Size = UDim2.new(1, 0, 1, 0)  -- Adjust size to fill screen
-    uiFrame.Position = UDim2.new(0, 0, 0, 0)  -- Center it to the screen
+    -- Create the black frame
+    local uiFrame = Instance.new("Frame")
+    uiFrame.BackgroundColor3 = Color3.new(0, 0, 0) -- Pure black
+    uiFrame.Size = UDim2.new(1, 0, 1, 0) -- Full screen
+    uiFrame.Position = UDim2.new(0, 0, 0, 0) -- Top-left corner
+    uiFrame.BorderSizePixel = 0 -- No borders
+    uiFrame.Parent = blackScreenUI
 end
 
+-- Add a toggle function (assuming Misc:AddToggleRight is part of a library)
 Misc:AddToggleRight("Black Screen", _G.SST.Black_Screen, function(value)
     _G.SST.Black_Screen = value
-    SS()  -- Assuming this function handles any additional logic
+    SS() -- Assuming this is a custom function for additional logic
 
     if value then
+        -- Disable 3D rendering and enable black screen
         game:GetService("RunService"):Set3dRenderingEnabled(false)
         toggleBlackScreen(true)
     else
+        -- Enable 3D rendering and disable black screen
         game:GetService("RunService"):Set3dRenderingEnabled(true)
         toggleBlackScreen(false)
     end
@@ -3570,14 +3579,6 @@ if WebHook ~= "" then
                             ["name"] = "Total",
                             ["value"] = "```Gems: " .. game:GetService("Players").LocalPlayer._stats.gem_amount.Value .. "   XP: " .. game:GetService("Players").LocalPlayer._stats.player_xp.Value .. "  HolidayStars: " .. game:GetService("Players").LocalPlayer._stats._resourceHolidayStars.Value .."```"
                         },
-						{
-                            ["name"] = "Wave",
-                            ["value"] = "```" .. game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Holder.Middle.WavesCompleted.Text .. "```"
-                        },
-                        {
-                            ["name"] = "Mode Select",
-                            ["value"] = "```Mode: " .. ModeSelect .. "```"
-                        },
                         {
                             ["name"] = "Gem",
                             ["value"] = "```Gem: " .. game:GetService("Players").LocalPlayer._stats.gem_amount.Value .. "```"
@@ -3626,10 +3627,6 @@ end
         end
     end)
 end)
-
-
-
--- เช็คว่าข้อมูล PlayerGui ถูกโหลดหรือยัง
 
 -- เพิ่ม Separator
 Check:AddSeperatorLeft("Player")
