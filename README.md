@@ -3511,7 +3511,6 @@ spawn(function()
 end)
 
 	Check:AddSeperatorRight("WebHook")
-			_G.SST.WebHook_Link = _G.SST.WebHook_Link
 Check:AddTextboxRight("WebHook Link",_G.SST.WebHook_Link,true,function(a)
 	WebHook_Link = a
 		_G.SST.WebHook_Link = WebHook_Link
@@ -3532,7 +3531,7 @@ spawn(function()
                 -- ตรวจสอบว่าภารกิจสิ้นสุดแล้ว
                 local player = game:GetService("Players").LocalPlayer
                 local gui = player.PlayerGui
-                local resultsUI = gui.ResultsUI.Holder
+                local resultsUI = gui.ResultsUI
 
                 if resultsUI.Enabled == true then
                     -- ดึงข้อมูลที่จำเป็นจาก UI
