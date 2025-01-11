@@ -1,4 +1,4 @@
-------------------rrr
+------------------yyy
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 repeat wait() until game:GetService("Players").LocalPlayer._stats
@@ -3558,7 +3558,7 @@ spawn(function()
     end
 end)
 
-Misc:AddToggleLeft("Anti AFK",_G.SST.Anti_AFK,function()
+Misc:AddToggleLeft("Anti AFK",_G.SST.Anti_AFK,function(a)
 	Anti_AFK  = a
 	_G.SST.Anti_AFK = Anti_AFK
 	SS()
