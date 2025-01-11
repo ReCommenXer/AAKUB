@@ -3632,9 +3632,12 @@ if WebHook ~= "" then
                             ["value"] = "```" ..game:GetService("Players").LocalPlayer.PlayerGui.spawn_units.Lives.Main.Desc.Level.Text .. "```"
                         },
 						{
-                            ["name"] = "Total",
-                            ["value"] = "```Gems: " .. game:GetService("Players").LocalPlayer._stats.gem_amount.Value .. "   XP: " .. game:GetService("Players").LocalPlayer._stats.player_xp.Value .. "  HolidayStars: " .. game:GetService("Players").LocalPlayer._stats._resourceHolidayStars.Value .."```"
-                        },
+							["name"] = "Total",
+							["value"] = "```Gem: " .. game:GetService("Players").LocalPlayer._stats.gem_amount.Value ..
+										"\nGold: " .. game:GetService("Players").LocalPlayer._stats.gem_amount.Value ..
+										"\nXP: " .. game:GetService("Players").LocalPlayer._stats.player_xp.Value ..
+										"\nHolidayStars: " .. game:GetService("Players").LocalPlayer._stats._resourceHolidayStars.Value .. "```"
+						},						
                         {
                             ["name"] = "Gem",
                             ["value"] = "```Gem: " .. game:GetService("Players").LocalPlayer._stats.gem_amount.Value .. "```"
