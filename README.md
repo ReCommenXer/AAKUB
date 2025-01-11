@@ -3593,54 +3593,37 @@ spawn(function()
         while wait() do
             if _G.SST.Sent_WebHook then
                 -- Check if the mission has ended
-                if game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Enabled == true then
-                    -- Retrieve the local player
-                    local player = game:GetService("Players").LocalPlayer
+                local player = game:GetService("Players").LocalPlayer
+                local resultsUI = player.PlayerGui:FindFirstChild("ResultsUI")
 
-                    -- Retrieve necessary details
-                    local gui = player.PlayerGui
-                    local resultsUI = gui.ResultsUI.Holder
-
+                if resultsUI and resultsUI.Enabled == true then
+                    -- Retrieve details
                     local Name = player.Name
-                    local GameTime = resultsUI.Middle.Timer.Text
-                    local GemRewards = resultsUI.LevelRewards.ScrollingFrame.GemReward.Main.Amount.Text
-                    local XpRewards = resultsUI.LevelRewards.ScrollingFrame.XPReward.Main.Amount.Text
-                    local ModeSelect = resultsUI.Difficulty.Text
-                    local NameMap = resultsUI.LevelName.Text
-                    local BattlePassLevel = gui.BattlePass.Main.Level.V.Text
-                    local FurthestRoom = gui.BattlePass.Main.FurthestRoom.V.Text
-                    local TitleText = resultsUI.Title.Text
+                    local gui = player.PlayerGui
+                    local GemRewards = resultsUI.Holder.LevelRewards.ScrollingFrame.GemReward.Main.Amount.Text
+                    local XpRewards = resultsUI.Holder.LevelRewards.ScrollingFrame.XPReward.Main.Amount.Text
+                    local GameTime = resultsUI.Holder.Middle.Timer.Text
 
-                    -- Star Pass Level and Map Information
                     local NameGames = "[❄️CHRISTMAS + 💫RERELEASE + 🏆TOURNAMENT] AA"
-                    if WebHook ~= "" then
+
+                    if _G.SST.WebHook_Link and _G.SST.WebHook_Link ~= "" then
                         pcall(function()
                             local url = _G.SST.WebHook_Link
                             local data = {
                                 ["content"] = "",
                                 ["embeds"] = {
                                     {
-                                        ["author"] = {
-                                            ["name"] = "ReBornxer Hub WebHook"
-                                        },
+                                        ["author"] = { ["name"] = "ReBornxer Hub WebHook" },
                                         ["type"] = "rich",
                                         ["title"] = NameGames,
                                         ["color"] = tonumber(0x13da),
                                         ["fields"] = {
                                             {
-                                                ["name"] = Name,
-                                                ["value"] = "```" .. game:GetService("Players").LocalPlayer.PlayerGui.spawn_units.Lives.Main.Desc.Level.Text .. "```"
-                                            },
-                                            {
                                                 ["name"] = "Total",
-                                                ["value"] = "```Gem: " .. game:GetService("Players").LocalPlayer._stats.gem_amount.Value ..
-                                                            "\nGold: " .. game:GetService("Players").LocalPlayer._stats.gem_amount.Value ..
-                                                            "\nXP: " .. game:GetService("Players").LocalPlayer._stats.player_xp.Value ..
-                                                            "\nHolidayStars: " .. game:GetService("Players").LocalPlayer._stats._resourceHolidayStars.Value .. "```"
-                                            },
-                                            {
-                                                ["name"] = "Gem",
-                                                ["value"] = "```Gem: " .. game:GetService("Players").LocalPlayer._stats.gem_amount.Value .. "```"
+                                                ["value"] = "```Gem: " .. player._stats.gem_amount.Value ..
+                                                            "\nGold: " .. player._stats.gem_amount.Value ..
+                                                            "\nXP: " .. player._stats.player_xp.Value ..
+                                                            "\nHolidayStars: " .. player._stats._resourceHolidayStars.Value .. "```"
                                             },
                                             {
                                                 ["name"] = "Elapsed Time",
@@ -3656,10 +3639,7 @@ spawn(function()
                             }
 
                             local jsonData = game:GetService("HttpService"):JSONEncode(data)
-
-                            local headers = {
-                                ["Content-Type"] = "application/json"
-                            }
+                            local headers = { ["Content-Type"] = "application/json" }
 
                             local request = http_request or request or HttpPost or syn.request
                             if request then
@@ -3677,7 +3657,7 @@ spawn(function()
                             end
                         end)
                     else
-                        print("Invalid Webhook URL")
+                        warn("Invalid Webhook URL")
                     end
 
                     _G.SST.Sent_WebHook = false
@@ -3686,6 +3666,7 @@ spawn(function()
         end
     end)
 end)
+
 
 -- เพิ่ม Separator
 Check:AddSeperatorLeft("Player")
