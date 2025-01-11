@@ -1,4 +1,4 @@
-------------------aaaa
+------------------yyy
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 repeat wait() until game:GetService("Players").LocalPlayer._stats
@@ -3613,7 +3613,7 @@ spawn(function()
 
                             -- Add Total field
                             table.insert(fields, {
-                                ["name"] = "Total",
+                                ["name"] = "📊 Total 📊",
                                 ["value"] = "```Name          : " .. Name ..
                                             "\nGem           : " .. player._stats.gem_amount.Value ..
                                             "\nGold          : " .. player._stats.gold_amount.Value ..
@@ -3623,7 +3623,7 @@ spawn(function()
 
                             -- Add Time field
                             table.insert(fields, {
-                                ["name"] = "⌛Time⌛",
+                                ["name"] = "⌛ Time ⌛",
                                 ["value"] = "```" .. GameTime .. "```"
                             })
 
