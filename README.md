@@ -1,4 +1,4 @@
-------------------yyy
+------------------666
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 repeat wait() until game:GetService("Players").LocalPlayer._stats
@@ -3784,7 +3784,7 @@ spawn(function()
                 end
 
                 -- ลบอุปกรณ์ที่ไม่จำเป็น
-                for _, v i n pairs(g:GetDescendants()) do
+                for _, v in pairs(g:GetDescendants()) do
                     if v:IsA("Accessory") or v:IsA("Clothing") then
                         v:Destroy()
                     end
