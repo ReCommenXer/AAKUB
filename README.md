@@ -3564,12 +3564,16 @@ Misc:AddToggleLeft("Anti AFK", _G.SST.Anti_AFK, function(isEnabled)
     SS()
 end)
 
-spawn(function()
+task.spawn(function()
     while _G.SST.Anti_AFK and task.wait(30) do
         pcall(function()
             local VirtualUser = game:GetService("VirtualUser")
             VirtualUser:CaptureController()
-            VirtualUser:ClickButton2(Vector2.new()) -- จำลองการคลิกขวา
+            -- จำลองการกดปุ่มแทนการคลิก
+            VirtualUser:SetKeyDown("W") -- กดปุ่ม "W"
+            task.wait(0.1) -- รอเล็กน้อย
+            VirtualUser:SetKeyUp("W") -- ปล่อยปุ่ม "W"
+            print("Anti-AFK: Simulated key press.")
         end)
     end
 end)
