@@ -97,7 +97,7 @@ ImageButton.Image = ""
 
 -- ฟังก์ชันสำหรับการคลิก
 ImageButton.MouseButton1Click:Connect(function()
-    local ui = game:GetService("CoreGui"):FindFirstChild("1xliiUI") -- ค้นหา UI
+    local ui = game:GetService("CoreGui"):FindFirstChild("RebornXer Hub") -- ค้นหา UI
     if ui and ui:FindFirstChild("Main") then -- ตรวจสอบว่ามี "Main" อยู่ใน UI
         local main = ui.Main
         if main.Size.X.Offset == 600 and main.Size.Y.Offset == 400 then
@@ -151,7 +151,7 @@ _G.SectionTextColor = Color3.fromRGB(0, 0, 255)
 _G.SectionOn = Color3.fromRGB(0, 250, 0)
 
 _G.Color1 = Color3.fromRGB(255,255,255)
-do local GUI = game.CoreGui:FindFirstChild("1xliiUI");if GUI then GUI:Destroy();end;if _G.Color == nil then
+do local GUI = game.CoreGui:FindFirstChild("RebornXer Hub");if GUI then GUI:Destroy();end;if _G.Color == nil then
 _G.Color = Color3.fromRGB(255,255,255)
 end 
 end
@@ -228,7 +228,7 @@ function Update:AddWindow(name,logo,keybind)
 	local yoo = string.gsub(tostring(keybind),"Enum.KeyCode.","")
 	
 	local SOMEXHUB = Instance.new("ScreenGui")
-	SOMEXHUB.Name = "1xliiUI"
+	SOMEXHUB.Name = "RebornXer Hub"
 	SOMEXHUB.Parent = game.CoreGui
 	SOMEXHUB.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
@@ -3528,45 +3528,16 @@ Misc:AddToggleLeft("Auto Rejoin [Kick]",_G.SST.Auto_Rejoin_Kick ,function(a)
 	_G.SST.Auto_Rejoin_Kick = Auto_Rejoin_Kick
 	SS()
 end)
-local teleportService = game:GetService("TeleportService")
-local coreGui = game:GetService("CoreGui")
-local rejoinConnection = nil
-local targetPlaceId = 8304191830 -- กำหนด Place ID ที่ต้องการ
-
-local function startAutoRejoin()
-    if rejoinConnection then return end -- ป้องกันการเชื่อมต่อซ้ำ
-
-    rejoinConnection = coreGui.ChildAdded:Connect(function(child)
-        pcall(function()
-            if child.Name == "ErrorPrompt" and child:FindFirstChild("MessageArea") and child.MessageArea:FindFirstChild("ErrorFrame") then
-                if _G.SST.Auto_Rejoin_Kick then
-                    print("ErrorPrompt detected, attempting to rejoin...")
-                    teleportService:Teleport(targetPlaceId) -- ส่งผู้เล่นไปยัง Place ID ที่กำหนด
-                    wait(5) -- รอ 5 วินาทีเพื่อป้องกันการวนลูป
-                end
-            end
-        end)
-    end)
-end
-
-local function stopAutoRejoin()
-    if rejoinConnection then
-        rejoinConnection:Disconnect()
-        rejoinConnection = nil
-    end
-end
-
--- เริ่มต้นการทำงาน
 spawn(function()
-    while task.wait(1) do
-        pcall(function()
-            if _G.SST.Auto_Rejoin_Kick then
-                startAutoRejoin()
-            else
-                stopAutoRejoin()
-            end
-        end)
-    end
+	while wait() do
+		if _G.SST.Auto_Rejoin_Kick then
+			_G.SST.Auto_Rejoin_Kick = game:GetService("CoreGui").RobloxPromptGui.promptOverlay.ChildAdded:Connect(function(child)
+				if child.Name == 'ErrorPrompt' and child:FindFirstChild('MessageArea') and child.MessageArea:FindFirstChild("ErrorFrame") then
+					game:GetService("TeleportService"):Teleport(8304191830)
+				end
+			end)
+		end
+	end
 end)
 
 
