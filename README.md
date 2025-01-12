@@ -1,4 +1,4 @@
-------------------yyy
+------------------xsssfgfg
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 repeat wait() until game:GetService("Players").LocalPlayer._stats
@@ -83,21 +83,33 @@ local posto = Instance.new("UIStroke")
 local ScreenGui = Instance.new("ScreenGui")
 local ImageButton = Instance.new("ImageButton")
 
-
+-- กำหนดค่าเริ่มต้น
 ScreenGui.Parent = game.CoreGui
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
 ImageButton.Parent = ScreenGui
-ImageButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+ImageButton.BackgroundColor3 = Color3.fromRGB(0, 80, 0)
 ImageButton.BorderSizePixel = 0
 ImageButton.Position = UDim2.new(0.120833337, 0, 0.0952890813, 0)
 ImageButton.Size = UDim2.new(0, 45, 0, 45)
 ImageButton.Draggable = true
 ImageButton.Image = ""
-ImageButton.MouseButton1Down:connect(function()
-game:GetService("VirtualInputManager"):SendKeyEvent(true,305,false,game)
- game:GetService("VirtualInputManager"):SendKeyEvent(false,305,false,game)
+
+-- ฟังก์ชันสำหรับการคลิก
+ImageButton.MouseButton1Click:Connect(function()
+    local ui = game:GetService("CoreGui"):FindFirstChild("1xliiUI") -- ค้นหา UI
+    if ui and ui:FindFirstChild("Main") then -- ตรวจสอบว่ามี "Main" อยู่ใน UI
+        local main = ui.Main
+        if main.Size.X.Offset == 600 and main.Size.Y.Offset == 400 then
+            main.Size = UDim2.new(0, 0, 0, 0) -- ย่อขนาด
+        else
+            main.Size = UDim2.new(0, 600, 0, 400) -- ขยายขนาด
+        end
+    else
+        warn("UI หรือ Main ไม่พบใน CoreGui")
+    end
 end)
+
 
 
 fuckshit.Parent = Open
@@ -3802,4 +3814,3 @@ spawn(function()
         end)
     end
 end)
-
