@@ -1,4 +1,4 @@
-------------------xsssfgfg
+------------------yyy
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 repeat wait() until game:GetService("Players").LocalPlayer._stats
@@ -3531,6 +3531,7 @@ end)
 local teleportService = game:GetService("TeleportService")
 local coreGui = game:GetService("CoreGui")
 local rejoinConnection = nil
+local targetPlaceId = 8304191830 -- กำหนด Place ID ที่ต้องการ
 
 local function startAutoRejoin()
     if rejoinConnection then return end -- ป้องกันการเชื่อมต่อซ้ำ
@@ -3540,8 +3541,8 @@ local function startAutoRejoin()
             if child.Name == "ErrorPrompt" and child:FindFirstChild("MessageArea") and child.MessageArea:FindFirstChild("ErrorFrame") then
                 if _G.SST.Auto_Rejoin_Kick then
                     print("ErrorPrompt detected, attempting to rejoin...")
-                    teleportService:Teleport(8304191830) -- กลับไปยังเซิร์ฟเวอร์เดิม
-                    wait(50) -- รอ 50 วินาที
+                    teleportService:Teleport(targetPlaceId) -- ส่งผู้เล่นไปยัง Place ID ที่กำหนด
+                    wait(5) -- รอ 5 วินาทีเพื่อป้องกันการวนลูป
                 end
             end
         end)
@@ -3555,6 +3556,7 @@ local function stopAutoRejoin()
     end
 end
 
+-- เริ่มต้นการทำงาน
 spawn(function()
     while task.wait(1) do
         pcall(function()
