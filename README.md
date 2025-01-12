@@ -3520,23 +3520,22 @@ local teleportService = game:GetService("TeleportService")
 local coreGui = game:GetService("CoreGui")
 local rejoinConnection = nil
 
--- ฟังก์ชันสำหรับเริ่มการตรวจจับการเตะ
 local function startAutoRejoin()
-    if rejoinConnection then return end -- ป้องกันการสร้างการเชื่อมต่อซ้ำ
+    if rejoinConnection then return end -- ป้องกันการเชื่อมต่อซ้ำ
 
-    rejoinConnection = coreGui.RobloxPromptGui.promptOverlay.ChildAdded:Connect(function(child)
-        -- ตรวจสอบว่ามีหน้าต่าง ErrorPrompt หรือไม่
-        if child.Name == "ErrorPrompt" and child:FindFirstChild("MessageArea") and child.MessageArea:FindFirstChild("ErrorFrame") then
-            -- ถ้าเปิดใช้งาน Auto_Rejoin ให้ส่งผู้เล่นกลับเซิร์ฟเวอร์
-            if _G.SST.Auto_Rejoin_Kick then
-                teleportService:Teleport(8304191830)
-                wait(50) -- รอ 50 วินาทีเพื่อป้องกันการวนลูป
+    rejoinConnection = coreGui.ChildAdded:Connect(function(child)
+        pcall(function()
+            if child.Name == "ErrorPrompt" and child:FindFirstChild("MessageArea") and child.MessageArea:FindFirstChild("ErrorFrame") then
+                if _G.SST.Auto_Rejoin_Kick then
+                    print("ErrorPrompt detected, attempting to rejoin...")
+                    teleportService:Teleport(8304191830) -- กลับไปยังเซิร์ฟเวอร์เดิม
+                    wait(50) -- รอ 50 วินาที
+                end
             end
-        end
+        end)
     end)
 end
 
--- ฟังก์ชันสำหรับหยุดการตรวจจับการเตะ
 local function stopAutoRejoin()
     if rejoinConnection then
         rejoinConnection:Disconnect()
@@ -3544,10 +3543,8 @@ local function stopAutoRejoin()
     end
 end
 
--- เริ่มต้นการทำงาน
 spawn(function()
-    while true do
-        wait(1) -- เพิ่มระยะเวลาเพื่อประหยัดทรัพยากร
+    while task.wait(1) do
         pcall(function()
             if _G.SST.Auto_Rejoin_Kick then
                 startAutoRejoin()
@@ -3558,6 +3555,7 @@ spawn(function()
     end
 end)
 
+
 Misc:AddToggleLeft("Anti AFK", _G.SST.Anti_AFK, function(isEnabled)
     Anti_AFK = isEnabled
 	_G.SST.Anti_AFK = Anti_AFK
@@ -3565,15 +3563,12 @@ Misc:AddToggleLeft("Anti AFK", _G.SST.Anti_AFK, function(isEnabled)
 end)
 
 task.spawn(function()
-    while _G.SST.Anti_AFK and task.wait(900) do -- รอ 15 นาที (900 วินาที)
+    while _G.AntiAFKEnabled and task.wait(300) do -- รันทุก 5 นาที
         pcall(function()
             local VirtualUser = game:GetService("VirtualUser")
             VirtualUser:CaptureController()
-            -- จำลองการกดปุ่ม
-            VirtualUser:SetKeyDown("W") -- กดปุ่ม "W"
-            task.wait(0.1) -- รอเล็กน้อย
-            VirtualUser:SetKeyUp("W") -- ปล่อยปุ่ม "W"
-            print("Anti-AFK: Simulated key press to prevent disconnection.")
+            VirtualUser:ClickButton2(Vector2.new(0, 0)) -- ส่งสัญญาณคลิกขวาจำลอง
+            print("Anti-AFK: Simulated mouse click.")
         end)
     end
 end)
