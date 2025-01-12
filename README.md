@@ -3565,18 +3565,19 @@ Misc:AddToggleLeft("Anti AFK", _G.SST.Anti_AFK, function(isEnabled)
 end)
 
 task.spawn(function()
-    while _G.SST.Anti_AFK and task.wait(30) do
+    while _G.SST.Anti_AFK and task.wait(900) do -- รอ 15 นาที (900 วินาที)
         pcall(function()
             local VirtualUser = game:GetService("VirtualUser")
             VirtualUser:CaptureController()
-            -- จำลองการกดปุ่มแทนการคลิก
+            -- จำลองการกดปุ่ม
             VirtualUser:SetKeyDown("W") -- กดปุ่ม "W"
             task.wait(0.1) -- รอเล็กน้อย
             VirtualUser:SetKeyUp("W") -- ปล่อยปุ่ม "W"
-            print("Anti-AFK: Simulated key press.")
+            print("Anti-AFK: Simulated key press to prevent disconnection.")
         end)
     end
 end)
+
 
 
 	Check:AddSeperatorRight("WebHook")
