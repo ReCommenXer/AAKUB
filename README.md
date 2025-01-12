@@ -88,7 +88,7 @@ ScreenGui.Parent = game.CoreGui
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
 ImageButton.Parent = ScreenGui
-ImageButton.BackgroundColor3 = Color3.fromRGB(0, 80, 0)
+ImageButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 ImageButton.BorderSizePixel = 0
 ImageButton.Position = UDim2.new(0.120833337, 0, 0.0952890813, 0)
 ImageButton.Size = UDim2.new(0, 45, 0, 45)
@@ -3127,7 +3127,7 @@ spawn(function()
                 end
             end
         end)
-        task.wait(0.1) -- รอเล็กน้อยก่อนทำงานรอบถัดไป
+        task.wait() -- รอเล็กน้อยก่อนทำงานรอบถัดไป
     end
 end)
 
@@ -3153,7 +3153,7 @@ spawn(function()
                 end
             end
         end)
-        task.wait(0.1) -- ลดการรอให้รอบเกิดเร็วขึ้น แต่ไม่ให้บล็อคการทำงานเกินไป
+        task.wait() -- ลดการรอให้รอบเกิดเร็วขึ้น แต่ไม่ให้บล็อคการทำงานเกินไป
     end
 end)
 
