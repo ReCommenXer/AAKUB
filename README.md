@@ -91,7 +91,7 @@ ImageButton.Parent = ScreenGui
 ImageButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 ImageButton.BorderSizePixel = 0
 ImageButton.Position = UDim2.new(0.2, 0, 0.2, 0)
-ImageButton.Size = UDim2.new(0, 100, 0, 100)
+ImageButton.Size = UDim2.new(0, 45, 0, 45)
 ImageButton.Draggable = true
 ImageButton.Image = "rbxassetid://70607394598818"
 
