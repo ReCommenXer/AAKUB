@@ -74,6 +74,10 @@ LoadSetting()
 
 
 ---------------------------------------------------- Ui
+local OCui = game.CoreGui:FindFirstChild("RebormXerOC")
+if OCui then
+	OCui:Destroy()
+end
 local ZenHub = Instance.new("ScreenGui")
 local Open = Instance.new("TextButton")
 local fuckshit = Instance.new("UICorner")
@@ -85,15 +89,17 @@ local ImageButton = Instance.new("ImageButton")
 
 -- กำหนดค่าเริ่มต้น
 ScreenGui.Parent = game.CoreGui
+ScreenGui.Name = "RebormXerOC"
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
 ImageButton.Parent = ScreenGui
+ImageButton.Name = "Open/CloseUi"
 ImageButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 ImageButton.BorderSizePixel = 0
-ImageButton.Position = UDim2.new(0.2, 0, 0.2, 0)
+ImageButton.Position = UDim2.new(0.1, 0, 0.1, 0)
 ImageButton.Size = UDim2.new(0, 45, 0, 45)
 ImageButton.Draggable = true
-ImageButton.Image = "rbxassetid://70607394598818"
+ImageButton.Image = "rbxassetid://108287073891881"
 
 -- ฟังก์ชันสำหรับการคลิก
 ImageButton.MouseButton1Click:Connect(function()
@@ -135,21 +141,21 @@ posto.Name = "posto"
 
 
 
-_G.WindowBackgroundColor = Color3.fromRGB(12,12,12)
-_G.BackgroundItemColor = Color3.fromRGB(20, 20, 20)
-_G.TabWindowColor = Color3.fromRGB(30, 30, 30)
-_G.ContainerColor = Color3.fromRGB(30, 30, 30)
-_G.TitleTextColor = Color3.fromRGB(150, 150, 150)
-_G.ImageColor = Color3.fromRGB(0, 0, 255)
-_G.LineThemeColor = Color3.fromRGB(150, 150, 150)
-_G.TabTextColor = Color3.fromRGB(150, 150, 150)
-_G.TabImageColor = Color3.fromRGB(150, 150, 150)
-_G.TabThemeColor = Color3.fromRGB(250, 0, 0)
-_G.SectionColor = Color3.fromRGB(0, 0, 255)
-_G.SectionImageColor = Color3.fromRGB(150, 150, 150)
-_G.SectionTextColor = Color3.fromRGB(0, 0, 255)
-_G.SectionOn = Color3.fromRGB(0, 250, 0)
-
+ _G.WindowBackgroundColor = Color3.fromRGB(0, 0, 0) -- พื้นหลังหน้าต่าง (ดำ)
+ _G.BackgroundItemColor = Color3.fromRGB(30, 30, 30) -- พื้นหลังของไอเทม (ดำเข้ม)
+ _G.TabWindowColor = Color3.fromRGB(20, 20, 20) -- สีแท็บหน้าต่าง (ดำเข้ม)
+ _G.ContainerColor = Color3.fromRGB(40, 40, 40) -- สีคอนเทนเนอร์ (ดำเข้ม)
+ _G.TitleTextColor = Color3.fromRGB(255, 255, 255) -- สีข้อความหัวเรื่อง (ขาว)
+ _G.ImageColor = Color3.fromRGB(255, 255, 255) -- สีของรูปภาพ (ขาว)
+ _G.LineThemeColor = Color3.fromRGB(255, 255, 255) -- สีเส้น (ขาว)
+ _G.TabTextColor = Color3.fromRGB(255, 255, 255) -- สีข้อความในแท็บ (ขาว)
+ _G.TabImageColor = Color3.fromRGB(255, 255, 255) -- สีรูปภาพในแท็บ (ขาว)
+ _G.TabThemeColor = Color3.fromRGB(255, 255, 255) -- สีธีมของแท็บ (ขาว)
+ _G.SectionColor = Color3.fromRGB(30, 30, 30) -- สีพื้นหลังของ Section (ดำเข้ม)
+ _G.SectionImageColor = Color3.fromRGB(255, 255, 255) -- สีรูปภาพใน Section (ขาว)
+ _G.SectionTextColor = Color3.fromRGB(255, 255, 255) -- สีข้อความใน Section (ขาว)
+ _G.SectionOn = Color3.fromRGB(0, 255, 0) -- สีสถานะเปิดของ Section (เขียว)
+ 
 _G.Color1 = Color3.fromRGB(255,255,255)
 do local GUI = game.CoreGui:FindFirstChild("RebornXer Hub");if GUI then GUI:Destroy();end;if _G.Color == nil then
 _G.Color = Color3.fromRGB(255,255,255)
@@ -274,7 +280,7 @@ local osfunc = {}
 	Logo.Parent = Top
 	Logo.BackgroundColor3 = Color3.fromRGB(255,255,255)
 	Logo.BackgroundTransparency = 1.000
-	Logo.Position = UDim2.new(0, 13, 0, 1)
+	Logo.Position = UDim2.new(0, 9, 0, 1)
 	Logo.Size = UDim2.new(0, 30, 0, 25)
 	Logo.Image = "rbxassetid://"..tostring(logo)
 
