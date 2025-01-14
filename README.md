@@ -90,8 +90,8 @@ ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 ImageButton.Parent = ScreenGui
 ImageButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 ImageButton.BorderSizePixel = 0
-ImageButton.Position = UDim2.new(0.120833337, 0, 0.0952890813, 0)
-ImageButton.Size = UDim2.new(0, 45, 0, 45)
+ImageButton.Position = UDim2.new(0.2, 0, 0.2, 0)
+ImageButton.Size = UDim2.new(0, 100, 0, 100)
 ImageButton.Draggable = true
 ImageButton.Image = "rbxassetid://70607394598818"
 
