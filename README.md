@@ -1,4 +1,4 @@
-------------------1yyy
+------------------st
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 repeat wait() until game:GetService("Players").LocalPlayer._stats
@@ -3028,40 +3028,48 @@ end)
 
 
 Main:AddSeperatorRight("Game")
-Main:AddToggleRight("Auto Back To Lobby" ,_G.SST.Auto_Back_To_Lobby,function(value)
-	Auto_Back_To_Lobby = value
-    _G.SST.Auto_Back_To_Lobby = Auto_Back_To_Lobby
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local function handleBackToLobby()
+    local player = Players.LocalPlayer
+    if player.PlayerGui:FindFirstChild("ResultsUI") and player.PlayerGui.ResultsUI.Enabled then
+        ReplicatedStorage.endpoints.client_to_server.teleport_back_to_lobby:InvokeServer()
+    end
+end
+
+local function handleReJoin()
+    local player = Players.LocalPlayer
+    if player.PlayerGui:FindFirstChild("ResultsUI") and player.PlayerGui.ResultsUI.Enabled then
+        ReplicatedStorage.endpoints.client_to_server.set_game_finished_vote:InvokeServer("replay")
+    end
+end
+
+-- สร้างตัวเลือก Auto Back To Lobby
+Main:AddToggleRight("Auto Back To Lobby", _G.SST.Auto_Back_To_Lobby, function(value)
+    _G.SST.Auto_Back_To_Lobby = value
     SS()
 end)
 
-spawn(function()
-	while wait() do
-		pcall(function()
-			if _G.SST.Auto_Back_To_Lobby then
-                if game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Enabled == true then
-					game:GetService("ReplicatedStorage").endpoints.client_to_server.teleport_back_to_lobby:InvokeServer()
-				end
-			end
-		end)
-	end
-end)
-Main:AddToggleRight("Auto ReJoin" ,_G.SST.Auto_ReJoin,function(value)
-	Auto_ReJoin = value
-    _G.SST.Auto_ReJoin = Auto_ReJoin
+-- สร้างตัวเลือก Auto ReJoin
+Main:AddToggleRight("Auto ReJoin", _G.SST.Auto_ReJoin, function(value)
+    _G.SST.Auto_ReJoin = value
     SS()
 end)
 
-spawn(function()
-	while wait() do
-		pcall(function()
-			if _G.SST.Auto_ReJoin then
-                if game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Enabled == true then
-					game:GetService("ReplicatedStorage").endpoints.client_to_server.set_game_finished_vote:InvokeServer("replay")
-				end
-			end
-		end)
-	end
+-- ใช้ RunService.Heartbeat แทน spawn เพื่อจัดการลูป
+RunService.Heartbeat:Connect(function()
+    pcall(function()
+        if _G.SST.Auto_Back_To_Lobby then
+            handleBackToLobby()
+        end
+        if _G.SST.Auto_ReJoin then
+            handleReJoin()
+        end
+    end)
 end)
+
 Main:AddSeperatorRight("Game")
 Main:AddDropdownRight("Select To upgrade",{"All Unit","Cost Unit"},_G.SST.Select_To_Upgrade,function(a)
 	Select_To_Upgrade = a
@@ -3525,7 +3533,8 @@ task.spawn(function()
         pcall(function()
             local VirtualUser = game:GetService("VirtualUser")
             VirtualUser:CaptureController()
-            VirtualUser:ClickButton2(Vector2.new(0, 0)) -- ส่งสัญญาณคลิกขวาจำลอ
+            VirtualUser:ClickButton2(Vector2.new(0, 0)) -- ส่งสัญญาณคลิกขวาจำลอง
+            print("Anti-AFK: Simulated mouse click.")
         end)
     end
 end)
@@ -3681,83 +3690,100 @@ spawn(function()
 end)
 
 
-spawn(function()
-	while wait() do
-		pcall(function()
-			if _G.SST.Boost_Fps then
-				game:GetService("Players").LocalPlayer._settings.disable_effects.Value = true
-				game:GetService("Players").LocalPlayer._settings.disable_kill_fx.Value = true
-				game:GetService("Players").LocalPlayer._settings.disable_other_fx.Value = true
-				game:GetService("Players").LocalPlayer._settings.low_quality.Value = true
-				game:GetService("Players").LocalPlayer._settings.low_quality_shadows.Value = true
-				game:GetService("Players").LocalPlayer._settings.low_quality_textures.Value = true
-			end
-		end)
-	end
-end)
 local Boosted = false -- ตัวแปรสถานะเพื่อตรวจสอบว่ารันแล้วหรือไม่
+local RunService = game:GetService("RunService")
 
-spawn(function()
-    while wait() do
-        pcall(function()
-            if _G.SST.Boost_Fps and not Boosted then
-				game:GetService("Players").LocalPlayer.PlayerGui.MessageGui:Destroy()
-                Boosted = true -- ตั้งค่าให้รู้ว่าสคริปต์รันแล้ว
-                local decalsyeeted = true
-                local g = game
-                local w = g.Workspace
-                local l = g.Lighting
-                local t = w.Terrain
+local function optimizeSettings(player)
+    local settings = player:FindFirstChild("_settings")
+    if settings then
+        settings.disable_effects.Value = true
+        settings.disable_kill_fx.Value = true
+        settings.disable_other_fx.Value = true
+        settings.low_quality.Value = true
+        settings.low_quality_shadows.Value = true
+        settings.low_quality_textures.Value = true
+    end
+end
 
-                -- ปรับ Terrain
-                t.WaterWaveSize = 0
-                t.WaterWaveSpeed = 0
-                t.WaterReflectance = 0
-                t.WaterTransparency = 0
+local function optimizeTerrain(terrain)
+    terrain.WaterWaveSize = 0
+    terrain.WaterWaveSpeed = 0
+    terrain.WaterReflectance = 0
+    terrain.WaterTransparency = 0
+end
 
-                -- ปิด Lighting
-                l.GlobalShadows = false
-                l.FogEnd = 9e9
-                l.Brightness = 0
+local function optimizeLighting(lighting)
+    lighting.GlobalShadows = false
+    lighting.FogEnd = 9e9
+    lighting.Brightness = 0
 
-                -- ลดคุณภาพการแสดงผล
-                settings().Rendering.QualityLevel = "Level01"
+    for _, effect in ipairs(lighting:GetChildren()) do
+        if effect:IsA("BlurEffect") or effect:IsA("SunRaysEffect") 
+            or effect:IsA("ColorCorrectionEffect") or effect:IsA("BloomEffect") 
+            or effect:IsA("DepthOfFieldEffect") then
+            effect.Enabled = false
+        end
+    end
+end
 
-                -- ปรับแต่งวัตถุ
-                for _, v in pairs(g:GetDescendants()) do
-                    if v:IsA("Part") or v:IsA("Union") or v:IsA("CornerWedgePart") or v:IsA("TrussPart") or v:IsA("MeshPart") then
-                        v.Material = "Plastic"
-                        v.Reflectance = 0
-                        if v:IsA("MeshPart") then
-                            v.TextureID = ""
-                        end
-                    elseif (v:IsA("Decal") or v:IsA("Texture")) and decalsyeeted then
-                        v:Destroy()
-                    elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
-                        v.Lifetime = NumberRange.new(0)
-                    elseif v:IsA("Fire") or v:IsA("SpotLight") or v:IsA("Smoke") or v:IsA("Sparkles") then
-                        v.Enabled = false
-                    elseif v:IsA("Sound") then
-                        v.Playing = false
-                    end
-                end
-
-                -- ปิดเอฟเฟคใน Lighting
-                for _, e in pairs(l:GetChildren()) do
-                    if e:IsA("BlurEffect") or e:IsA("SunRaysEffect") or e:IsA("ColorCorrectionEffect") or e:IsA("BloomEffect") or e:IsA("DepthOfFieldEffect") then
-                        e.Enabled = false
-                    end
-                end
-
-                -- ลบอุปกรณ์ที่ไม่จำเป็น
-                for _, v in pairs(g:GetDescendants()) do
-                    if v:IsA("Accessory") or v:IsA("Clothing") then
-                        v:Destroy()
-                    end
-                end
+local function optimizePartsAndEffects(descendants)
+    for _, obj in ipairs(descendants) do
+        if obj:IsA("Part") or obj:IsA("Union") or obj:IsA("CornerWedgePart") 
+            or obj:IsA("TrussPart") or obj:IsA("MeshPart") then
+            obj.Material = Enum.Material.Plastic
+            obj.Reflectance = 0
+            if obj:IsA("MeshPart") then
+                obj.TextureID = ""
             end
+        elseif obj:IsA("Decal") or obj:IsA("Texture") then
+            obj:Destroy()
+        elseif obj:IsA("ParticleEmitter") or obj:IsA("Trail") then
+            obj.Lifetime = NumberRange.new(0)
+        elseif obj:IsA("Fire") or obj:IsA("SpotLight") or obj:IsA("Smoke") or obj:IsA("Sparkles") then
+            obj.Enabled = false
+        elseif obj:IsA("Sound") then
+            obj.Playing = false
+        end
+    end
+end
+
+local function removeUnnecessaryAccessories(descendants)
+    for _, obj in ipairs(descendants) do
+        if obj:IsA("Accessory") or obj:IsA("Clothing") then
+            obj:Destroy()
+        end
+    end
+end
+
+RunService.Heartbeat:Connect(function()
+    if _G.SST.Boost_Fps and not Boosted then
+        Boosted = true
+        pcall(function()
+            local player = game:GetService("Players").LocalPlayer
+            local playerGui = player:FindFirstChild("PlayerGui")
+            
+            -- ลบ MessageGui
+            if playerGui and playerGui:FindFirstChild("MessageGui") then
+                playerGui.MessageGui:Destroy()
+            end
+
+            -- ปรับค่าการตั้งค่า
+            optimizeSettings(player)
+            
+            -- ปรับ Terrain และ Lighting
+            optimizeTerrain(workspace.Terrain)
+            optimizeLighting(game.Lighting)
+
+            -- ปรับแต่งวัตถุและเอฟเฟกต์
+            optimizePartsAndEffects(game:GetDescendants())
+            removeUnnecessaryAccessories(game:GetDescendants())
+
+            -- ลดคุณภาพการแสดงผล
+            settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
         end)
     end
 end)
+
+
 
 Update:AddNotification('Hello World')
