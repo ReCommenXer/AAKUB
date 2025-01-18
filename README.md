@@ -41,7 +41,7 @@ pcall(function()
         Claim_Easter = false
     }
 end)
-w
+
 function LoadSetting()
     local fileName = "RebornXer Hub Anime Adventures" .. game.Players.LocalPlayer.Name .. ".json"
     
