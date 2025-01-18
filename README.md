@@ -1,4 +1,4 @@
-------------------st
+------------------อพหะ
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 repeat wait() until game:GetService("Players").LocalPlayer._stats
@@ -41,7 +41,7 @@ pcall(function()
         Claim_Easter = false
     }
 end)
-
+w
 function LoadSetting()
     local fileName = "RebornXer Hub Anime Adventures" .. game.Players.LocalPlayer.Name .. ".json"
     
@@ -3495,8 +3495,6 @@ spawn(function()
         pcall(function()
             if type(_G.SST.Select_Farme_Rate) == "number" and _G.SST.Select_Farme_Rate > 0 then
                 setfpscap(_G.SST.Select_Farme_Rate) -- ตั้งค่าความเร็วเฟรมตามค่า
-            else
-                setfpscap(60) -- ตั้งค่าเริ่มต้นหากไม่มีค่า
             end
         end)
     end
@@ -3554,94 +3552,99 @@ _G.SST.Sent_WebHook = Sent_WebHook
 SS()
 end)
 
-spawn(function()
+local HttpService = game:GetService("HttpService")
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+
+local function sendWebhook(Name, GemRewards, XpRewards, GameTime, player)
+    local url = _G.SST.WebHook_Link
+    if not url or url == "" then
+        warn("Invalid Webhook URL")
+        return
+    end
+
+    local fields = {}
+
+    -- Add Total field
+    table.insert(fields, {
+        ["name"] = "📊 Total 📊",
+        ["value"] = "```Name          : " .. Name ..
+                    "\nGem           : " .. player._stats.gem_amount.Value ..
+                    "\nGold          : " .. player._stats.gold_amount.Value ..
+                    "\nXP            : " .. player._stats.player_xp.Value ..
+                    "\nHolidayStars  : " .. player._stats._resourceHolidayStars.Value .. "```"
+    })
+
+    -- Add Time field
+    table.insert(fields, {
+        ["name"] = "⌛ Time ⌛",
+        ["value"] = "```" .. GameTime .. "```"
+    })
+
+    -- Add Rewards field if necessary
+    if GemRewards ~= "+99999" or XpRewards ~= "+99999 XP" then
+        table.insert(fields, {
+            ["name"] = "Rewards",
+            ["value"] = "```Gems: " .. GemRewards .. "   XP: " .. XpRewards .. "```"
+        })
+    end
+
+    -- Construct the webhook payload
+    local data = {
+        ["content"] = "",
+        ["embeds"] = {
+            {
+                ["author"] = { ["name"] = "ReBornxer Hub WebHook" },
+                ["type"] = "rich",
+                ["title"] = "[❄️CHRISTMAS + 💫RERELEASE + 🏆TOURNAMENT] AA",
+                ["color"] = tonumber(0x13da),
+                ["fields"] = fields
+            }
+        }
+    }
+
+    local jsonData = HttpService:JSONEncode(data)
+    local headers = { ["Content-Type"] = "application/json" }
+
+    -- Send the webhook request
+    local request = http_request or request or HttpPost or syn.request
+    if request then
+        local response = request({
+            Url = url,
+            Body = jsonData,
+            Method = "POST",
+            Headers = headers
+        })
+        if response.StatusCode ~= 200 then
+            warn("Failed to send webhook. Status Code: " .. response.StatusCode)
+        end
+    else
+        warn("HTTP request function not available.")
+    end
+end
+
+RunService.Heartbeat:Connect(function()
     pcall(function()
-        while wait() do
-            if _G.SST.Sent_WebHook then
-                -- Check if the mission has ended
-                local player = game:GetService("Players").LocalPlayer
-                local resultsUI = player.PlayerGui:FindFirstChild("ResultsUI")
+        if _G.SST.Sent_WebHook then
+            local player = Players.LocalPlayer
+            local resultsUI = player.PlayerGui:FindFirstChild("ResultsUI")
+            
+            if resultsUI and resultsUI.Enabled then
+                local Name = player.Name
+                local GemRewards = resultsUI.Holder.LevelRewards.ScrollingFrame.GemReward.Main.Amount.Text
+                local XpRewards = resultsUI.Holder.LevelRewards.ScrollingFrame.XPReward.Main.Amount.Text
+                local GameTime = resultsUI.Holder.Middle.Timer.Text
 
-                if resultsUI and resultsUI.Enabled == true then
-                    -- Retrieve details
-                    local Name = player.Name
-                    local gui = player.PlayerGui
-                    local GemRewards = resultsUI.Holder.LevelRewards.ScrollingFrame.GemReward.Main.Amount.Text
-                    local XpRewards = resultsUI.Holder.LevelRewards.ScrollingFrame.XPReward.Main.Amount.Text
-                    local GameTime = resultsUI.Holder.Middle.Timer.Text
+                -- Call the function to send the webhook
+                sendWebhook(Name, GemRewards, XpRewards, GameTime, player)
 
-                    local NameGames = "[❄️CHRISTMAS + 💫RERELEASE + 🏆TOURNAMENT] AA"
-
-                    if _G.SST.WebHook_Link and _G.SST.WebHook_Link ~= "" then
-                        pcall(function()
-                            local url = _G.SST.WebHook_Link
-                            local fields = {}
-
-                            -- Add Total field
-                            table.insert(fields, {
-                                ["name"] = "📊 Total 📊",
-                                ["value"] = "```Name          : " .. Name ..
-                                            "\nGem           : " .. player._stats.gem_amount.Value ..
-                                            "\nGold          : " .. player._stats.gold_amount.Value ..
-                                            "\nXP            : " .. player._stats.player_xp.Value ..
-                                            "\nHolidayStars  : " .. player._stats._resourceHolidayStars.Value .. "```"
-                            })
-
-                            -- Add Time field
-                            table.insert(fields, {
-                                ["name"] = "⌛ Time ⌛",
-                                ["value"] = "```" .. GameTime .. "```"
-                            })
-
-                            -- Add Rewards field only if conditions are met
-                            if GemRewards ~= "+99999" or XpRewards ~= "+99999 XP" then
-                                table.insert(fields, {
-                                    ["name"] = "Rewards",
-                                    ["value"] = "```Gems: " .. GemRewards .. "   XP: " .. XpRewards .. "```"
-                                })
-                            end
-
-                            local data = {
-                                ["content"] = "",
-                                ["embeds"] = {
-                                    {
-                                        ["author"] = { ["name"] = "ReBornxer Hub WebHook" },
-                                        ["type"] = "rich",
-                                        ["title"] = NameGames,
-                                        ["color"] = tonumber(0x13da),
-                                        ["fields"] = fields
-                                    }
-                                }
-                            }
-
-                            local jsonData = game:GetService("HttpService"):JSONEncode(data)
-                            local headers = { ["Content-Type"] = "application/json" }
-
-                            local request = http_request or request or HttpPost or syn.request
-                            if request then
-                                local response = request({
-                                    Url = url,
-                                    Body = jsonData,
-                                    Method = "POST",
-                                    Headers = headers
-                                })
-                                if response.StatusCode ~= 200 then
-                                    warn("Failed to send webhook. Status Code: " .. response.StatusCode)
-                                end
-                            else
-                                warn("HTTP request function not available.")
-                            end
-                        end)
-                    else
-                        warn("Invalid Webhook URL")
-                    end
-
-                    _G.SST.Sent_WebHook = false
-                end
+                -- Reset the webhook flag
+                _G.SST.Sent_WebHook = false
             end
         end
     end)
 end)
+
 
 -- เพิ่ม Separator
 Check:AddSeperatorLeft("Player")
