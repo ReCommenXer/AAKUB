@@ -3035,23 +3035,41 @@ local content = loadstring(readfile(GetNamePlayer.."AA_Units.lua"))()
 -- สร้าง UnitList เพื่อเก็บชื่อ
 local UnitList = {}
 
--- ดึงชื่อของตัวที่ Equipped = true
-for name, data in pairs(content) do
-    if data["Equipped"] == true then
-        table.insert(UnitList, name)  -- เพิ่มชื่อที่มี Equipped = true ลงใน UnitList
+-- ฟังก์ชันเพื่อดึงชื่อของตัวที่ Equipped = true
+local function updateUnitList()
+    local newUnitList = {}
+
+    -- ดึงชื่อของตัวที่ Equipped = true
+    for name, data in pairs(content) do
+        if data["Equipped"] == true then
+            table.insert(newUnitList, name)
+        end
+    end
+
+    return newUnitList
+end
+
+-- เก็บค่าของ UnitList เก่า
+local oldUnitList = updateUnitList()
+
+-- ฟังก์ชันตรวจสอบและอัพเดต dropdown
+local function checkAndUpdateDropdown()
+    local newUnitList = updateUnitList()
+
+    -- เปรียบเทียบ UnitList เก่าและใหม่
+    if #newUnitList ~= #oldUnitList then
+        -- หาก UnitList มีการเปลี่ยนแปลง ให้ทำการอัพเดต
+        oldUnitList = newUnitList  -- อัพเดต oldUnitList
+        Main:AddDropdownRight("Select Unit", newUnitList, _G.SST.Select_Unit, function(a)
+            Select_Unit = a
+            _G.SST.Select_Unit = Select_Unit
+            SS()  -- เรียกฟังก์ชัน SS() เมื่อเลือก
+        end)
     end
 end
 
--- ตรวจสอบว่า UnitList มีข้อมูลหรือไม่
-if #UnitList > 0 then
-    Main:AddDropdownRight("Select Unit", UnitList, _G.SST.Select_Unit, function(a)
-        Select_Unit = a
-        _G.SST.Select_Unit = Select_Unit
-        SS()  -- เรียกฟังก์ชัน SS() เมื่อเลือก
-    end)
-else
-    print("ไม่พบยูนิตที่มี Equipped = true")
-end
+-- เรียกใช้ฟังก์ชันเพื่อตรวจสอบและอัพเดต dropdown
+checkAndUpdateDropdown()
 
 Main:AddSeperatorRight("Game")
 local RunService = game:GetService("RunService")
@@ -3854,4 +3872,4 @@ for name, data in pairs(content) do
         data["Cost"]
     ))
 end
-Update:AddNotification('Beta 1')
+Update:AddNotification('Hello World')
