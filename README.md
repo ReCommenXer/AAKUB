@@ -3525,8 +3525,7 @@ task.spawn(function()
         pcall(function()
             local VirtualUser = game:GetService("VirtualUser")
             VirtualUser:CaptureController()
-            VirtualUser:ClickButton2(Vector2.new(0, 0)) -- ส่งสัญญาณคลิกขวาจำลอง
-            print("Anti-AFK: Simulated mouse click.")
+            VirtualUser:ClickButton2(Vector2.new(0, 0)) -- ส่งสัญญาณคลิกขวาจำลอ
         end)
     end
 end)
@@ -3761,4 +3760,4 @@ spawn(function()
     end
 end)
 
-Update:AddNotification("ํYoo")
+Update:AddNotification('Hello World')
