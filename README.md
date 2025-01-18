@@ -1,4 +1,4 @@
-------------------อพหะ
+------------------aaas
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 repeat wait() until game:GetService("Players").LocalPlayer._stats
@@ -3085,29 +3085,30 @@ Main:AddToggleRight("Auto Upgrade Unit",_G.SST.Auto_Upgrade_Unit,function(a)
 	SS()
 end)
 
-local allowedNames = {
-    bulma = true,
-    ["bulma:shiny"] = true,
-    ["bulma:shiny:golden"] = true,
-    speedwagon = true,
-    ["speedwagon:shiny"] = true,
-    ["speedwagon:shiny:golden"] = true,
-    ["speedwagon:golden"] = true,
-}
-
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local upgradeEndpoint = ReplicatedStorage.endpoints.client_to_server.upgrade_unit_ingame
-local UnitsFolder = workspace._UNITS
-
 spawn(function()
     while true do
-        if _G.SST and _G.SST.Auto_Upgrade_Unit and _G.SST.Select_To_Upgrade == "Cost Unit" then
-            for _, unit in ipairs(UnitsFolder:GetChildren()) do
-                if unit:IsA("Model") and unit:GetAttribute("range_stat") and allowedNames[unit.Name] then
-                    upgradeEndpoint:InvokeServer(unit)
+        pcall(function()
+            if _G.SST and _G.SST.Auto_Upgrade_Unit and _G.SST.Select_To_Upgrade == "Cost Unit" then
+                local units = workspace._UNITS:GetChildren()
+                for i, v in pairs(units) do
+                    if v:IsA("Model") and v:GetAttribute("range_stat") ~= nil then
+                        if v.Name == "bulma" or v.Name == "bulma:shiny" or v.Name == "bulma:shiny:golden" or v.Name == "speedwagon" or v.Name == "speedwagon:shiny" or v.Name == "speedwagon:shiny:golden" or v.Name == "speedwagon:golden" then
+                            local up = { v }
+
+                            -- เรียกฟังก์ชัน upgrade_unit_ingame
+                            local success, err = pcall(function()
+                                game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(unpack(up))
+                            end)
+
+                            if not success then
+                                warn("Error invoking upgrade_unit_ingame: " .. tostring(err))
+                            end
+                        end
+                    end
                 end
             end
-        end
+        end)
+        task.wait(0.1) -- รอเล็กน้อยก่อนทำงานรอบถัดไป
     end
 end)
 
@@ -3133,7 +3134,7 @@ spawn(function()
             warn("Error in auto-upgrade loop: " .. tostring(err))
         end
 
-        task.wait(0.01) -- ปรับเวลารอเพื่อให้ลูปเร็วขึ้นโดยไม่เกิดปัญหากับเซิร์ฟเวอร์
+        task.wait(0.1) -- ปรับเวลารอเพื่อให้ลูปเร็วขึ้นโดยไม่เกิดปัญหากับเซิร์ฟเวอร์
     end
 end)
 
@@ -3160,7 +3161,6 @@ spawn(function()
 								[3] = true,
 								[4] = "Hard"
 							}
-							print("Arguments: ", args[1], args[2], args[3], args[4])  -- ตรวจสอบค่าก่อนเรียก
 							game:GetService("ReplicatedStorage").endpoints.client_to_server.request_join_lobby:InvokeServer(Room.Name)
 
 							game:GetService("ReplicatedStorage").endpoints.client_to_server.request_lock_level:InvokeServer(unpack(args))
@@ -3291,35 +3291,64 @@ Main:AddToggleLeft("Auto Farm Gem",_G.SST.Farm_Gem,function(a)
 _G.SST.Farm_Gem = Farm_Gem
 SS()
 end)
-spawn(function()
-		while wait() do
-			pcall(function()
-				if _G.SST.Farm_Gem then
-					if game:GetService("Players").LocalPlayer.PlayerGui.VoteStart.Enabled == true then
-						game:GetService("ReplicatedStorage").endpoints.client_to_server.vote_start:InvokeServer()
-					end
-					for i, Room in pairs(workspace._LOBBIES.Story:GetChildren()) do
-						if Room:FindFirstChild("Timer") and Room.Timer.Value == -1 then
-							-- ตรวจสอบค่า arguments ก่อนเรียกใช้
-							local args = {
-								[1] = Room.Name,
-								[2] = "aot_infinite",
-								[3] = true,
-								[4] = "Hard"
-							}
-							print("Arguments: ", args[1], args[2], args[3], args[4])  -- ตรวจสอบค่าก่อนเรียก
-							game:GetService("ReplicatedStorage").endpoints.client_to_server.request_join_lobby:InvokeServer(Room.Name)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
 
-							game:GetService("ReplicatedStorage").endpoints.client_to_server.request_lock_level:InvokeServer(unpack(args))
-							wait(2)
-      						 game:GetService("ReplicatedStorage").endpoints.client_to_server.request_start_game:InvokeServer(Room.Name)
-							
-						end
-					end
-				end
-			end)
-		end
-	end)
+spawn(function()
+    while task.wait(0.5) do -- ปรับเวลาให้ลูปทำงานไม่ถี่เกินไป
+        local success, err = pcall(function()
+            if _G.SST and _G.SST.Farm_Gem then
+                -- ตรวจสอบ VoteStart ก่อนเรียกใช้งาน
+                if LocalPlayer.PlayerGui.VoteStart and LocalPlayer.PlayerGui.VoteStart.Enabled then
+                    ReplicatedStorage.endpoints.client_to_server.vote_start:InvokeServer()
+                end
+                
+                for _, Room in ipairs(workspace._LOBBIES.Story:GetChildren()) do
+                    if Room:FindFirstChild("Timer") and Room.Timer.Value == -1 then
+                        -- เตรียม arguments สำหรับล็อบบี้
+                        local args = {
+                            Room.Name,
+                            "aot_infinite",
+                            true,
+                            "Hard"
+                        }
+                        
+                        -- ตรวจสอบค่าก่อนเรียกใช้งาน
+                        print("Joining lobby:", args[1])
+                        
+                        -- Join lobby
+                        ReplicatedStorage.endpoints.client_to_server.request_join_lobby:InvokeServer(Room.Name)
+                        
+                        -- Lock level
+                        local lockSuccess, lockErr = pcall(function()
+                            ReplicatedStorage.endpoints.client_to_server.request_lock_level:InvokeServer(unpack(args))
+                        end)
+                        
+                        if not lockSuccess then
+                            warn("Error locking level:", lockErr)
+                        end
+                        
+                        -- Start game
+                        task.wait(1) -- ลดเวลารอให้น้อยลง
+                        local startSuccess, startErr = pcall(function()
+                            ReplicatedStorage.endpoints.client_to_server.request_start_game:InvokeServer(Room.Name)
+                        end)
+                        
+                        if not startSuccess then
+                            warn("Error starting game:", startErr)
+                        end
+                    end
+                end
+            end
+        end)
+
+        if not success then
+            warn("Error in Farm_Gem loop:", err)
+        end
+    end
+end)
+
 	Main:AddSeperatorLeft("Holiday Stars")
 
 	Main:AddToggleLeft("Auto Farm HolidayStars",_G.SST.Auto_Farm_HolidayStars,function(a)
