@@ -1,4 +1,4 @@
-------------------อพหะ
+------------------er333
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 repeat wait() until game:GetService("Players").LocalPlayer._stats
@@ -2986,14 +2986,14 @@ local MapList = {
 }
 
 
-Main:AddDropdownLeft("Select Map",MapList,_G.SST.Select_Map,function(Value)
+Main:AddDropdownL("Select Map",MapList,_G.SST.Select_Map,function(Value)
     Select_Map = Value
     _G.SST.Select_Map = Select_Map
     SS()
 end)
 ActList = {"1","2","3","4","5","6","Infinite"}
 
-Main:AddDropdownLeft("Select Act",ActList,_G.SST.Select_Act,function(Value)
+Main:AddDropdownL("Select Act",ActList,_G.SST.Select_Act,function(Value)
     Select_Act = Value
     _G.SST.Select_Act = Select_Act
     SS()
@@ -3023,13 +3023,13 @@ end)
 
 
 ModeList = {"Normal","Hard"}
-Main:AddDropdownLeft("Select Mode",ModeList,_G.SST.Select_Mode,function(Value)
+Main:AddDropdownL("Select Mode",ModeList,_G.SST.Select_Mode,function(Value)
     Select_Mode = Value
     _G.SST.Select_Mode = Select_Mode
     SS()
 end)
 
-Main:AddToggleLeft("Select Friend Only",_G.SST.Select_Friend_Only,function(value)
+Main:AddToggleL("Select Friend Only",_G.SST.Select_Friend_Only,function(value)
     Select_Friend_Only = value
     _G.SST.Select_Friend_Only = Select_Friend_Only
     SS()
@@ -3045,7 +3045,7 @@ spawn(function()
 				end)
 		end
 	end)
-Main:AddToggleLeft("Auto Join",_G.SST.Auto_Join,function(value)
+Main:AddToggleL("Auto Join",_G.SST.Auto_Join,function(value)
     Auto_Join = value
     _G.SST.Auto_Join = Auto_Join
     SS()
@@ -3096,7 +3096,7 @@ end
 
 -- ตรวจสอบว่า UnitList มีข้อมูลหรือไม่
 if #UnitList > 0 then
-    Main:AddDropdownRight("Select Unit", UnitList, _G.SST.Select_Unit, function(a)
+    Main:AddDropdownR("Select Unit", UnitList, _G.SST.Select_Unit, function(a)
         Select_Unit = a
         _G.SST.Select_Unit = Select_Unit
         SS()  -- เรียกฟังก์ชัน SS() เมื่อเลือก
@@ -3125,13 +3125,13 @@ local function handleReJoin()
 end
 
 -- สร้างตัวเลือก Auto Back To Lobby
-Main:AddToggleRight("Auto Back To Lobby", _G.SST.Auto_Back_To_Lobby, function(value)
+Main:AddToggleR("Auto Back To Lobby", _G.SST.Auto_Back_To_Lobby, function(value)
     _G.SST.Auto_Back_To_Lobby = value
     SS()
 end)
 
 -- สร้างตัวเลือก Auto ReJoin
-Main:AddToggleRight("Auto ReJoin", _G.SST.Auto_ReJoin, function(value)
+Main:AddToggleR("Auto ReJoin", _G.SST.Auto_ReJoin, function(value)
     _G.SST.Auto_ReJoin = value
     SS()
 end)
@@ -3149,7 +3149,7 @@ RunService.Heartbeat:Connect(function()
 end)
 
 Main:AddSeperatorRight("Game")
-Main:AddDropdownRight("Select To upgrade",{"All Unit","Cost Unit"},_G.SST.Select_To_Upgrade,function(a)
+Main:AddDropdownR("Select To upgrade",{"All Unit","Cost Unit"},_G.SST.Select_To_Upgrade,function(a)
 	Select_To_Upgrade = a
 _G.SST.Select_To_Upgrade = Select_To_Upgrade
 SS()
@@ -3157,7 +3157,7 @@ end)
 
 
 	
-Main:AddToggleRight("Auto Upgrade Unit",_G.SST.Auto_Upgrade_Unit,function(a)
+Main:AddToggleR("Auto Upgrade Unit",_G.SST.Auto_Upgrade_Unit,function(a)
 	Auto_Upgrade_Unit = a
 	_G.SST.Auto_Upgrade_Unit = Auto_Upgrade_Unit
 	SS()
@@ -3221,7 +3221,7 @@ end)
 
 Main:AddSeperatorLeft("Farm")
 
-Main:AddToggleLeft("Auto Farm Level",_G.SST.Farm_Level,function(a)
+Main:AddToggleL("Auto Farm Level",_G.SST.Farm_Level,function(a)
 	Farm_Level = a
 _G.SST.Farm_Level = Farm_Level
 SS()
@@ -3328,7 +3328,7 @@ end)
 
 Main:AddSeperatorLeft("Event")
 
-Main:AddToggleLeft("Auto Feed Easter",_G.SST.Feed_Easter,function(a)
+Main:AddToggleL("Auto Feed Easter",_G.SST.Feed_Easter,function(a)
 	Feed_Easter = a
 _G.SST.Feed_Easter = Feed_Easter
 SS()
@@ -3345,7 +3345,7 @@ spawn(function()
 	end
 end)
 
-Main:AddToggleLeft("Auto Claim Easter",_G.SST.Claim_Easter,function(a)
+Main:AddToggleL("Auto Claim Easter",_G.SST.Claim_Easter,function(a)
 	Claim_Easter = a
 _G.SST.Claim_Easter = Claim_Easter
 SS()
@@ -3364,7 +3364,7 @@ end)
 
 Main:AddSeperatorLeft("Gem")
 
-Main:AddToggleLeft("Auto Farm Gem",_G.SST.Farm_Gem,function(a)
+Main:AddToggleL("Auto Farm Gem",_G.SST.Farm_Gem,function(a)
 	Farm_Gem = a
 _G.SST.Farm_Gem = Farm_Gem
 SS()
@@ -3429,7 +3429,7 @@ end)
 
 	Main:AddSeperatorLeft("Holiday Stars")
 
-	Main:AddToggleLeft("Auto Farm HolidayStars",_G.SST.Auto_Farm_HolidayStars,function(a)
+	Main:AddToggleL("Auto Farm HolidayStars",_G.SST.Auto_Farm_HolidayStars,function(a)
 		Auto_Farm_HolidayStars = a
 		_G.SST.Auto_Farm_HolidayStars = Auto_Farm_HolidayStars
 		SS()
@@ -3452,7 +3452,7 @@ end)
 
 Main:AddSeperatorLeft("Curse Key")
 
-Main:AddToggleLeft("Auto Farm Curse",_G.SST.Farm_Sukuna,function(a)
+Main:AddToggleL("Auto Farm Curse",_G.SST.Farm_Sukuna,function(a)
 	Farm_Sukuna = a
 _G.SST.Farm_Sukuna = Farm_Sukuna
 SS()
@@ -3566,8 +3566,8 @@ local function toggleBlackScreen(enable)
     uiFrame.Parent = blackScreenUI
 end
 
--- เพิ่มปุ่ม toggle (สมมติว่า Misc:AddToggleRight เป็นฟังก์ชันจากระบบที่ใช้งานอยู่)
-Misc:AddToggleRight("Black Screen", _G.SST.Black_Screen, function(value)
+-- เพิ่มปุ่ม toggle (สมมติว่า Misc:AddToggleR เป็นฟังก์ชันจากระบบที่ใช้งานอยู่)
+Misc:AddToggleR("Black Screen", _G.SST.Black_Screen, function(value)
     _G.SST.Black_Screen = value
     SS() -- ฟังก์ชันเพิ่มเติมที่คุณมีในระบบ
 
@@ -3583,7 +3583,7 @@ Misc:AddToggleRight("Black Screen", _G.SST.Black_Screen, function(value)
 end)
 
 
-Misc:AddToggleRight("Boost Fps",_G.SST.Boost_Fps,function(va)
+Misc:AddToggleR("Boost Fps",_G.SST.Boost_Fps,function(va)
 	Boost_Fps = va
  _G.SST.Boost_Fps = Boost_Fps
  SS()
@@ -3609,7 +3609,7 @@ end)
 
 
 Misc:AddSeperatorLeft("Misc")
-Misc:AddToggleLeft("Auto Rejoin [Kick]",_G.SST.Auto_Rejoin_Kick ,function(a)
+Misc:AddToggleL("Auto Rejoin [Kick]",_G.SST.Auto_Rejoin_Kick ,function(a)
 	Auto_Rejoin_Kick  = a
 	_G.SST.Auto_Rejoin_Kick = Auto_Rejoin_Kick
 	SS()
@@ -3627,7 +3627,7 @@ spawn(function()
 end)
 
 
-Misc:AddToggleLeft("Anti AFK", _G.SST.Anti_AFK, function(isEnabled)
+Misc:AddToggleL("Anti AFK", _G.SST.Anti_AFK, function(isEnabled)
     Anti_AFK = isEnabled
 	_G.SST.Anti_AFK = Anti_AFK
     SS()
@@ -3653,7 +3653,7 @@ Check:AddTextboxRight("WebHook Link",_G.SST.WebHook_Link,true,function(a)
 
 	SS()
 end)
-Check:AddToggleRight("Send WebHook",_G.SST.Sent_WebHook,function(a)
+Check:AddToggleR("Send WebHook",_G.SST.Sent_WebHook,function(a)
 	Sent_WebHook = a
 _G.SST.Sent_WebHook = Sent_WebHook
 SS()
@@ -3906,4 +3906,4 @@ for name, data in pairs(content) do
         data["Cost"]
     ))
 end
-Update:AddNotification('hi World')
+Update:AddNotification('Hello World')
