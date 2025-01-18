@@ -1,4 +1,4 @@
-------------------aaas
+------------------อพหะ
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 repeat wait() until game:GetService("Players").LocalPlayer._stats
@@ -3815,7 +3815,29 @@ RunService.Heartbeat:Connect(function()
         end)
     end
 end)
+local GetNamePlayer = game.Players.LocalPlayer.Name
+local content = loadstring(readfile(GetNamePlayer.."AA_Units.lua"))()  -- แปลงสตริงเป็น table
 
+-- ดึงข้อมูลออกมาในรูปแบบที่ต้องการ
+for name, data in pairs(content) do
+    print(string.format(
+        "ชื่อ: %s, Equipped: %s, Level: %d, UUID: %s, Cost: %d",
+        name,
+        tostring(data["Equipped"]),
+        data["Level"],
+        data["UUID"],
+        data["Cost"]
+    ))
+end
+
+local content = loadstring(readfile(GetNamePlayer.."AA_Units.lua"))()  -- แปลงสตริงเป็น table
+
+-- ดึงชื่อของตัวที่ Equipped = true
+for name, data in pairs(content) do
+    if data["Equipped"] == true then
+        print(name)
+    end
+end
 
 
 Update:AddNotification('Hello World')
