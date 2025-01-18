@@ -3026,6 +3026,32 @@ end)
 		end
 	end)
 
+	Main:AddSeperatorRight("Setting")
+local GetNamePlayer = game.Players.LocalPlayer.Name
+
+-- อ่านไฟล์และแปลงเป็น table
+local content = loadstring(readfile(GetNamePlayer.."AA_Units.lua"))()
+
+-- สร้าง UnitList เพื่อเก็บชื่อ
+local UnitList = {}
+
+-- ดึงชื่อของตัวที่ Equipped = true
+for name, data in pairs(content) do
+    if data["Equipped"] == true then
+        table.insert(UnitList, name)  -- เพิ่มชื่อที่มี Equipped = true ลงใน UnitList
+    end
+end
+
+-- ตรวจสอบว่า UnitList มีข้อมูลหรือไม่
+if #UnitList > 0 then
+    Main:AddDropdownRight("Select Unit", UnitList, _G.SST.Select_Unit, function(a)
+        Select_Unit = a
+        _G.SST.Select_Unit = Select_Unit
+        SS()  -- เรียกฟังก์ชัน SS() เมื่อเลือก
+    end)
+else
+    print("ไม่พบยูนิตที่มี Equipped = true")
+end
 
 Main:AddSeperatorRight("Game")
 local RunService = game:GetService("RunService")
@@ -3815,7 +3841,6 @@ RunService.Heartbeat:Connect(function()
         end)
     end
 end)
-local GetNamePlayer = game.Players.LocalPlayer.Name
 local content = loadstring(readfile(GetNamePlayer.."AA_Units.lua"))()  -- แปลงสตริงเป็น table
 
 -- ดึงข้อมูลออกมาในรูปแบบที่ต้องการ
@@ -3829,15 +3854,4 @@ for name, data in pairs(content) do
         data["Cost"]
     ))
 end
-
-local content = loadstring(readfile(GetNamePlayer.."AA_Units.lua"))()  -- แปลงสตริงเป็น table
-
--- ดึงชื่อของตัวที่ Equipped = true
-for name, data in pairs(content) do
-    if data["Equipped"] == true then
-        print(name)
-    end
-end
-
-
-Update:AddNotification('Hello World')
+Update:AddNotification('Beta 1')
