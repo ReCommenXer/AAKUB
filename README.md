@@ -3085,58 +3085,58 @@ Main:AddToggleRight("Auto Upgrade Unit",_G.SST.Auto_Upgrade_Unit,function(a)
 	SS()
 end)
 
+local allowedNames = {
+    bulma = true,
+    ["bulma:shiny"] = true,
+    ["bulma:shiny:golden"] = true,
+    speedwagon = true,
+    ["speedwagon:shiny"] = true,
+    ["speedwagon:shiny:golden"] = true,
+    ["speedwagon:golden"] = true,
+}
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local upgradeEndpoint = ReplicatedStorage.endpoints.client_to_server.upgrade_unit_ingame
+local UnitsFolder = workspace._UNITS
+
 spawn(function()
     while true do
-        pcall(function()
-            if _G.SST and _G.SST.Auto_Upgrade_Unit and _G.SST.Select_To_Upgrade == "Cost Unit" then
-                local units = workspace._UNITS:GetChildren()
-                for i, v in pairs(units) do
-                    if v:IsA("Model") and v:GetAttribute("range_stat") ~= nil then
-                        if v.Name == "bulma" or v.Name == "bulma:shiny" or v.Name == "bulma:shiny:golden" or v.Name == "speedwagon" or v.Name == "speedwagon:shiny" or v.Name == "speedwagon:shiny:golden" or v.Name == "speedwagon:golden" then
-                            local up = { v }
-
-                            -- เรียกฟังก์ชัน upgrade_unit_ingame
-                            local success, err = pcall(function()
-                                game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(unpack(up))
-                            end)
-
-                            if not success then
-                                warn("Error invoking upgrade_unit_ingame: " .. tostring(err))
-                            end
-                        end
-                    end
+        if _G.SST and _G.SST.Auto_Upgrade_Unit and _G.SST.Select_To_Upgrade == "Cost Unit" then
+            for _, unit in ipairs(UnitsFolder:GetChildren()) do
+                if unit:IsA("Model") and unit:GetAttribute("range_stat") and allowedNames[unit.Name] then
+                    upgradeEndpoint:InvokeServer(unit)
                 end
             end
-        end)
-        task.wait() -- รอเล็กน้อยก่อนทำงานรอบถัดไป
+        end
     end
 end)
 
 
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local upgradeEndpoint = ReplicatedStorage.endpoints.client_to_server.upgrade_unit_ingame
+local UnitsFolder = workspace._UNITS
+
 spawn(function()
     while true do
-        pcall(function()
+        local success, err = pcall(function()
             if _G.SST and _G.SST.Auto_Upgrade_Unit and _G.SST.Select_To_Upgrade == "All Unit" then
-                local units = workspace._UNITS:GetChildren()
-                for i, v in pairs(units) do
-                    if v:IsA("Model") and v:GetAttribute("range_stat") ~= nil then
-                        local up = { v }
-                        
-                        -- เรียกฟังก์ชัน sell_unit_ingame
-                        local success, err = pcall(function()
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(unpack(up))
-                        end)
-
-                        if not success then
-                            warn("Error invoking upgrade_unit_ingame: " .. tostring(err))
-                        end
+                for _, unit in ipairs(UnitsFolder:GetChildren()) do
+                    if unit:IsA("Model") and unit:GetAttribute("range_stat") then
+                        upgradeEndpoint:InvokeServer(unit)
                     end
                 end
             end
         end)
-        task.wait() -- ลดการรอให้รอบเกิดเร็วขึ้น แต่ไม่ให้บล็อคการทำงานเกินไป
+
+        if not success then
+            warn("Error in auto-upgrade loop: " .. tostring(err))
+        end
+
+        task.wait(0.01) -- ปรับเวลารอเพื่อให้ลูปเร็วขึ้นโดยไม่เกิดปัญหากับเซิร์ฟเวอร์
     end
 end)
+
 
 
 
@@ -3445,7 +3445,7 @@ local function toggleBlackScreen(enable)
     -- สร้าง UI จอดำ
     blackScreenUI = Instance.new("ScreenGui")
     blackScreenUI.Name = "Blackscreen"
-    blackScreenUI.DisplayOrder = 1000 -- ให้แสดงอยู่เหนือ UI อื่นๆ
+    blackScreenUI.DisplayOrder = 1 -- ให้แสดงอยู่เหนือ UI อื่นๆ
     blackScreenUI.ResetOnSpawn = false -- UI จะไม่หายไปเมื่อผู้เล่นตายหรือเกิดใหม่
     blackScreenUI.IgnoreGuiInset = true -- ให้จอดำครอบคลุมพื้นที่เต็มจอ
     blackScreenUI.Parent = playerGui
