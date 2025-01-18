@@ -78,7 +78,7 @@ local OCui = game.CoreGui:FindFirstChild("RebormXerOC")
 if OCui then
 	OCui:Destroy()
 end
-local ZenHub = Instance.new("ScreenGui")
+local RebornXer = Instance.new("ScreenGui")
 local Open = Instance.new("TextButton")
 local fuckshit = Instance.new("UICorner")
 local MODILEMAGE = Instance.new("ImageLabel")
@@ -102,20 +102,28 @@ ImageButton.Draggable = true
 ImageButton.Image = "rbxassetid://108287073891881"
 
 -- ฟังก์ชันสำหรับการคลิก
+local TweenService = game:GetService("TweenService")
 ImageButton.MouseButton1Click:Connect(function()
     local ui = game:GetService("CoreGui"):FindFirstChild("RebornXer Hub") -- ค้นหา UI
     if ui and ui:FindFirstChild("Main") then -- ตรวจสอบว่ามี "Main" อยู่ใน UI
         local main = ui.Main
         if main.Size.X.Offset == 600 and main.Size.Y.Offset == 400 then
-            main.Size = UDim2.new(0, 0, 0, 0) -- ย่อขนาด
+            local tween = TweenService:Create(
+                main,
+                TweenInfo.new(0.25, Enum.EasingStyle.Sine, Enum.EasingDirection.In), -- กำหนดเวลา 0.35 วินาที
+                {Size = UDim2.new(0, 0, 0, 0)}
+            )
+            tween:Play() -- เล่น Tween
         else
-            main.Size = UDim2.new(0, 600, 0, 400) -- ขยายขนาด
+            local tween = TweenService:Create(
+                main,
+                TweenInfo.new(0.25, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), -- กำหนดเวลา 0.35 วินาที
+                {Size = UDim2.new(0, 600, 0, 400)}
+            )
+            tween:Play() -- เล่น Tween
         end
-    else
-        warn("UI หรือ Main ไม่พบใน CoreGui")
     end
 end)
-
 
 
 fuckshit.Parent = Open
@@ -233,17 +241,17 @@ function Update:AddWindow(name,logo,keybind)
 	local keybind = keybind or Enum.KeyCode.RightControl
 	local yoo = string.gsub(tostring(keybind),"Enum.KeyCode.","")
 	
-	local SOMEXHUB = Instance.new("ScreenGui")
-	SOMEXHUB.Name = "RebornXer Hub"
-	SOMEXHUB.Parent = game.CoreGui
-	SOMEXHUB.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+	local RebornXer_Hub = Instance.new("ScreenGui")
+	RebornXer_Hub.Name = "RebornXer Hub"
+	RebornXer_Hub.Parent = game.CoreGui
+	RebornXer_Hub.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
 local osfunc = {}
  local osfunc2 = {}
 	local Main = Instance.new("Frame")
 	local WindowStrokemain = Instance.new("UIStroke")
 	Main.Name = "Main"
-	Main.Parent = SOMEXHUB
+	Main.Parent = RebornXer_Hub
 	Main.ClipsDescendants = true
 	Main.AnchorPoint = Vector2.new(0.5,0.5)
 	Main.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
@@ -317,7 +325,7 @@ local ListNof = Instance.new("Frame")
 	local NofList = Instance.new("UIListLayout")
 
 	ListNof.Name = "ListNof"
-	ListNof.Parent = SOMEXHUB
+	ListNof.Parent = RebornXer_Hub
 	ListNof.BackgroundColor3 = Color3.fromRGB(255,255,255)
 	ListNof.BackgroundTransparency = 1.000
 	ListNof.Position = UDim2.new(0.778017223, 0, -0.00217864919, 0)
@@ -427,7 +435,7 @@ function Update:AddNotification(textdesc)
     local defaultOkayColor = Color3.fromRGB(12, 12, 12)
 
     NotificationFrame.Name = "NotificationFrame"
-    NotificationFrame.Parent = SOMEXHUB
+    NotificationFrame.Parent = RebornXer_Hub
     NotificationFrame.AnchorPoint = Vector2.new(0.5, 0.5) -- ตั้งจุดยึดตรงกลาง
     NotificationFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
     NotificationFrame.BorderColor3 = SectionColor
@@ -658,17 +666,31 @@ local Page2 = Instance.new("Frame")
  
  MakeDraggable(Top,Main)
  
- UserInputService.InputBegan:Connect(function(input)
-if input.KeyCode == Enum.KeyCode[yoo] then
-if uihide == false then
- uihide = true
- Main:TweenSize(UDim2.new(0, 0, 0, 0),"In","Quad",0,true)
-else
- uihide = false
- Main:TweenSize(UDim2.new(0, 600, 0, 400),"Out","Quad",0,true)
-end
-end
- end)
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+
+local uihide = false
+UserInputService.InputBegan:Connect(function(input)
+    if input.KeyCode == Enum.KeyCode[yoo] then -- แก้ไขเป็น KeyCode ที่ต้องการ
+        if uihide == false then
+            uihide = true
+            local tween = TweenService:Create(
+                Main,
+                TweenInfo.new(0.35, Enum.EasingStyle.Sine, Enum.EasingDirection.In), -- กำหนดเวลา 1 วินาที
+                {Size = UDim2.new(0, 0, 0, 0)}
+            )
+            tween:Play()
+        else
+            uihide = false
+            local tween = TweenService:Create(
+                Main,
+                TweenInfo.new(0.35, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), -- กำหนดเวลา 1 วินาที
+                {Size = UDim2.new(0, 600, 0, 400)}
+            )
+            tween:Play()
+        end
+    end
+end)
 	
 
 
@@ -1077,138 +1099,168 @@ Sound.Volume = 1 -- ระดับเสียงงงงงงง ;-;
 	end
 	
 		local main = {}
-		function main:AddButtonRight(text,callback)
-			local Button2 = Instance.new("Frame")
-			local UICorner2 = Instance.new("UICorner")
-			local TextBtn2 = Instance.new("TextButton")
-			local UICorner_1 = Instance.new("UICorner")
-			local Black2 = Instance.new("Frame")
-			local UICorner_2 = Instance.new("UICorner")
-			
-			Button2.Name = "Button"
-			Button2.Parent = MainFramePage2
-			Button2.BackgroundColor3 = _G.Color
-			Button2.Size = UDim2.new(0, 280, 0, 28)
-			
-			UICorner2.CornerRadius = UDim.new(0, 5)
-			UICorner2.Parent = Button2
-			
-			TextBtn2.Name = "TextBtn"
-			TextBtn2.Parent = Button2
-			TextBtn2.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-			TextBtn2.Position = UDim2.new(0, 1, 0, 1)
-			TextBtn2.Size = UDim2.new(0, 278, 0, 26)
-			TextBtn2.AutoButtonColor = false
-			TextBtn2.Font = Enum.Font.Code
-			TextBtn2.Text = text
-			TextBtn2.TextColor3 = Color3.fromRGB(225, 225, 225)
-			TextBtn2.TextSize = 12.000
-			
-			UICorner_1.CornerRadius = UDim.new(0, 5)
-			UICorner_1.Parent = TextBtn2
-			
-			Black2.Name = "Black"
-			Black2.Parent = Button2
-			Black2.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-			Black2.BackgroundTransparency = 1.000
-			Black2.BorderSizePixel = 0
-			Black2.Position = UDim2.new(0, 1, 0, 1)
-			Black2.Size = UDim2.new(0, 280, 0, 26)
-			
-			UICorner_2.CornerRadius = UDim.new(0, 5)
-			UICorner_2.Parent = Black2
+		local TweenService = game:GetService("TweenService")
 
-			TextBtn2.MouseEnter:Connect(function()
-				TweenService:Create(
-					Black2,
-					TweenInfo.new(0.4,Enum.EasingStyle.Quad,Enum.EasingDirection.Out),
-					{BackgroundTransparency = 0.7}
-				):Play()
-			end)
-			TextBtn2.MouseLeave:Connect(function()
-				TweenService:Create(
-					Black2,
-					TweenInfo.new(0.4,Enum.EasingStyle.Quad,Enum.EasingDirection.Out),
-					{BackgroundTransparency = 1}
-				):Play()
-			end)
-			TextBtn2.MouseButton1Click:Connect(function()
-				TextBtn2.TextSize = 0
-				TweenService:Create(
-					TextBtn2,
-					TweenInfo.new(0.4,Enum.EasingStyle.Quad,Enum.EasingDirection.Out),
-					{TextSize = 12}
-				):Play()
-				callback()
-			end)
-		end
-		
-		function main:AddButtonLeft(text,callback)
-			local Button = Instance.new("Frame")
-			local UICorner = Instance.new("UICorner")
-			local TextBtn = Instance.new("TextButton")
-			local UICorner_2 = Instance.new("UICorner")
-			local Black = Instance.new("Frame")
-			local UICorner_3 = Instance.new("UICorner")
-			
-			Button.Name = "Button"
-			Button.Parent = MainFramePage
-			Button.BackgroundColor3 = _G.Color
-			Button.Size = UDim2.new(0, 280, 0, 28)
-			
-			UICorner.CornerRadius = UDim.new(0, 5)
-			UICorner.Parent = Button
-			
-			TextBtn.Name = "TextBtn"
-			TextBtn.Parent = Button
-			TextBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-			TextBtn.Position = UDim2.new(0, 1, 0, 1)
-			TextBtn.Size = UDim2.new(0, 278, 0, 26)
-			TextBtn.AutoButtonColor = false
-			TextBtn.Font = Enum.Font.Code
-			TextBtn.Text = text
-			TextBtn.TextColor3 = Color3.fromRGB(225, 225, 225)
-			TextBtn.TextSize = 12.000
-			
-			UICorner_2.CornerRadius = UDim.new(0, 5)
-			UICorner_2.Parent = TextBtn
-			
-			Black.Name = "Black"
-			Black.Parent = Button
-			Black.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-			Black.BackgroundTransparency = 1.000
-			Black.BorderSizePixel = 0
-			Black.Position = UDim2.new(0, 1, 0, 1)
-			Black.Size = UDim2.new(0, 280, 0, 26)
-			
-			UICorner_3.CornerRadius = UDim.new(0, 5)
-			UICorner_3.Parent = Black
+function main:AddButtonR(text, callback)
+    if not MainFramePage2 then
+        warn("MainFramePage2 is not defined")
+        return
+    end
+    
+    local Button2 = Instance.new("Frame")
+    local UICorner2 = Instance.new("UICorner")
+    local TextBtn2 = Instance.new("TextButton")
+    local UICorner_1 = Instance.new("UICorner")
+    local Black2 = Instance.new("Frame")
+    local UICorner_2 = Instance.new("UICorner")
+    
+    Button2.Name = "Button"
+    Button2.Parent = MainFramePage2
+    Button2.BackgroundColor3 = _G.Color or Color3.new(1, 1, 1)
+    Button2.Size = UDim2.new(0, 280, 0, 28)
+    
+    UICorner2.CornerRadius = UDim.new(0, 5)
+    UICorner2.Parent = Button2
+    
+    TextBtn2.Name = "TextBtn"
+    TextBtn2.Parent = Button2
+    TextBtn2.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    TextBtn2.Position = UDim2.new(0, 1, 0, 1)
+    TextBtn2.Size = UDim2.new(0, 278, 0, 26)
+    TextBtn2.AutoButtonColor = false
+    TextBtn2.Font = Enum.Font.Code
+    TextBtn2.Text = text
+    TextBtn2.TextColor3 = Color3.fromRGB(225, 225, 225)
+    TextBtn2.TextSize = 12
+    
+    UICorner_1.CornerRadius = UDim.new(0, 5)
+    UICorner_1.Parent = TextBtn2
+    
+    Black2.Name = "Black"
+    Black2.Parent = Button2
+    Black2.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    Black2.BackgroundTransparency = 1
+    Black2.BorderSizePixel = 0
+    Black2.Position = UDim2.new(0, 1, 0, 1)
+    Black2.Size = UDim2.new(0, 280, 0, 26)
+    
+    UICorner_2.CornerRadius = UDim.new(0, 5)
+    UICorner_2.Parent = Black2
 
-			TextBtn.MouseEnter:Connect(function()
-				TweenService:Create(
-					Black,
-					TweenInfo.new(0.4,Enum.EasingStyle.Quad,Enum.EasingDirection.Out),
-					{BackgroundTransparency = 0.7}
-				):Play()
-			end)
-			TextBtn.MouseLeave:Connect(function()
-				TweenService:Create(
-					Black,
-					TweenInfo.new(0.4,Enum.EasingStyle.Quad,Enum.EasingDirection.Out),
-					{BackgroundTransparency = 1}
-				):Play()
-			end)
-			TextBtn.MouseButton1Click:Connect(function()
-				TextBtn.TextSize = 0
-				TweenService:Create(
-					TextBtn,
-					TweenInfo.new(0.4,Enum.EasingStyle.Quad,Enum.EasingDirection.Out),
-					{TextSize = 12}
-				):Play()
-				callback()
-			end)
-		end
-		function main:AddToggleLeft(text,config,callback)
+    TextBtn2.MouseEnter:Connect(function()
+        local tween = TweenService:Create(
+            Black2,
+            TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundTransparency = 0.7}
+        )
+        tween:Play()
+    end)
+    
+    TextBtn2.MouseLeave:Connect(function()
+        local tween = TweenService:Create(
+            Black2,
+            TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundTransparency = 1}
+        )
+        tween:Play()
+    end)
+    
+    TextBtn2.MouseButton1Click:Connect(function()
+        TextBtn2.TextSize = 0
+        local tween = TweenService:Create(
+            TextBtn2,
+            TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {TextSize = 12}
+        )
+        tween:Play()
+        if callback then
+            callback()
+        else
+            warn("Callback function is not defined")
+        end
+    end)
+end
+
+function main:AddButtonL(text, callback)
+    if not MainFramePage then
+        warn("MainFramePage is not defined")
+        return
+    end
+
+    local Button = Instance.new("Frame")
+    local UICorner = Instance.new("UICorner")
+    local TextBtn = Instance.new("TextButton")
+    local UICorner_2 = Instance.new("UICorner")
+    local Black = Instance.new("Frame")
+    local UICorner_3 = Instance.new("UICorner")
+    
+    Button.Name = "Button"
+    Button.Parent = MainFramePage
+    Button.BackgroundColor3 = _G.Color or Color3.new(1, 1, 1)
+    Button.Size = UDim2.new(0, 280, 0, 28)
+    
+    UICorner.CornerRadius = UDim.new(0, 5)
+    UICorner.Parent = Button
+    
+    TextBtn.Name = "TextBtn"
+    TextBtn.Parent = Button
+    TextBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    TextBtn.Position = UDim2.new(0, 1, 0, 1)
+    TextBtn.Size = UDim2.new(0, 278, 0, 26)
+    TextBtn.AutoButtonColor = false
+    TextBtn.Font = Enum.Font.Code
+    TextBtn.Text = text
+    TextBtn.TextColor3 = Color3.fromRGB(225, 225, 225)
+    TextBtn.TextSize = 12
+    
+    UICorner_2.CornerRadius = UDim.new(0, 5)
+    UICorner_2.Parent = TextBtn
+    
+    Black.Name = "Black"
+    Black.Parent = Button
+    Black.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    Black.BackgroundTransparency = 1
+    Black.BorderSizePixel = 0
+    Black.Position = UDim2.new(0, 1, 0, 1)
+    Black.Size = UDim2.new(0, 280, 0, 26)
+    
+    UICorner_3.CornerRadius = UDim.new(0, 5)
+    UICorner_3.Parent = Black
+
+    TextBtn.MouseEnter:Connect(function()
+        local tween = TweenService:Create(
+            Black,
+            TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundTransparency = 0.7}
+        )
+        tween:Play()
+    end)
+    
+    TextBtn.MouseLeave:Connect(function()
+        local tween = TweenService:Create(
+            Black,
+            TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {BackgroundTransparency = 1}
+        )
+        tween:Play()
+    end)
+    
+    TextBtn.MouseButton1Click:Connect(function()
+        TextBtn.TextSize = 0
+        local tween = TweenService:Create(
+            TextBtn,
+            TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {TextSize = 12}
+        )
+        tween:Play()
+        if callback then
+            callback()
+        else
+            warn("Callback function is not defined")
+        end
+    end)
+end
+		function main:AddToggleL(text,config,callback)
 			config = config or false
 			local toggled = config
 			local Toggle = Instance.new("Frame")
@@ -1324,7 +1376,7 @@ local Space = Instance.new("TextLabel")
 			end
 		end
 		
-function main:AddToggleRight(text,config,callback)
+function main:AddToggleR(text,config,callback)
 			config = config or false
 			local toggledd = config
 			local Togglee = Instance.new("Frame")
@@ -1444,7 +1496,7 @@ Truea.Name = "Truea"
 		
 
 		
-		function main:AddDropdownLeft(droptitle, list, config, callback)
+		function main:AddDropdownL(droptitle, list, config, callback)
 local config = config or "Select First"
 local dropfunc = {}
 local list = list or {}
@@ -1758,7 +1810,7 @@ end
 return dropfunc
 end
 
-	function main:AddDropdownRight(droptitle, list,  config, callback1)
+	function main:AddDropdownR(droptitle, list,  config, callback1)
 -- Local --
 local config = config or "Select First"
 local dropfunc1 = {}
@@ -3854,4 +3906,4 @@ for name, data in pairs(content) do
         data["Cost"]
     ))
 end
-Update:AddNotification('Hello World')
+Update:AddNotification('hi World')
