@@ -1,4 +1,4 @@
-------------------aaa
+------------------er333
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 repeat wait() until game:GetService("Players").LocalPlayer._stats
@@ -6,76 +6,7 @@ repeat wait() until workspace._PETS
 repeat wait() until game:GetService("Players").LocalPlayer:FindFirstChild("PlayerGui")
 
 ----------------------------------- save
--- ฟังก์ชันเพื่อตรวจสอบและสร้างไฟล์ข้อมูลผู้เล่น
-function LC()
-    local fileName = "AA" .. game.Players.LocalPlayer.Name .. ".json"
-    
-    -- ตรวจสอบว่าไฟล์มีอยู่หรือไม่
-    if not isfile(fileName) then
-        -- เขียนไฟล์ใหม่ด้วยการเข้ารหัสข้อมูล _G.SeveST เป็น JSON
-        writefile(fileName, game:GetService("HttpService"):JSONEncode(_G.SeveST))
-        return
-    end
-end
 
--- ตรวจสอบและตั้งค่าค่าพื้นฐานใน _G.SeveST
-pcall(function()
-    -- สร้างตาราง _G.SeveST เพื่อเก็บข้อมูล
-    _G.SeveST = {}
-
-    -- วนลูปผ่าน UnitFrames ใน PlayerGui ของผู้เล่น
-    for i, v in pairs(game:GetService("Players").LocalPlayer.PlayerGui.collection.grid.List.Outer.UnitFrames:GetChildren()) do
-        if v.Name == "CollectionUnitFrame" then
-            -- เก็บข้อมูลในตาราง _G.SeveST โดยใช้ชื่อของ UnitFrame เป็นคีย์
-            _G.SeveST[v.name.Text] = {
-                Equipped = v.EquippedList.Equipped.Visible,
-                Level = v.Main:FindFirstChild("Level").Text,
-                UUID = v._uuid.Value,
-                Cost = tonumber(v.Cost.text.Text) -- แปลงค่า Cost เป็นตัวเลข
-            }
-        end
-    end
-end)
-
--- ฟังก์ชันเพื่อโหลดการตั้งค่าจากไฟล์ JSON
-function LST()
-    local fileName = "AA" .. game.Players.LocalPlayer.Name .. ".json"
-    
-    if isfile(fileName) then
-        local fileContent = readfile(fileName)
-        local succeSaveST, decoded = pcall(function()
-            return game:GetService("HttpService"):JSONDecode(fileContent)
-        end)
-        
-        if succeSaveST then
-            _G.SeveST = decoded
-        end
-    else
-        SaveST()
-    end
-end
-
--- ฟังก์ชันเพื่อบันทึกการตั้งค่าไปยังไฟล์ JSON
-function SaveST()
-    local fileName = "AA  " .. game.Players.LocalPlayer.Name .. ".json"
-    
-    if isfile(fileName) then
-        writefile(fileName, game:GetService("HttpService"):JSONEncode(_G.SeveST))
-    else
-        LC()
-    end
-end
-
--- เรียกใช้ฟังก์ชันเพื่อตรวจสอบและสร้างไฟล์ข้อมูลผู้เล่น
-LC()
-
--- เรียกใช้ฟังก์ชันเพื่อโหลดการตั้งค่าจากไฟล์ JSON
-LST()
-
--- พิมพ์ข้อมูลที่เก็บใน _G.SeveST
-for name, unit in pairs(_G.SeveST) do
-    print(name .. " Uid: " .. unit.UUID .. " equipped: " .. tostring(unit.Equipped) .. " Cost: " .. unit.Cost .. " Level: " .. unit.Level)
-end
 
 function loadcheck()
     local fileName = "RebornXer Hub Anime Adventures" .. game.Players.LocalPlayer.Name .. ".json"
@@ -3945,17 +3876,74 @@ RunService.Heartbeat:Connect(function()
         end)
     end
 end)
-local content = loadstring(readfile(GetNamePlayer.."AA_Units.lua"))()  -- แปลงสตริงเป็น table
-
--- ดึงข้อมูลออกมาในรูปแบบที่ต้องการ
-for name, data in pairs(content) do
-    print(string.format(
-        "ชื่อ: %s, Equipped: %s, Level: %d, UUID: %s, Cost: %d",
-        name,
-        tostring(data["Equipped"]),
-        data["Level"],
-        data["UUID"],
-        data["Cost"]
-    ))
+-- ฟังก์ชันเพื่อตรวจสอบและสร้างไฟล์ข้อมูลผู้เล่น
+function LC()
+    local fileName = "AA" .. game.Players.LocalPlayer.Name .. ".json"
+    
+    -- ตรวจสอบว่าไฟล์มีอยู่หรือไม่
+    if not isfile(fileName) then
+        -- เขียนไฟล์ใหม่ด้วยการเข้ารหัสข้อมูล _G.SeveST เป็น JSON
+        writefile(fileName, game:GetService("HttpService"):JSONEncode(_G.SeveST))
+        return
+    end
 end
-Update:AddNotification('tabe World')
+
+-- ตรวจสอบและตั้งค่าค่าพื้นฐานใน _G.SeveST
+pcall(function()
+    -- สร้างตาราง _G.SeveST เพื่อเก็บข้อมูล
+    _G.SeveST = {}
+
+    -- วนลูปผ่าน UnitFrames ใน PlayerGui ของผู้เล่น
+    for i, v in pairs(game:GetService("Players").LocalPlayer.PlayerGui.collection.grid.List.Outer.UnitFrames:GetChildren()) do
+        if v.Name == "CollectionUnitFrame" then
+            -- เก็บข้อมูลในตาราง _G.SeveST โดยใช้ชื่อของ UnitFrame เป็นคีย์
+            _G.SeveST[v.name.Text] = {
+                Equipped = v.EquippedList.Equipped.Visible,
+                Level = v.Main:FindFirstChild("Level").Text,
+                UUID = v._uuid.Value,
+                Cost = tonumber(v.Cost.text.Text) -- แปลงค่า Cost เป็นตัวเลข
+            }
+        end
+    end
+end)
+
+-- ฟังก์ชันเพื่อโหลดการตั้งค่าจากไฟล์ JSON
+function LST()
+    local fileName = "AA" .. game.Players.LocalPlayer.Name .. ".json"
+    
+    if isfile(fileName) then
+        local fileContent = readfile(fileName)
+        local succeSaveST, decoded = pcall(function()
+            return game:GetService("HttpService"):JSONDecode(fileContent)
+        end)
+        
+        if succeSaveST then
+            _G.SeveST = decoded
+        end
+    else
+        SaveST()
+    end
+end
+
+-- ฟังก์ชันเพื่อบันทึกการตั้งค่าไปยังไฟล์ JSON
+function SaveST()
+    local fileName = "AA  " .. game.Players.LocalPlayer.Name .. ".json"
+    
+    if isfile(fileName) then
+        writefile(fileName, game:GetService("HttpService"):JSONEncode(_G.SeveST))
+    else
+        LC()
+    end
+end
+
+-- เรียกใช้ฟังก์ชันเพื่อตรวจสอบและสร้างไฟล์ข้อมูลผู้เล่น
+LC()
+
+-- เรียกใช้ฟังก์ชันเพื่อโหลดการตั้งค่าจากไฟล์ JSON
+LST()
+
+-- พิมพ์ข้อมูลที่เก็บใน _G.SeveST
+for name, unit in pairs(_G.SeveST) do
+    print(name .. " Uid: " .. unit.UUID .. " equipped: " .. tostring(unit.Equipped) .. " Cost: " .. unit.Cost .. " Level: " .. unit.Level)
+end
+Update:AddNotification('the World')
