@@ -1,4 +1,4 @@
-------------------er333
+------------------er333ๆๆๆๆๆๆๆๆๆ
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 repeat wait() until game:GetService("Players").LocalPlayer._stats
@@ -3791,12 +3791,12 @@ local RunService = game:GetService("RunService")
 local function optimizeSettings(player)
     local settings = player:FindFirstChild("_settings")
     if settings then
-        settings.disable_effects.Value = true
-        settings.disable_kill_fx.Value = true
-        settings.disable_other_fx.Value = true
-        settings.low_quality.Value = true
-        settings.low_quality_shadows.Value = true
-        settings.low_quality_textures.Value = true
+        for _, property in ipairs({"disable_effects", "disable_kill_fx", "disable_other_fx", "low_quality", "low_quality_shadows", "low_quality_textures"}) do
+            local setting = settings:FindFirstChild(property)
+            if setting and setting:IsA("BoolValue") then
+                setting.Value = true
+            end
+        end
     end
 end
 
@@ -3823,61 +3823,71 @@ end
 
 local function optimizePartsAndEffects(descendants)
     for _, obj in ipairs(descendants) do
-        if obj:IsA("Part") or obj:IsA("Union") or obj:IsA("CornerWedgePart") 
-            or obj:IsA("TrussPart") or obj:IsA("MeshPart") then
-            obj.Material = Enum.Material.Plastic
-            obj.Reflectance = 0
-            if obj:IsA("MeshPart") then
-                obj.TextureID = ""
+        pcall(function()
+            if obj:IsA("Part") or obj:IsA("Union") or obj:IsA("CornerWedgePart") 
+                or obj:IsA("TrussPart") or obj:IsA("MeshPart") then
+                obj.Material = Enum.Material.Plastic
+                obj.Reflectance = 0
+                if obj:IsA("MeshPart") then
+                    obj.TextureID = ""
+                end
+            elseif obj:IsA("Decal") or obj:IsA("Texture") then
+                obj:Destroy()
+            elseif obj:IsA("ParticleEmitter") or obj:IsA("Trail") then
+                obj.Lifetime = NumberRange.new(0)
+            elseif obj:IsA("Fire") or obj:IsA("SpotLight") or obj:IsA("Smoke") or obj:IsA("Sparkles") then
+                obj.Enabled = false
+            elseif obj:IsA("Sound") then
+                obj.Playing = false
             end
-        elseif obj:IsA("Decal") or obj:IsA("Texture") then
-            obj:Destroy()
-        elseif obj:IsA("ParticleEmitter") or obj:IsA("Trail") then
-            obj.Lifetime = NumberRange.new(0)
-        elseif obj:IsA("Fire") or obj:IsA("SpotLight") or obj:IsA("Smoke") or obj:IsA("Sparkles") then
-            obj.Enabled = false
-        elseif obj:IsA("Sound") then
-            obj.Playing = false
-        end
+        end)
     end
 end
 
 local function removeUnnecessaryAccessories(descendants)
     for _, obj in ipairs(descendants) do
-        if obj:IsA("Accessory") or obj:IsA("Clothing") then
-            obj:Destroy()
-        end
+        pcall(function()
+            if obj:IsA("Accessory") or obj:IsA("Clothing") then
+                obj:Destroy()
+            end
+        end)
     end
 end
 
 RunService.Heartbeat:Connect(function()
-    if _G.SST.Boost_Fps and not Boosted then
+    if _G.SST and _G.SST.Boost_Fps and not Boosted then
         Boosted = true
         pcall(function()
             local player = game:GetService("Players").LocalPlayer
+            if not player then return end
+
             local playerGui = player:FindFirstChild("PlayerGui")
-            
+
             -- ลบ MessageGui
             if playerGui and playerGui:FindFirstChild("MessageGui") then
-                playerGui.MessageGui:Destroy()
+                pcall(function() playerGui.MessageGui:Destroy() end)
             end
 
             -- ปรับค่าการตั้งค่า
             optimizeSettings(player)
-            
+
             -- ปรับ Terrain และ Lighting
             optimizeTerrain(workspace.Terrain)
             optimizeLighting(game.Lighting)
 
             -- ปรับแต่งวัตถุและเอฟเฟกต์
-            optimizePartsAndEffects(game:GetDescendants())
-            removeUnnecessaryAccessories(game:GetDescendants())
+            local descendants = game:GetDescendants()
+            optimizePartsAndEffects(descendants)
+            removeUnnecessaryAccessories(descendants)
 
             -- ลดคุณภาพการแสดงผล
-            settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
+            if settings and settings().Rendering then
+                settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
+            end
         end)
     end
 end)
+
 
 Update:AddNotification('the World')
 -- ฟังก์ชันเพื่อตรวจสอบและสร้างไฟล์ข้อมูลผู้เล่น
