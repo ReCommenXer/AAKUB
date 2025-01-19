@@ -3078,32 +3078,6 @@ end)
 		end
 	end)
 
-	Main:AddSeperatorRight("Setting")
-local GetNamePlayer = game.Players.LocalPlayer.Name
-
--- อ่านไฟล์และแปลงเป็น table
-local content = loadstring(readfile(GetNamePlayer.."AA_Units.lua"))()
-
--- สร้าง UnitList เพื่อเก็บชื่อ
-local UnitList = {}
-
--- ดึงชื่อของตัวที่ Equipped = true
-for name, data in pairs(content) do
-    if data["Equipped"] == true then
-        table.insert(UnitList, name)  -- เพิ่มชื่อที่มี Equipped = true ลงใน UnitList
-    end
-end
-
--- ตรวจสอบว่า UnitList มีข้อมูลหรือไม่
-if #UnitList > 0 then
-    Main:AddDropdownR("Select Unit", UnitList, _G.SST.Select_Unit, function(a)
-        Select_Unit = a
-        _G.SST.Select_Unit = Select_Unit
-        SS()  -- เรียกฟังก์ชัน SS() เมื่อเลือก
-    end)
-else
-    print("ไม่พบยูนิตที่มี Equipped = true")
-end
 
 Main:AddSeperatorRight("Game")
 local RunService = game:GetService("RunService")
@@ -3171,7 +3145,9 @@ spawn(function()
                 for i, v in pairs(units) do
                     if v:IsA("Model") and v:GetAttribute("range_stat") ~= nil then
                         if v.Name == "bulma" or v.Name == "bulma:shiny" or v.Name == "bulma:shiny:golden" or v.Name == "speedwagon" or v.Name == "speedwagon:shiny" or v.Name == "speedwagon:shiny:golden" or v.Name == "speedwagon:golden" then
-                            local up = { v }
+                            local stats = unit:FindFirstChild("_stats")
+        				if stats and stats.player and stats.player.Value and stats.player.Value == game:GetService("Players").LocalPlayer then
+							local up = { v }
 
                             -- เรียกฟังก์ชัน upgrade_unit_ingame
                             local success, err = pcall(function()
@@ -3180,13 +3156,14 @@ spawn(function()
 
                             if not success then
                                 warn("Error invoking upgrade_unit_ingame: " .. tostring(err))
+								end
                             end
                         end
                     end
                 end
             end
         end)
-        task.wait(0.1) -- รอเล็กน้อยก่อนทำงานรอบถัดไป
+        task.wait(0.06) -- รอเล็กน้อยก่อนทำงานรอบถัดไป
     end
 end)
 
@@ -3198,11 +3175,16 @@ local UnitsFolder = workspace._UNITS
 
 spawn(function()
     while true do
+        local GetNamePy = game.Players.LocalPlayer.Name
         local success, err = pcall(function()
             if _G.SST and _G.SST.Auto_Upgrade_Unit and _G.SST.Select_To_Upgrade == "All Unit" then
-                for _, unit in ipairs(UnitsFolder:GetChildren()) do
+                for _, unit in ipairs(workspace._UNITS:GetChildren()) do
                     if unit:IsA("Model") and unit:GetAttribute("range_stat") then
-                        upgradeEndpoint:InvokeServer(unit)
+                        local stats = unit:FindFirstChild("_stats")
+        				if stats and stats.player and stats.player.Value and stats.player.Value == game:GetService("Players").LocalPlayer then
+                            upgradeEndpoint:InvokeServer(unit)
+							print(stats.player.Value)
+                        end
                     end
                 end
             end
@@ -3212,10 +3194,9 @@ spawn(function()
             warn("Error in auto-upgrade loop: " .. tostring(err))
         end
 
-        task.wait(0.1) -- ปรับเวลารอเพื่อให้ลูปเร็วขึ้นโดยไม่เกิดปัญหากับเซิร์ฟเวอร์
+        task.wait(0.06) -- Adjust the wait time as needed to avoid server issues
     end
 end)
-
 
 
 
