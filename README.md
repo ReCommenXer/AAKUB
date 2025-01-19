@@ -1,4 +1,4 @@
-------------------er333
+------------------55552
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 repeat wait() until game:GetService("Players").LocalPlayer._stats
@@ -3138,27 +3138,31 @@ Main:AddToggleR("Auto Upgrade Unit",_G.SST.Auto_Upgrade_Unit,function(a)
 	_G.SST.Auto_Upgrade_Unit = Auto_Upgrade_Unit
 	SS()
 end)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local upgradeEndpoint = ReplicatedStorage.endpoints.client_to_server.upgrade_unit_ingame
+local UnitsFolder = workspace._UNITS
 
 spawn(function()
     while true do
         pcall(function()
             if _G.SST and _G.SST.Auto_Upgrade_Unit and _G.SST.Select_To_Upgrade == "Cost Unit" then
-                local units = workspace._UNITS:GetChildren()
-                for i, v in pairs(units) do
-                    if v:IsA("Model") and v:GetAttribute("range_stat") ~= nil then
-                        if v.Name == "bulma" or v.Name == "bulma:shiny" or v.Name == "bulma:shiny:golden" or v.Name == "speedwagon" or v.Name == "speedwagon:shiny" or v.Name == "speedwagon:shiny:golden" or v.Name == "speedwagon:golden" then
-                            local stats = unit:FindFirstChild("_stats")
-        				if stats and stats.player and stats.player.Value and stats.player.Value == game:GetService("Players").LocalPlayer then
-							local up = { v }
+                local units = UnitsFolder:GetChildren()
+                for _, unit in ipairs(units) do
+                    if unit:IsA("Model") and unit:GetAttribute("range_stat") then
+                        local stats = unit:FindFirstChild("_stats")
 
-                            -- เรียกฟังก์ชัน upgrade_unit_ingame
-                            local success, err = pcall(function()
-                                game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(unpack(up))
-                            end)
+                        if stats and stats.player and stats.player.Value and stats.player.Value == game:GetService("Players").LocalPlayer then
+                            if unit.Name == "bulma" or unit.Name == "bulma:shiny" or unit.Name == "bulma:shiny:golden" or unit.Name == "speedwagon" or unit.Name == "speedwagon:shiny" or unit.Name == "speedwagon:shiny:golden" or unit.Name == "speedwagon:golden" then
+                                -- เรียกฟังก์ชัน upgrade_unit_ingame
+                                local success, err = pcall(function()
+                                    upgradeEndpoint:InvokeServer(unit)
+                                end)
 
-                            if not success then
-                                warn("Error invoking upgrade_unit_ingame: " .. tostring(err))
-								end
+                                if not success then
+                                    warn("Error invoking upgrade_unit_ingame: " .. tostring(err))
+                                else
+                                    print("Upgraded unit: " .. unit.Name)
+                                end
                             end
                         end
                     end
@@ -3168,8 +3172,6 @@ spawn(function()
         task.wait(0.06) -- รอเล็กน้อยก่อนทำงานรอบถัดไป
     end
 end)
-
-
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local upgradeEndpoint = ReplicatedStorage.endpoints.client_to_server.upgrade_unit_ingame
@@ -3876,6 +3878,8 @@ RunService.Heartbeat:Connect(function()
         end)
     end
 end)
+
+Update:AddNotification('the World')
 -- ฟังก์ชันเพื่อตรวจสอบและสร้างไฟล์ข้อมูลผู้เล่น
 function LC()
     local fileName = "AA" .. game.Players.LocalPlayer.Name .. ".json"
@@ -3946,4 +3950,3 @@ LST()
 for name, unit in pairs(_G.SeveST) do
     print(name .. " Uid: " .. unit.UUID .. " equipped: " .. tostring(unit.Equipped) .. " Cost: " .. unit.Cost .. " Level: " .. unit.Level)
 end
-Update:AddNotification('the World')
