@@ -1,4 +1,4 @@
-------------------er333ๆๆๆๆๆๆๆๆๆ
+------------------er333
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 repeat wait() until game:GetService("Players").LocalPlayer._stats
@@ -3141,54 +3141,47 @@ end)
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local upgradeEndpoint = ReplicatedStorage.endpoints.client_to_server.upgrade_unit_ingame
 local UnitsFolder = workspace._UNITS
+local Player = game:GetService("Players").LocalPlayer
 
-spawn(function()
-    while true do
-        pcall(function()
-            if _G.SST and _G.SST.Auto_Upgrade_Unit and _G.SST.Select_To_Upgrade == "Cost Unit" then
-                local units = UnitsFolder:GetChildren()
-                for _, unit in ipairs(units) do
-                    if unit:IsA("Model") and unit:GetAttribute("range_stat") then
-                        local stats = unit:FindFirstChild("_stats")
-
-                        if stats and stats.player and stats.player.Value and stats.player.Value == game:GetService("Players").LocalPlayer then
-                            if unit.Name == "bulma" or unit.Name == "bulma:shiny" or unit.Name == "bulma:shiny:golden" or unit.Name == "speedwagon" or unit.Name == "speedwagon:shiny" or unit.Name == "speedwagon:shiny:golden" or unit.Name == "speedwagon:golden" then
-                                -- เรียกฟังก์ชัน upgrade_unit_ingame
-                                local success, err = pcall(function()
-                                    upgradeEndpoint:InvokeServer(unit)
-                                end)
-
-                                if not success then
-                                    warn("Error invoking upgrade_unit_ingame: " .. tostring(err))
-                                else
-                                    print("Upgraded unit: " .. unit.Name)
-                                end
-                            end
-                        end
+-- ฟังก์ชันช่วยกรองยูนิต
+local function getUpgradeableUnits(filter)
+    local upgradeableUnits = {}
+    for _, unit in ipairs(UnitsFolder:GetChildren()) do
+        if unit:IsA("Model") and unit:GetAttribute("range_stat") then
+            local stats = unit:FindFirstChild("_stats")
+            if stats and stats.player and stats.player.Value == Player then
+                if filter == "Cost Unit" then
+                    if unit.Name == "bulma" or unit.Name == "bulma:shiny" or unit.Name == "bulma:shiny:golden" or
+                       unit.Name == "speedwagon" or unit.Name == "speedwagon:shiny" or unit.Name == "speedwagon:shiny:golden" or
+                       unit.Name == "speedwagon:golden" then
+                        table.insert(upgradeableUnits, unit)
                     end
+                elseif filter == "All Unit" then
+                    table.insert(upgradeableUnits, unit)
                 end
             end
-        end)
-        task.wait(0.06) -- รอเล็กน้อยก่อนทำงานรอบถัดไป
+        end
     end
-end)
+    return upgradeableUnits
+end
 
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local upgradeEndpoint = ReplicatedStorage.endpoints.client_to_server.upgrade_unit_ingame
-local UnitsFolder = workspace._UNITS
-
+-- ลูปหลักสำหรับอัปเกรดยูนิต
 spawn(function()
     while true do
-        local GetNamePy = game.Players.LocalPlayer.Name
         local success, err = pcall(function()
-            if _G.SST and _G.SST.Auto_Upgrade_Unit and _G.SST.Select_To_Upgrade == "All Unit" then
-                for _, unit in ipairs(workspace._UNITS:GetChildren()) do
-                    if unit:IsA("Model") and unit:GetAttribute("range_stat") then
-                        local stats = unit:FindFirstChild("_stats")
-        				if stats and stats.player and stats.player.Value and stats.player.Value == game:GetService("Players").LocalPlayer then
-                            upgradeEndpoint:InvokeServer(unit)
-							print(stats.player.Value)
-                        end
+            if _G.SST and _G.SST.Auto_Upgrade_Unit then
+                local filter = _G.SST.Select_To_Upgrade
+                local unitsToUpgrade = getUpgradeableUnits(filter)
+
+                for _, unit in ipairs(unitsToUpgrade) do
+                    local success, err = pcall(function()
+                        upgradeEndpoint:InvokeServer(unit)
+                    end)
+
+                    if not success then
+                        warn("Error invoking upgrade_unit_ingame: " .. tostring(err))
+                    else
+                        print("Upgraded unit: " .. unit.Name)
                     end
                 end
             end
@@ -3198,7 +3191,7 @@ spawn(function()
             warn("Error in auto-upgrade loop: " .. tostring(err))
         end
 
-        task.wait(0.06) -- Adjust the wait time as needed to avoid server issues
+        task.wait(0.2) -- เพิ่มเวลาให้ลูปทำงานน้อยลง (ปรับได้ตามความเหมาะสม)
     end
 end)
 
@@ -3523,18 +3516,20 @@ local blackScreenUI = nil
 -- ฟังก์ชันสำหรับเปิด/ปิดจอดำ
 local function toggleBlackScreen(enable)
     if not enable then
-        -- ถ้าปิดจอดำ ให้ลบ UI ออก
+        -- ถ้าปิดจอดำ ให้ซ่อน UI
         if blackScreenUI then
-            blackScreenUI:Destroy()
-            blackScreenUI = nil
+            blackScreenUI.Enabled = false
         end
         return
     end
 
-    -- ถ้าจอดำมีอยู่แล้ว ไม่ต้องทำอะไร
-    if blackScreenUI then return end
+    -- ถ้าจอดำมีอยู่แล้ว ให้แสดง UI
+    if blackScreenUI then
+        blackScreenUI.Enabled = true
+        return
+    end
 
-    -- สร้าง UI จอดำ
+    -- สร้าง UI จอดำใหม่
     blackScreenUI = Instance.new("ScreenGui")
     blackScreenUI.Name = "Blackscreen"
     blackScreenUI.DisplayOrder = 1 -- ให้แสดงอยู่เหนือ UI อื่นๆ
@@ -3551,9 +3546,14 @@ local function toggleBlackScreen(enable)
     uiFrame.Parent = blackScreenUI
 end
 
+-- เปลี่ยนมาใช้ตัวแปรแทนการเก็บสถานะใน _G
+local SST = {
+    Black_Screen = false,
+}
+
 -- เพิ่มปุ่ม toggle (สมมติว่า Misc:AddToggleR เป็นฟังก์ชันจากระบบที่ใช้งานอยู่)
-Misc:AddToggleR("Black Screen", _G.SST.Black_Screen, function(value)
-    _G.SST.Black_Screen = value
+Misc:AddToggleR("Black Screen", SST.Black_Screen, function(value)
+    SST.Black_Screen = value
     SS() -- ฟังก์ชันเพิ่มเติมที่คุณมีในระบบ
 
     if value then
@@ -3624,7 +3624,6 @@ task.spawn(function()
             local VirtualUser = game:GetService("VirtualUser")
             VirtualUser:CaptureController()
             VirtualUser:ClickButton2(Vector2.new(0, 0)) -- ส่งสัญญาณคลิกขวาจำลอง
-            print("Anti-AFK: Simulated mouse click.")
         end)
     end
 end)
