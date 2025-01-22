@@ -1,10 +1,5 @@
-------------------wwww
-repeat wait() until game:IsLoaded()
-repeat wait() until game:GetService("Players")
-repeat wait() until game:GetService("Players").LocalPlayer._stats
-repeat wait() until workspace._PETS
-repeat wait() until game:GetService("Players").LocalPlayer:FindFirstChild("PlayerGui")
-
+------------------wait load
+if not game:IsLoaded() then repeat game.Loaded:Wait() until game:IsLoaded() end
 ----------------------------------- save
 
 
