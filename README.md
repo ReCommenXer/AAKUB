@@ -1,4 +1,4 @@
-------------------er333
+------------------wwww
 repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players")
 repeat wait() until game:GetService("Players").LocalPlayer._stats
@@ -3884,7 +3884,7 @@ RunService.Heartbeat:Connect(function()
 end)
 
 
-Update:AddNotification('Hello'..game.Players.LocalPlayer.Name)
+Update:AddNotification('Hello  '..game.Players.LocalPlayer.Name)
 -- ฟังก์ชันเพื่อตรวจสอบและสร้างไฟล์ข้อมูลผู้เล่น
 local HttpService = game:GetService("HttpService")
 
