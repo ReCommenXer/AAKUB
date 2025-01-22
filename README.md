@@ -112,14 +112,14 @@ ImageButton.MouseButton1Click:Connect(function()
         if main.Size.X.Offset == 600 and main.Size.Y.Offset == 400 then
             local tween = TweenService:Create(
                 main,
-                TweenInfo.new(0.25, Enum.EasingStyle.Sine, Enum.EasingDirection.In), -- กำหนดเวลา 0.35 วินาที
+                TweenInfo.new(0.20, Enum.EasingStyle.Sine, Enum.EasingDirection.In), -- กำหนดเวลา 0.35 วินาที
                 {Size = UDim2.new(0, 0, 0, 0)}
             )
             tween:Play() -- เล่น Tween
         else
             local tween = TweenService:Create(
                 main,
-                TweenInfo.new(0.25, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), -- กำหนดเวลา 0.35 วินาที
+                TweenInfo.new(0.20, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), -- กำหนดเวลา 0.35 วินาที
                 {Size = UDim2.new(0, 600, 0, 400)}
             )
             tween:Play() -- เล่น Tween
@@ -3884,7 +3884,7 @@ RunService.Heartbeat:Connect(function()
 end)
 
 
-Update:AddNotification('Hello User')
+Update:AddNotification('Hello'..game.Players.LocalPlayer.Name)
 -- ฟังก์ชันเพื่อตรวจสอบและสร้างไฟล์ข้อมูลผู้เล่น
 local HttpService = game:GetService("HttpService")
 
