@@ -3547,15 +3547,11 @@ local function toggleBlackScreen(enable)
 end
 
 -- เปลี่ยนมาใช้ตัวแปรแทนการเก็บสถานะใน _G
-local SST = {
-    Black_Screen = false,
-}
-
 -- เพิ่มปุ่ม toggle (สมมติว่า Misc:AddToggleR เป็นฟังก์ชันจากระบบที่ใช้งานอยู่)
-Misc:AddToggleR("Black Screen", SST.Black_Screen, function(value)
-    SST.Black_Screen = value
+Misc:AddToggleR("Black Screen",_G.SST.Black_Screen, function(value)
+    Black_Screen = value
+	_G.SST.Black_Screen = Black_Screen
     SS() -- ฟังก์ชันเพิ่มเติมที่คุณมีในระบบ
-
     if value then
         -- ปิดการแสดงผล 3D และเปิดจอดำ
         game:GetService("RunService"):Set3dRenderingEnabled(false)
@@ -3888,7 +3884,7 @@ RunService.Heartbeat:Connect(function()
 end)
 
 
-Update:AddNotification('the World')
+Update:AddNotification('Hello User')
 -- ฟังก์ชันเพื่อตรวจสอบและสร้างไฟล์ข้อมูลผู้เล่น
 local HttpService = game:GetService("HttpService")
 
