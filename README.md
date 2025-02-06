@@ -1,5 +1,5 @@
 ------------------wait load
-if not game:IsLoaded() then repeat game.Loaded:Wait() until game:IsLoaded() end
+if not game:IsLoaded() then repeat game.Loaded:Wait() until game:IsLoaded() 
 ----------------------------------- save
 
 
@@ -3108,16 +3108,19 @@ Main:AddToggleR("Auto ReJoin", _G.SST.Auto_ReJoin, function(value)
 end)
 
 -- ใช้ RunService.Heartbeat แทน spawn เพื่อจัดการลูป
-RunService.Heartbeat:Connect(function()
+local connection
+connection = RunService.Heartbeat:Connect(function()
     pcall(function()
         if _G.SST.Auto_Back_To_Lobby then
             handleBackToLobby()
-        end
-        if _G.SST.Auto_ReJoin then
+            connection:Disconnect()
+        elseif _G.SST.Auto_ReJoin then
             handleReJoin()
+            connection:Disconnect()
         end
     end)
 end)
+
 
 Main:AddSeperatorRight("Game")
 Main:AddDropdownR("Select To upgrade",{"All Unit","Cost Unit"},_G.SST.Select_To_Upgrade,function(a)
@@ -3186,7 +3189,7 @@ spawn(function()
             warn("Error in auto-upgrade loop: " .. tostring(err))
         end
 
-        task.wait(0.2) -- เพิ่มเวลาให้ลูปทำงานน้อยลง (ปรับได้ตามความเหมาะสม)
+        task.wait(0.1) -- เพิ่มเวลาให้ลูปทำงานน้อยลง (ปรับได้ตามความเหมาะสม)
     end
 end)
 
@@ -3593,7 +3596,7 @@ end)
 spawn(function()
 	while wait() do
 		if _G.SST.Auto_Rejoin_Kick then
-			_G.SST.Auto_Rejoin_Kick = game:GetService("CoreGui").RobloxPromptGui.promptOverlay.ChildAdded:Connect(function(child)
+			Auto_Rejoin_Kick = game:GetService("CoreGui").RobloxPromptGui.promptOverlay.ChildAdded:Connect(function(child)
 				if child.Name == 'ErrorPrompt' and child:FindFirstChild('MessageArea') and child.MessageArea:FindFirstChild("ErrorFrame") then
 					game:GetService("TeleportService"):Teleport(8304191830)
 				end
@@ -3881,127 +3884,110 @@ end)
 
 Update:AddNotification('Hello  '..game.Players.LocalPlayer.Name)
 -- ฟังก์ชันเพื่อตรวจสอบและสร้างไฟล์ข้อมูลผู้เล่น
+-- รับบริการที่ต้องใช้
 local HttpService = game:GetService("HttpService")
+local Players = game:GetService("Players")
+local localPlayer = Players.LocalPlayer
 
--- ฟังก์ชันเพื่อตรวจสอบและสร้างไฟล์ข้อมูลผู้เล่น
-function LC()
-    local fileName = "AA" .. game.Players.LocalPlayer.Name .. ".json"
-    
-    -- ตรวจสอบว่าไฟล์มีอยู่หรือไม่
-    if not isfile(fileName) then
-        -- เขียนไฟล์ใหม่ด้วยการเข้ารหัสข้อมูล _G.SeveST เป็น JSON
-        writefile(fileName, HttpService:JSONEncode(_G.SeveST))
-        return
-    end
-end
+-- กำหนดชื่อไฟล์สำหรับบันทึกข้อมูลของผู้เล่น
+local fileName = "AA" .. localPlayer.Name .. ".json"
 
--- ตรวจสอบและตั้งค่าค่าพื้นฐานใน _G.SeveST
-pcall(function()
-    -- สร้างตาราง _G.SeveST เพื่อเก็บข้อมูล
-    _G.SeveST = {}
+-- ฟังก์ชันสำหรับสร้างข้อมูลเริ่มต้นจาก UnitFrames
+local function createInitialData()
+    local data = {}
 
-    -- วนลูปผ่าน UnitFrames ใน PlayerGui ของผู้เล่น
-    for i, v in pairs(game:GetService("Players").LocalPlayer.PlayerGui.collection.grid.List.Outer.UnitFrames:GetChildren()) do
+    -- เข้าถึง UnitFrames ภายใน PlayerGui ของผู้เล่น
+    local unitFramesFolder = localPlayer.PlayerGui.collection.grid.List.Outer.UnitFrames
+    for _, v in ipairs(unitFramesFolder:GetChildren()) do
         if v.Name == "CollectionUnitFrame" then
-            -- เก็บข้อมูลในตาราง _G.SeveST โดยใช้ชื่อของ UnitFrame เป็นคีย์
-            _G.SeveST[v.name.Text] = {
+            -- ใช้ชื่อใน text label เป็น key และเก็บข้อมูลต่าง ๆ ลงในตาราง
+            data[v.name.Text] = {
                 Equipped = v.EquippedList.Equipped.Visible,
-                Level = tonumber(v.Main:FindFirstChild("Level").Text),
+                Level = tonumber(v.Main:FindFirstChild("Level").Text) or 0,
                 UUID = v._uuid.Value,
-                Cost = tonumber(v.Cost.text.Text) -- แปลงค่า Cost เป็นตัวเลข
+                Cost = tonumber(v.Cost.text.Text) or 0
             }
         end
     end
-end)
 
-local HttpService = game:GetService("HttpService")
+    return data
+end
 
--- ฟังก์ชันเพื่อตรวจสอบและสร้างไฟล์ข้อมูลผู้เล่น
-function LC()
-    local fileName = "AA" .. game.Players.LocalPlayer.Name .. ".json"
-    
-    -- ตรวจสอบว่าไฟล์มีอยู่หรือไม่
+-- ฟังก์ชันเพื่อตรวจสอบว่ามีไฟล์ข้อมูลอยู่หรือไม่ ถ้าไม่มีก็ให้สร้างไฟล์ขึ้นมา
+local function checkOrCreateFile()
     if not isfile(fileName) then
-        -- เขียนไฟล์ใหม่ด้วยการเข้ารหัสข้อมูล _G.SeveST เป็น JSON
-        writefile(fileName, HttpService:JSONEncode(_G.SeveST))
-        return
+        local initialData = createInitialData()
+        writefile(fileName, HttpService:JSONEncode(initialData))
     end
 end
 
--- ตรวจสอบและตั้งค่าค่าพื้นฐานใน _G.SeveST
-pcall(function()
-    -- สร้างตาราง _G.SeveST เพื่อเก็บข้อมูล
-    _G.SeveST = {}
-
-    -- วนลูปผ่าน UnitFrames ใน PlayerGui ของผู้เล่น
-    for i, v in pairs(game:GetService("Players").LocalPlayer.PlayerGui.collection.grid.List.Outer.UnitFrames:GetChildren()) do
-        if v.Name == "CollectionUnitFrame" then
-            -- เก็บข้อมูลในตาราง _G.SeveST โดยใช้ชื่อของ UnitFrame เป็นคีย์
-            _G.SeveST[v.name.Text] = {
-                Equipped = v.EquippedList.Equipped.Visible,
-                Level = tonumber(v.Main:FindFirstChild("Level").Text),
-                UUID = v._uuid.Value,
-                Cost = tonumber(v.Cost.text.Text) -- แปลงค่า Cost เป็นตัวเลข
-            }
-        end
-    end
-end)
-
--- ฟังก์ชันเพื่อโหลดการตั้งค่าจากไฟล์ JSON
-function LST()
-    local fileName = "AA" .. game.Players.LocalPlayer.Name .. ".json"
-    
+-- ฟังก์ชันสำหรับโหลดข้อมูลจากไฟล์ JSON ไปยัง _G.SeveST
+local function loadData()
     if isfile(fileName) then
         local fileContent = readfile(fileName)
         local success, decoded = pcall(function()
             return HttpService:JSONDecode(fileContent)
         end)
-        
-        if success then
+        if success and type(decoded) == "table" then
             _G.SeveST = decoded
+        else
+            warn("ไม่สามารถถอดรหัสข้อมูลจากไฟล์ " .. fileName .. " ได้")
+            _G.SeveST = {}
         end
     else
-        SaveST()
+        -- ถ้าไม่มีไฟล์ ให้สร้างและโหลดข้อมูลใหม่
+        checkOrCreateFile()
+        loadData()
     end
 end
 
--- ฟังก์ชันเพื่อบันทึกการตั้งค่าไปยังไฟล์ JSON
-function SaveST()
-    local fileName = "AA" .. game.Players.LocalPlayer.Name .. ".json"
-    
-    if isfile(fileName) then
+-- ฟังก์ชันสำหรับบันทึกข้อมูลจาก _G.SeveST กลับไปยังไฟล์ JSON
+local function saveData()
+    if _G.SeveST then
         writefile(fileName, HttpService:JSONEncode(_G.SeveST))
     else
-        LC()
+        warn("ไม่มีข้อมูลใน _G.SeveST ให้บันทึก")
     end
 end
 
--- เรียกใช้ฟังก์ชันเพื่อตรวจสอบและสร้างไฟล์ข้อมูลผู้เล่น
-LC()
-
--- เรียกใช้ฟังก์ชันเพื่อโหลดการตั้งค่าจากไฟล์ JSON
-LST()
-
--- พิมพ์ข้อมูลที่เก็บใน _G.SeveST เพื่อให้แน่ใจว่าข้อมูลถูกต้อง
-for name, unit in pairs(_G.SeveST) do
-    print(name .. " Uid: " .. unit.UUID .. " equipped: " .. tostring(unit.Equipped) .. " Cost: " .. unit.Cost .. " Level: " .. unit.Level)
-end
-
--- ฟังก์ชันเพื่อใช้งานข้อมูลจาก _G.SeveST
-function UseSeveST()
-    for name, unit in pairs(_G.SeveST) do
-        -- ตัวอย่างการใช้งานข้อมูล
-        if unit.Equipped then
-            print(name .. " is equipped and ready for use.")
-        else
-            print(name .. " is not equipped.")
+-- ฟังก์ชันแสดงข้อมูลของ Unit ที่บันทึกไว้
+local function printData()
+    if _G.SeveST then
+        for name, unit in pairs(_G.SeveST) do
+            print(string.format(
+                "%s Uid: %s | Equipped: %s | Cost: %s | Level: %s",
+                name, unit.UUID, tostring(unit.Equipped), tostring(unit.Cost), tostring(unit.Level)
+            ))
         end
-
-        -- ตัวอย่างการคำนวณการใช้ข้อมูล
-        local upgradeCost = unit.Cost * unit.Level
-        print("The upgrade cost for " .. name .. " is " .. upgradeCost)
+    else
+        warn("ไม่มีข้อมูลใน _G.SeveST")
     end
 end
 
--- เรียกใช้ฟังก์ชันเพื่อใช้งานข้อมูล
-UseSeveST()
+-- ฟังก์ชันตัวอย่างการใช้งานข้อมูลจาก _G.SeveST
+local function useData()
+    if _G.SeveST then
+        for name, unit in pairs(_G.SeveST) do
+            if unit.Equipped then
+                print(name .. " is equipped and ready for use.")
+            else
+                print(name .. " is not equipped.")
+            end
+
+            local upgradeCost = unit.Cost * unit.Level
+            print("The upgrade cost for " .. name .. " is " .. upgradeCost)
+        end
+    else
+        warn("ไม่มีข้อมูลใน _G.SeveST")
+    end
+end
+
+-- ขั้นตอนการทำงานหลัก
+checkOrCreateFile()   -- ตรวจสอบและสร้างไฟล์ถ้ายังไม่มี
+loadData()            -- โหลดข้อมูลจากไฟล์ไปยัง _G.SeveST
+printData()           -- แสดงข้อมูลที่ได้
+useData()             -- เรียกใช้งานข้อมูลตามที่ต้องการ
+
+-- หากต้องการบันทึกข้อมูลใหม่หลังจากมีการเปลี่ยนแปลงใน _G.SeveST ให้เรียกใช้ saveData()
+-- saveData()
+end
