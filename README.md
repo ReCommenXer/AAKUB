@@ -1,5 +1,5 @@
 ------------------wait load
-if not game:IsLoaded() then repeat game.Loaded:Wait() until game:IsLoaded() 
+if not game:IsLoaded() then repeat game.Loaded:Wait() until game:IsLoaded() end
 ----------------------------------- save
 
 
@@ -3990,4 +3990,3 @@ useData()             -- เรียกใช้งานข้อมูลต�
 
 -- หากต้องการบันทึกข้อมูลใหม่หลังจากมีการเปลี่ยนแปลงใน _G.SeveST ให้เรียกใช้ saveData()
 -- saveData()
-end
