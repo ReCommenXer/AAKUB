@@ -3077,48 +3077,59 @@ end)
 
 
 Main:AddSeperatorRight("Game")
+
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+if not _G.SST then
+    _G.SST = {}
+end
+
+local lastCheck = 0  -- ตัวแปรเก็บเวลาล่าสุดที่เรียกฟังก์ชัน
+local checkInterval = 1  -- เช็คทุกๆ 1 วินาที (ปรับค่าได้)
+
 local function handleBackToLobby()
     local player = Players.LocalPlayer
-    if player.PlayerGui:FindFirstChild("ResultsUI") and player.PlayerGui.ResultsUI.Enabled then
+    local resultsUI = player.PlayerGui:FindFirstChild("ResultsUI")
+    
+    if resultsUI and resultsUI.Enabled then
         ReplicatedStorage.endpoints.client_to_server.teleport_back_to_lobby:InvokeServer()
     end
 end
 
 local function handleReJoin()
     local player = Players.LocalPlayer
-    if player.PlayerGui:FindFirstChild("ResultsUI") and player.PlayerGui.ResultsUI.Enabled then
+    local resultsUI = player.PlayerGui:FindFirstChild("ResultsUI")
+    
+    if resultsUI and resultsUI.Enabled then
         ReplicatedStorage.endpoints.client_to_server.set_game_finished_vote:InvokeServer("replay")
     end
 end
 
 -- สร้างตัวเลือก Auto Back To Lobby
-Main:AddToggleR("Auto Back To Lobby", _G.SST.Auto_Back_To_Lobby, function(value)
+Main:AddToggleR("Auto Back To Lobby", _G.SST.Auto_Back_To_Lobby or false, function(value)
     _G.SST.Auto_Back_To_Lobby = value
-    SS()
 end)
 
 -- สร้างตัวเลือก Auto ReJoin
-Main:AddToggleR("Auto ReJoin", _G.SST.Auto_ReJoin, function(value)
+Main:AddToggleR("Auto ReJoin", _G.SST.Auto_ReJoin or false, function(value)
     _G.SST.Auto_ReJoin = value
-    SS()
 end)
 
--- ใช้ RunService.Heartbeat แทน spawn เพื่อจัดการลูป
-while wait() do
-    pcall(function()
+-- ใช้ RunService.Heartbeat พร้อมตัวจับเวลา
+RunService.Heartbeat:Connect(function()
+    if tick() - lastCheck >= checkInterval then
+        lastCheck = tick()  -- อัปเดตเวลาล่าสุด
+        
         if _G.SST.Auto_Back_To_Lobby then
             handleBackToLobby()
-            
-        elseif _G.SST.Auto_ReJoin then
+        end
+        if _G.SST.Auto_ReJoin then
             handleReJoin()
         end
-    end)
-end
-
+    end
+end)
 
 Main:AddSeperatorRight("Game")
 Main:AddDropdownR("Select To upgrade",{"All Unit","Cost Unit"},_G.SST.Select_To_Upgrade,function(a)
