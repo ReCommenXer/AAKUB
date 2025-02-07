@@ -3108,18 +3108,16 @@ Main:AddToggleR("Auto ReJoin", _G.SST.Auto_ReJoin, function(value)
 end)
 
 -- ใช้ RunService.Heartbeat แทน spawn เพื่อจัดการลูป
-local connection
-connection = RunService.Heartbeat:Connect(function()
+while wait() do
     pcall(function()
         if _G.SST.Auto_Back_To_Lobby then
             handleBackToLobby()
-            connection:Disconnect()
+            
         elseif _G.SST.Auto_ReJoin then
             handleReJoin()
-            connection:Disconnect()
         end
     end)
-end)
+end
 
 
 Main:AddSeperatorRight("Game")
