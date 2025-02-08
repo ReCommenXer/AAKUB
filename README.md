@@ -1,39 +1,10 @@
 ------------------wait load
--- รอเกมโหลดก่อนทำงาน
-if not game:IsLoaded() then 
-    repeat game.Loaded:Wait() until game:IsLoaded() 
-end
-
--- ฟังก์ชันตรวจสอบ & โหลดค่าเริ่มต้น
-
-local function loadSettings()
-    if not isfile(fileName) then
-        writefile(fileName, HttpService:JSONEncode({})) -- สร้างไฟล์ถ้ายังไม่มี
-    end
-    local success, data = pcall(function()
-        return HttpService:JSONDecode(readfile(fileName))
-    end)
-    if success then
-        return data
-    else
-        return {} -- ถ้าไฟล์เสียหายให้ใช้ค่าเริ่มต้น
-    end
-end
-
--- โหลดค่าตั้งค่า
-_G.SST = loadSettings()
-
--- ฟังก์ชันป้องกัน AFK
-
-
--- UI Script (ปรับปรุง Tween ให้ลื่นขึ้น)
+if not game:IsLoaded() then repeat game.Loaded:Wait() until game:IsLoaded() end
 ----------------------------------- save
-local HttpService = game:GetService("HttpService")
-local fileName = "RebornXerHub AA" .. game.Players.LocalPlayer.Name .. ".json"
+
 
 function loadcheck()
-    local fileName = "RebornXerHub AA" .. game.Players.LocalPlayer.Name .. ".json"
-
+    local fileName = "RebornXer Hub Anime Adventures" .. game.Players.LocalPlayer.Name .. ".json"
     
     if not isfile(fileName) then
         writefile(fileName, game:GetService("HttpService"):JSONEncode(_G.SST))
@@ -67,8 +38,32 @@ pcall(function()
         Claim_Easter = false
     }
 end)
-local function SS(data)
-    writefile(fileName, HttpService:JSONEncode(data))
+
+function LoadSetting()
+    local fileName = "RebornXer Hub Anime Adventures" .. game.Players.LocalPlayer.Name .. ".json"
+    
+    if isfile(fileName) then
+        local fileContent = readfile(fileName)
+        local success, decoded = pcall(function()
+            return game:GetService("HttpService"):JSONDecode(fileContent)
+        end)
+        
+        if success then
+            _G.SST = decoded
+        end
+    else
+        SS()
+    end
+end
+
+function SS()
+    local fileName = "RebornXer Hub Anime Adventures" .. game.Players.LocalPlayer.Name .. ".json"
+    
+    if isfile(fileName) then
+        writefile(fileName, game:GetService("HttpService"):JSONEncode(_G.SST))
+    else
+        loadcheck()
+    end
 end
 
 loadcheck()
@@ -106,17 +101,27 @@ ImageButton.Image = "rbxassetid://108287073891881"
 -- ฟังก์ชันสำหรับการคลิก
 local TweenService = game:GetService("TweenService")
 ImageButton.MouseButton1Click:Connect(function()
-    local ui = game:GetService("CoreGui"):FindFirstChild("RebornXer_Hub")
-    if ui and ui:FindFirstChild("Main") then
+    local ui = game:GetService("CoreGui"):FindFirstChild("RebornXer Hub") -- ค้นหา UI
+    if ui and ui:FindFirstChild("Main") then -- ตรวจสอบว่ามี "Main" อยู่ใน UI
         local main = ui.Main
-        local newSize = (main.Size.X.Offset == 600) and UDim2.new(0, 0, 0, 0) or UDim2.new(0, 600, 0, 400)
-        game:GetService("TweenService"):Create(
-            main,
-            TweenInfo.new(0.2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
-            {Size = newSize}
-        ):Play()
+        if main.Size.X.Offset == 600 and main.Size.Y.Offset == 400 then
+            local tween = TweenService:Create(
+                main,
+                TweenInfo.new(0.20, Enum.EasingStyle.Sine, Enum.EasingDirection.In), -- กำหนดเวลา 0.35 วินาที
+                {Size = UDim2.new(0, 0, 0, 0)}
+            )
+            tween:Play() -- เล่น Tween
+        else
+            local tween = TweenService:Create(
+                main,
+                TweenInfo.new(0.20, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), -- กำหนดเวลา 0.35 วินาที
+                {Size = UDim2.new(0, 600, 0, 400)}
+            )
+            tween:Play() -- เล่น Tween
+        end
     end
 end)
+
 
 fuckshit.Parent = Open
 
@@ -3581,14 +3586,13 @@ end)
 
 -- เริ่มฟังก์ชัน spawn สำหรับการตั้งค่า FPS
 spawn(function()
-    while task.wait(1) do
-        pcall(function()
-            if type(_G.SST.Select_Farme_Rate) == "number" and _G.SST.Select_Farme_Rate > 0 then
-                setfpscap(_G.SST.Select_Farme_Rate) -- ตั้งค่าความเร็วเฟรมตามค่า
-            end
-        end)
-    end
-end)
+	local RunService = game:GetService("RunService")
+		RunService.RenderStepped:Connect(function()
+			if type(_G.SST.Select_Farme_Rate) == "number" and _G.SST.Select_Farme_Rate > 0 then
+			setfpscap(_G.SST.Select_Farme_Rate)
+		end
+	end)
+	
 
 
 Misc:AddSeperatorLeft("Misc")
@@ -3619,9 +3623,11 @@ end)
 task.spawn(function()
     while _G.AntiAFKEnabled and task.wait(300) do -- รันทุก 5 นาที
         pcall(function()
-            local VirtualUser = game:GetService("VirtualUser")
-            VirtualUser:CaptureController()
-            VirtualUser:ClickButton2(Vector2.new(0, 0)) -- ส่งสัญญาณคลิกขวาจำลอง
+            local vu = game:GetService("VirtualUser")
+game:GetService("Players").LocalPlayer.Idled:Connect(function()
+    vu:CaptureController()
+    vu:ClickButton2(Vector2.new()) -- กัน AFK แบบไม่ทำให้เกมหน่วง
+end)
         end)
     end
 end)
