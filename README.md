@@ -3586,13 +3586,14 @@ end)
 
 -- เริ่มฟังก์ชัน spawn สำหรับการตั้งค่า FPS
 spawn(function()
-	local RunService = game:GetService("RunService")
-		RunService.RenderStepped:Connect(function()
-			if type(_G.SST.Select_Farme_Rate) == "number" and _G.SST.Select_Farme_Rate > 0 then
-			setfpscap(_G.SST.Select_Farme_Rate)
-		end
-	end)
-	
+    while task.wait(1) do
+        pcall(function()
+            if type(_G.SST.Select_Farme_Rate) == "number" and _G.SST.Select_Farme_Rate > 0 then
+                setfpscap(_G.SST.Select_Farme_Rate) -- ตั้งค่าความเร็วเฟรมตามค่า
+            end
+        end)
+    end
+end)
 
 
 Misc:AddSeperatorLeft("Misc")
@@ -3623,11 +3624,9 @@ end)
 task.spawn(function()
     while _G.AntiAFKEnabled and task.wait(300) do -- รันทุก 5 นาที
         pcall(function()
-            local vu = game:GetService("VirtualUser")
-game:GetService("Players").LocalPlayer.Idled:Connect(function()
-    vu:CaptureController()
-    vu:ClickButton2(Vector2.new()) -- กัน AFK แบบไม่ทำให้เกมหน่วง
-end)
+            local VirtualUser = game:GetService("VirtualUser")
+            VirtualUser:CaptureController()
+            VirtualUser:ClickButton2(Vector2.new(0, 0)) -- ส่งสัญญาณคลิกขวาจำลอง
         end)
     end
 end)
@@ -3999,4 +3998,4 @@ printData()           -- แสดงข้อมูลที่ได้
 useData()             -- เรียกใช้งานข้อมูลตามที่ต้องการ
 
 -- หากต้องการบันทึกข้อมูลใหม่หลังจากมีการเปลี่ยนแปลงใน _G.SeveST ให้เรียกใช้ saveData()
-saveData()
+-- saveData()
